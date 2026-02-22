@@ -19,56 +19,86 @@ body {
 
 /* ================= NAVBAR ================= */
 .navbar {
-  position: fixed;
-  width: 100%;
-  top: 0;
-  padding: 20px 8%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(0,0,0,0.85);
-  backdrop-filter: blur(10px);
-  z-index: 999;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	padding: 15px 8%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background: rgba(0, 0, 0, 0.6);
+	backdrop-filter: blur(10px);
+	border-bottom: 1px solid rgba(183, 0, 255, 0.3);
+	z-index: 1000;
 }
 
+/* LOGO */
 .logo {
-  color: var(--neon);
-  font-weight: bold;
-  font-size: 20px;
-  text-shadow: 0 0 10px var(--neon);
+	font-size: 22px;
+	font-weight: bold;
+	color: var(--neon);
+	letter-spacing: 2px;
+	text-shadow: 0 0 10px var(--neon),
+				 0 0 20px var(--neon);
+	cursor: pointer;
+	transition: 0.3s;
+}
+
+.logo:hover {
+	transform: scale(1.1);
 }
 
 /* NAV LINKS */
 .nav-links {
-  display: flex;
-  list-style: none;
-  gap: 40px;
+	list-style: none;
+	display: flex;
+	gap: 30px;
 }
 
 .nav-links a {
-  text-decoration: none;
-  color: var(--neon);
-  transition: 0.3s;
+	position: relative;
+	text-decoration: none;
+	color: white;
+	font-weight: 500;
+	letter-spacing: 1px;
+	transition: 0.3s;
+}
+
+/* Neon underline animation */
+.nav-links a::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	bottom: -5px;
+	width: 0%;
+	height: 2px;
+	background: var(--neon);
+	box-shadow: 0 0 10px var(--neon);
+	transition: 0.4s ease;
 }
 
 .nav-links a:hover {
-  text-shadow: 0 0 10px var(--neon);
+	color: var(--neon);
+}
+
+.nav-links a:hover::after {
+	width: 100%;
 }
 
 /* ================= HAMBURGER ================= */
 .hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  cursor: pointer;
-  z-index: 1000;
+	display: none;
+	flex-direction: column;
+	gap: 5px;
+	cursor: pointer;
 }
 
 .hamburger span {
-  width: 25px;
-  height: 3px;
-  background: var(--neon);
-  transition: 0.4s;
+	width: 25px;
+	height: 3px;
+	background: var(--neon);
+	box-shadow: 0 0 10px var(--neon);
+	transition: 0.3s;
 }
 
 /* Animasi jadi X */
