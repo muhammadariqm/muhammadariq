@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const textArray = [
       "Web Developer",
       "Cybersecurity Enthusiast",
+      "SOC Analyst",
     ];
 
     let count = 0;

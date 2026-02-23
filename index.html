@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Muhammad Ariq Mubarak | Portfolio</title>
-
+		<link rel="shortcut icon" href="images/star.png" type="image/x-icon" />
 		<link
 			href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"
 			rel="stylesheet" />
@@ -38,7 +38,8 @@
 				MUHAMMAD ARIQ MUBARAK
 			</h1>
 			<h2 class="typing"></h2>
-			<p>Computer Engineering Student | Web Developer | Cybersecurity</p>
+			<h2>Computer Engineering Student | Web Developer | Cybersecurity</h2>
+			<p>Building secure, scalable, and maintainable web systems.</p>
 		</header>
 
 		<!-- ABOUT -->
@@ -48,10 +49,7 @@
 			<div class="about-wrapper">
 				<!-- FOTO -->
 				<div class="about-image">
-					<img
-						src="images/Ariq.jpg"
-						style="filter: grayscale()"
-						alt="Muhammad Ariq Mubarak" />
+					<img src="images/Ariq.jpg" alt="Muhammad Ariq Mubarak" />
 				</div>
 
 				<!-- KONTEN -->
@@ -84,20 +82,43 @@
 
 		<!-- SKILLS -->
 		<section class="skills reveal">
-			<h2>Skills</h2>
-			<div class="card-container">
-				<div class="card">HTML</div>
-				<div class="card">CSS</div>
-				<div class="card">JavaScript</div>
-				<div class="card">PHP</div>
-				<div class="card">Laravel</div>
-				<div class="card">CodeIgniter</div>
-				<div class="card">Dart</div>
-				<div class="card">Flutter</div>
-				<div class="card">MySQL</div>
-				<div class="card">Linux</div>
-				<div class="card">Wireshark</div>
-				<div class="card">Nmap</div>
+			<h2>Tech Stack</h2>
+			<div class="skill-container">
+				<div class="skill-card">HTML</div>
+				<div class="skill-card">CSS</div>
+				<div class="skill-card">JavaScript</div>
+				<div class="skill-card">Figma</div>
+
+				<div class="skill-card">PHP</div>
+				<div class="skill-card">Laravel</div>
+				<div class="skill-card">CodeIgniter</div>
+				<div class="skill-card">Python</div>
+
+				<div class="skill-card">Dart</div>
+				<div class="skill-card">Flutter</div>
+
+				<div class="skill-card">MySQL</div>
+				<div class="skill-card">Firebase</div>
+
+				<div class="skill-card">Postman</div>
+				<div class="skill-card">ChatGPT</div>
+
+				<div class="skill-card">Linux</div>
+				<div class="skill-card">Wireshark</div>
+				<div class="skill-card">Nmap</div>
+				<div class="skill-card">SQLMap</div>
+				<div class="skill-card">Wazuh</div>
+				<div class="skill-card">Arachni</div>
+				<div class="skill-card">Metasploit</div>
+				<div class="skill-card">Burp Suite</div>
+				<div class="skill-card">Kali Linux</div>
+				<div class="skill-card">OWASP ZAP</div>
+				<div class="skill-card">Nessus</div>
+				<div class="skill-card">Nikto</div>
+				<div class="skill-card">Aircrack-ng</div>
+				<div class="skill-card">John the Ripper</div>
+				<div class="skill-card">Hashcat</div>
+				<div class="skill-card">OpenVAS</div>
 			</div>
 		</section>
 
@@ -323,19 +344,18 @@
 				.addEventListener("submit", function (event) {
 					event.preventDefault();
 
-					console.log("Name:", this.user_name.value);
-					console.log("Email:", this.user_email.value);
-					console.log("Message:", this.message.value);
+					const form = this; // 🔥 simpan referensi form
+					const status = document.getElementById("status-message");
 
-					emailjs.sendForm("service_gr9ldub", "template_w3pzeud", this).then(
+					emailjs.sendForm("service_gr9ldub", "template_w3pzeud", form).then(
 						function () {
-							document.getElementById("status-message").innerHTML =
-								"✅ Message sent successfully!";
+							status.innerHTML = "✅ Message sent successfully!";
+
+							form.reset(); // 🔥 ini pasti jalan
 						},
 						function (error) {
 							console.log(error);
-							document.getElementById("status-message").innerHTML =
-								"❌ Failed to send message.";
+							status.innerHTML = "❌ Failed to send message.";
 						},
 					);
 				});
