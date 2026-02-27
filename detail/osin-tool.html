@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="id">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>ODDNEY – Advanced OSINT Tool</title>
+
+		<link
+			href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap"
+			rel="stylesheet" />
+
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: "Inter", sans-serif;
+				background: #050816;
+				color: #e2e8f0;
+				overflow-x: hidden;
+			}
+
+			body::before {
+				content: "";
+				position: fixed;
+				width: 600px;
+				height: 600px;
+				background: radial-gradient(circle, #00adb5 0%, transparent 70%);
+				top: -200px;
+				left: -200px;
+				opacity: 0.15;
+				z-index: -1;
+			}
+
+			body::after {
+				content: "";
+				position: fixed;
+				width: 600px;
+				height: 600px;
+				background: radial-gradient(circle, #4f46e5 0%, transparent 70%);
+				bottom: -200px;
+				right: -200px;
+				opacity: 0.15;
+				z-index: -1;
+			}
+
+			.container {
+				max-width: 1200px;
+				margin: auto;
+				padding: 120px 20px;
+			}
+
+			.hero {
+				text-align: center;
+				margin-bottom: 100px;
+			}
+
+			.hero h1 {
+				font-family: "Orbitron", sans-serif;
+				font-size: 48px;
+				background: linear-gradient(90deg, #00adb5, #4f46e5);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				margin-bottom: 20px;
+			}
+
+			.subtitle {
+				color: #94a3b8;
+				font-size: 18px;
+				margin-bottom: 30px;
+			}
+
+			.badges span {
+				background: rgba(255, 255, 255, 0.05);
+				padding: 8px 16px;
+				margin: 6px;
+				border-radius: 30px;
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				font-size: 13px;
+			}
+
+			.grid {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 40px;
+				margin-bottom: 80px;
+			}
+
+			.card {
+				background: rgba(255, 255, 255, 0.05);
+				backdrop-filter: blur(20px);
+				padding: 40px;
+				border-radius: 20px;
+				border: 1px solid rgba(255, 255, 255, 0.08);
+				transition: 0.4s;
+			}
+
+			.card:hover {
+				transform: translateY(-10px);
+				box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+			}
+
+			.card h2 {
+				color: #00adb5;
+				margin-bottom: 20px;
+			}
+
+			.card ul {
+				padding-left: 18px;
+				line-height: 1.9;
+			}
+
+			.preview {
+				margin-top: 40px;
+				text-align: center;
+			}
+
+			.preview img {
+				width: 100%;
+				max-width: 900px;
+				border-radius: 18px;
+				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+				transition: 0.4s;
+			}
+
+			.preview img:hover {
+				transform: scale(1.03);
+			}
+
+			.cta {
+				text-align: center;
+				margin-top: 100px;
+			}
+
+			.btn-back {
+				padding: 15px 35px;
+				background: linear-gradient(90deg, #00adb5, #4f46e5);
+				border: none;
+				border-radius: 12px;
+				font-weight: 600;
+				color: white;
+				text-decoration: none;
+				transition: 0.3s;
+			}
+
+			.btn-back:hover {
+				transform: translateY(-4px);
+				box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+			}
+
+			.footer {
+				margin-top: 120px;
+				text-align: center;
+				color: #64748b;
+				font-size: 14px;
+			}
+
+			@media (max-width: 900px) {
+				.grid {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="hero">
+				<h1>ODDNEY</h1>
+				<p class="subtitle">
+					Advanced Open Source Intelligence & Digital Footprint Analysis Tool
+				</p>
+
+				<div class="badges">
+					<span>Python</span>
+					<span>OSINT</span>
+					<span>Automation</span>
+					<span>Digital Forensics</span>
+					<span>Cyber Security</span>
+				</div>
+			</div>
+
+			<div class="grid">
+				<div class="card">
+					<h2>Project Overview</h2>
+					<p>
+						ODDNEY adalah tool OSINT berbasis Python yang dirancang untuk
+						melakukan pencarian informasi publik secara otomatis dari berbagai
+						sumber online seperti Google, Twitter, LinkedIn, Instagram, dan
+						email discovery.
+					</p>
+				</div>
+
+				<div class="card">
+					<h2>Objectives</h2>
+					<ul>
+						<li>Mengotomatisasi proses Open Source Intelligence</li>
+						<li>Menganalisis digital footprint target</li>
+						<li>Mengintegrasikan berbagai sumber pencarian</li>
+						<li>Menyederhanakan investigasi berbasis OSINT</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="grid">
+				<div class="card">
+					<h2>Key Features</h2>
+					<ul>
+						<li>Google Search Automation</li>
+						<li>Social Media Lookup</li>
+						<li>Email Finder Integration</li>
+						<li>CLI-based Interface</li>
+						<li>Lightweight & Fast Execution</li>
+					</ul>
+				</div>
+
+				<div class="card">
+					<h2>System Workflow</h2>
+					<ul>
+						<li>User inputs target name</li>
+						<li>Tool generates search queries</li>
+						<li>Collects public data links</li>
+						<li>Outputs structured intelligence results</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="card">
+				<h2>Project Preview</h2>
+				<div class="preview">
+					<img src="../images/osin.png" alt="ODDNEY OSINT Tool Preview" />
+				</div>
+			</div>
+
+			<div class="cta">
+				<a href="../index.html#projects" class="btn-back">← Back to Projects</a>
+			</div>
+
+			<div class="footer">Cyber Security & OSINT Automation Project</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="id">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SSO & OAuth 2.0 Authentication System – Laravel</title>
+
+		<link
+			href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap"
+			rel="stylesheet" />
+
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: "Inter", sans-serif;
+				background: #050816;
+				color: #e2e8f0;
+				overflow-x: hidden;
+			}
+
+			body::before {
+				content: "";
+				position: fixed;
+				width: 600px;
+				height: 600px;
+				background: radial-gradient(circle, #00adb5 0%, transparent 70%);
+				top: -200px;
+				left: -200px;
+				opacity: 0.15;
+				z-index: -1;
+			}
+
+			body::after {
+				content: "";
+				position: fixed;
+				width: 600px;
+				height: 600px;
+				background: radial-gradient(circle, #4f46e5 0%, transparent 70%);
+				bottom: -200px;
+				right: -200px;
+				opacity: 0.15;
+				z-index: -1;
+			}
+
+			.container {
+				max-width: 1200px;
+				margin: auto;
+				padding: 120px 20px;
+			}
+
+			.hero {
+				text-align: center;
+				margin-bottom: 100px;
+			}
+
+			.hero h1 {
+				font-family: "Orbitron", sans-serif;
+				font-size: 48px;
+				background: linear-gradient(90deg, #00adb5, #4f46e5);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				margin-bottom: 20px;
+			}
+
+			.subtitle {
+				color: #94a3b8;
+				font-size: 18px;
+				margin-bottom: 30px;
+			}
+
+			.badges span {
+				background: rgba(255, 255, 255, 0.05);
+				padding: 8px 16px;
+				margin: 6px;
+				border-radius: 30px;
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				font-size: 13px;
+			}
+
+			.grid {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 40px;
+				margin-bottom: 80px;
+			}
+
+			.card {
+				background: rgba(255, 255, 255, 0.05);
+				backdrop-filter: blur(20px);
+				padding: 40px;
+				border-radius: 20px;
+				border: 1px solid rgba(255, 255, 255, 0.08);
+				transition: 0.4s;
+			}
+
+			.card:hover {
+				transform: translateY(-10px);
+				box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+			}
+
+			.card h2 {
+				color: #00adb5;
+				margin-bottom: 20px;
+			}
+
+			.card ul {
+				padding-left: 18px;
+				line-height: 1.9;
+			}
+
+			.preview-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 30px;
+				margin-top: 40px;
+			}
+
+			.preview-grid img {
+				width: 100%;
+				border-radius: 18px;
+				transition: 0.4s;
+				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+			}
+
+			.preview-grid img:hover {
+				transform: scale(1.05);
+			}
+
+			.cta {
+				text-align: center;
+				margin-top: 100px;
+			}
+
+			.btn-back {
+				padding: 15px 35px;
+				background: linear-gradient(90deg, #00adb5, #4f46e5);
+				border: none;
+				border-radius: 12px;
+				font-weight: 600;
+				color: white;
+				text-decoration: none;
+				transition: 0.3s;
+			}
+
+			.btn-back:hover {
+				transform: translateY(-4px);
+				box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+			}
+
+			.footer {
+				margin-top: 120px;
+				text-align: center;
+				color: #64748b;
+				font-size: 14px;
+			}
+
+			@media (max-width: 900px) {
+				.grid {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="hero">
+				<h1>SSO & OAuth 2.0 Authentication</h1>
+				<p class="subtitle">
+					Enterprise Authentication System built with Laravel & JWT
+				</p>
+				<div class="badges">
+					<span>Laravel</span>
+					<span>JWT</span>
+					<span>OAuth 2.0</span>
+					<span>REST API</span>
+					<span>RBAC</span>
+					<span>MySQL</span>
+				</div>
+			</div>
+
+			<div class="grid">
+				<div class="card">
+					<h2>Problem</h2>
+					<p>
+						Traditional authentication systems require separate logins across
+						multiple services, reducing efficiency and increasing security
+						risks.
+					</p>
+				</div>
+
+				<div class="card">
+					<h2>Solution</h2>
+					<p>
+						Designed a centralized Single Sign-On system using OAuth 2.0 and JWT
+						enabling secure and scalable authentication.
+					</p>
+				</div>
+			</div>
+
+			<div class="grid">
+				<div class="card">
+					<h2>Core Features</h2>
+					<ul>
+						<li>JWT-based authentication</li>
+						<li>Google OAuth integration</li>
+						<li>RBAC access control</li>
+						<li>REST API protection</li>
+						<li>Stateless architecture</li>
+					</ul>
+				</div>
+
+				<div class="card">
+					<h2>Authentication Flow</h2>
+					<ul>
+						<li>User login via credentials/OAuth</li>
+						<li>Server validates identity</li>
+						<li>JWT token generated</li>
+						<li>Token sent in Authorization header</li>
+						<li>Server verifies token & role</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="card">
+				<h2>Preview</h2>
+
+				<div class="preview-grid">
+					<img src="../images/sso.png" alt="SSO Preview" />
+				</div>
+			</div>
+
+			<div class="cta">
+				<a href="../index.html#projects" class="btn-back">← Back to Home</a>
+			</div>
+
+			<div class="footer">
+				Developed as Final Project – Computer Engineering
+			</div>
+		</div>
+	</body>
+</html>

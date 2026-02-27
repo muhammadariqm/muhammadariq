@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="id">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Penetration Testing – Government Website Security Assessment</title>
+
+		<link
+			href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap"
+			rel="stylesheet" />
+
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: "Inter", sans-serif;
+				background: #050816;
+				color: #e2e8f0;
+				overflow-x: hidden;
+			}
+
+			body::before {
+				content: "";
+				position: fixed;
+				width: 600px;
+				height: 600px;
+				background: radial-gradient(circle, #00adb5 0%, transparent 70%);
+				top: -200px;
+				left: -200px;
+				opacity: 0.15;
+				z-index: -1;
+			}
+
+			body::after {
+				content: "";
+				position: fixed;
+				width: 600px;
+				height: 600px;
+				background: radial-gradient(circle, #4f46e5 0%, transparent 70%);
+				bottom: -200px;
+				right: -200px;
+				opacity: 0.15;
+				z-index: -1;
+			}
+
+			.container {
+				max-width: 1200px;
+				margin: auto;
+				padding: 120px 20px;
+			}
+
+			.hero {
+				text-align: center;
+				margin-bottom: 100px;
+			}
+
+			.hero h1 {
+				font-family: "Orbitron", sans-serif;
+				font-size: 48px;
+				background: linear-gradient(90deg, #00adb5, #4f46e5);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				margin-bottom: 20px;
+			}
+
+			.subtitle {
+				color: #94a3b8;
+				font-size: 18px;
+				margin-bottom: 30px;
+			}
+
+			.badges span {
+				background: rgba(255, 255, 255, 0.05);
+				padding: 8px 16px;
+				margin: 6px;
+				border-radius: 30px;
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				font-size: 13px;
+			}
+
+			.grid {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 40px;
+				margin-bottom: 80px;
+			}
+
+			.card {
+				background: rgba(255, 255, 255, 0.05);
+				backdrop-filter: blur(20px);
+				padding: 40px;
+				border-radius: 20px;
+				border: 1px solid rgba(255, 255, 255, 0.08);
+				transition: 0.4s;
+			}
+
+			.card:hover {
+				transform: translateY(-10px);
+				box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+			}
+
+			.card h2 {
+				color: #00adb5;
+				margin-bottom: 20px;
+			}
+
+			.card ul,
+			.card ol {
+				padding-left: 18px;
+				line-height: 1.9;
+			}
+
+			.highlight-box {
+				background: rgba(0, 173, 181, 0.15);
+				border-left: 4px solid #00adb5;
+				padding: 20px;
+				border-radius: 12px;
+				margin-top: 20px;
+			}
+
+			.cta {
+				text-align: center;
+				margin-top: 100px;
+			}
+
+			.btn-back {
+				padding: 15px 35px;
+				background: linear-gradient(90deg, #00adb5, #4f46e5);
+				border: none;
+				border-radius: 12px;
+				font-weight: 600;
+				color: white;
+				text-decoration: none;
+				transition: 0.3s;
+			}
+
+			.btn-back:hover {
+				transform: translateY(-4px);
+				box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+			}
+
+			.footer {
+				margin-top: 120px;
+				text-align: center;
+				color: #64748b;
+				font-size: 14px;
+			}
+
+			@media (max-width: 900px) {
+				.grid {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="hero">
+				<h1>Penetration Testing</h1>
+				<p class="subtitle">Government Website Security Assessment</p>
+
+				<div class="badges">
+					<span>Security Assessment</span>
+					<span>OWASP</span>
+					<span>Burp Suite</span>
+					<span>SQLMap</span>
+					<span>Nmap</span>
+					<span>Risk Analysis</span>
+				</div>
+			</div>
+
+			<div class="grid">
+				<div class="card">
+					<h2>Project Overview</h2>
+					<p>
+						Kegiatan security assessment dan penetration testing terhadap
+						website instansi pemerintahan untuk mengidentifikasi celah keamanan
+						dan memberikan rekomendasi perbaikan.
+					</p>
+
+					<div class="highlight-box">
+						<strong>Scope:</strong> Black-box & limited gray-box testing pada
+						aplikasi web berbasis PHP & MySQL.
+					</div>
+				</div>
+
+				<div class="card">
+					<h2>Objectives</h2>
+					<ul>
+						<li>Mengidentifikasi vulnerability</li>
+						<li>Menganalisis tingkat risiko</li>
+						<li>Memberikan rekomendasi mitigasi</li>
+						<li>Meningkatkan security awareness</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="grid">
+				<div class="card">
+					<h2>Tools & Methodology</h2>
+					<ul>
+						<li>OWASP Testing Guide</li>
+						<li>OWASP Top 10</li>
+						<li>Burp Suite</li>
+						<li>SQLMap</li>
+						<li>Nmap</li>
+						<li>Manual Testing</li>
+					</ul>
+				</div>
+
+				<div class="card">
+					<h2>Testing Phases</h2>
+					<ol>
+						<li>Information Gathering</li>
+						<li>Vulnerability Scanning</li>
+						<li>Exploitation Testing</li>
+						<li>Impact Analysis</li>
+						<li>Reporting & Recommendation</li>
+					</ol>
+				</div>
+			</div>
+
+			<div class="grid">
+				<div class="card">
+					<h2>Findings Summary</h2>
+					<ul>
+						<li>SQL Injection (Medium Risk)</li>
+						<li>Cross-Site Scripting (XSS)</li>
+						<li>Weak Authentication</li>
+						<li>Missing Security Headers</li>
+					</ul>
+				</div>
+
+				<div class="card">
+					<h2>Risk Assessment</h2>
+					<p>
+						Analisis menggunakan pendekatan
+						<strong>Risk = Likelihood × Impact</strong> untuk menentukan
+						prioritas perbaikan.
+					</p>
+				</div>
+			</div>
+
+			<div class="card">
+				<h2>Deliverables</h2>
+				<ul>
+					<li>Comprehensive Penetration Testing Report</li>
+					<li>Evidence & Screenshot Documentation</li>
+					<li>Risk Matrix & Severity Classification</li>
+					<li>Mitigation & Hardening Recommendations</li>
+				</ul>
+			</div>
+
+			<div class="cta">
+				<a href="../index.html#projects" class="btn-back">← Back to Projects</a>
+			</div>
+
+			<div class="footer">Professional Security Assessment Project</div>
+		</div>
+	</body>
+</html>

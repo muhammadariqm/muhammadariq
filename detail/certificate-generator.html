@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="id">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Certificate Generator – SMTP Automation</title>
+
+		<link
+			href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Inter:wght@400;600&display=swap"
+			rel="stylesheet" />
+
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: "Inter", sans-serif;
+				background: #060b1a;
+				color: #e2e8f0;
+				overflow-x: hidden;
+			}
+
+			/* Ambient Glow */
+			body::before {
+				content: "";
+				position: fixed;
+				width: 600px;
+				height: 600px;
+				background: radial-gradient(circle, #4f46e5 0%, transparent 70%);
+				top: -200px;
+				left: -200px;
+				opacity: 0.15;
+				z-index: -1;
+			}
+
+			body::after {
+				content: "";
+				position: fixed;
+				width: 600px;
+				height: 600px;
+				background: radial-gradient(circle, #00adb5 0%, transparent 70%);
+				bottom: -200px;
+				right: -200px;
+				opacity: 0.15;
+				z-index: -1;
+			}
+
+			.container {
+				max-width: 1200px;
+				margin: auto;
+				padding: 120px 20px;
+			}
+
+			/* HERO */
+			.hero {
+				text-align: center;
+				margin-bottom: 100px;
+			}
+
+			.hero h1 {
+				font-family: "Orbitron", sans-serif;
+				font-size: 46px;
+				background: linear-gradient(90deg, #4f46e5, #00adb5);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				margin-bottom: 20px;
+			}
+
+			.subtitle {
+				color: #94a3b8;
+				font-size: 18px;
+				margin-bottom: 30px;
+			}
+
+			.badges span {
+				display: inline-block;
+				background: rgba(255, 255, 255, 0.05);
+				padding: 8px 16px;
+				margin: 6px;
+				border-radius: 30px;
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				font-size: 13px;
+			}
+
+			/* GRID */
+			.grid {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 40px;
+				margin-bottom: 80px;
+			}
+
+			.card {
+				background: rgba(255, 255, 255, 0.05);
+				backdrop-filter: blur(20px);
+				padding: 40px;
+				border-radius: 20px;
+				border: 1px solid rgba(255, 255, 255, 0.08);
+				transition: 0.4s;
+			}
+
+			.card:hover {
+				transform: translateY(-10px);
+				box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+			}
+
+			.card h2 {
+				color: #00adb5;
+				margin-bottom: 20px;
+			}
+
+			.card ul {
+				padding-left: 20px;
+				line-height: 1.9;
+			}
+
+			/* Highlight Section */
+			.highlight {
+				background: linear-gradient(90deg, #4f46e5, #00adb5);
+				padding: 30px;
+				border-radius: 20px;
+				font-weight: 600;
+				line-height: 1.8;
+			}
+
+			/* Preview */
+			.preview-section {
+				margin-top: 60px;
+			}
+
+			.preview-image {
+				margin-top: 30px;
+				text-align: center;
+			}
+
+			.preview-image img {
+				width: 100%;
+				max-width: 900px;
+				border-radius: 20px;
+				box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+				transition: 0.4s;
+			}
+
+			.preview-image img:hover {
+				transform: scale(1.03);
+			}
+
+			/* CTA */
+			.cta {
+				text-align: center;
+				margin-top: 100px;
+			}
+
+			.btn-back {
+				padding: 15px 35px;
+				background: linear-gradient(90deg, #4f46e5, #00adb5);
+				border: none;
+				border-radius: 12px;
+				font-weight: 600;
+				color: white;
+				text-decoration: none;
+				transition: 0.3s;
+			}
+
+			.btn-back:hover {
+				transform: translateY(-4px);
+				box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+			}
+
+			.footer {
+				margin-top: 120px;
+				text-align: center;
+				color: #64748b;
+				font-size: 14px;
+			}
+
+			/* Responsive */
+			@media (max-width: 900px) {
+				.grid {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="hero">
+				<h1>Certificate Generator System</h1>
+				<p class="subtitle">
+					Automated Certificate Distribution with SMTP Integration & Admin
+					Dashboard
+				</p>
+
+				<div class="badges">
+					<span>Laravel</span>
+					<span>SMTP Mailer</span>
+					<span>MySQL</span>
+					<span>Admin Dashboard</span>
+					<span>Automation System</span>
+				</div>
+			</div>
+
+			<div class="grid">
+				<div class="card">
+					<h2>Problem</h2>
+					<p>
+						Manual certificate distribution in events is inefficient,
+						time-consuming, and prone to human error.
+					</p>
+				</div>
+
+				<div class="card">
+					<h2>Solution</h2>
+					<p>
+						Built a web-based automation system that generates personalized
+						certificates and sends them in bulk via SMTP integration.
+					</p>
+				</div>
+			</div>
+
+			<div class="grid">
+				<div class="card">
+					<h2>Core Features</h2>
+					<ul>
+						<li>Template-based certificate engine</li>
+						<li>Bulk participant upload</li>
+						<li>SMTP automated distribution</li>
+						<li>Role-based admin dashboard</li>
+						<li>Event & user management</li>
+						<li>Feedback monitoring</li>
+					</ul>
+				</div>
+
+				<div class="card">
+					<h2>System Modules</h2>
+					<ul>
+						<li>Landing Page</li>
+						<li>Authentication System</li>
+						<li>Admin Panel</li>
+						<li>Dynamic PDF Generator</li>
+						<li>Bulk SMTP Engine</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="card highlight">
+				✔ Automated certificate generation<br />
+				✔ Reduced manual distribution time by 90%<br />
+				✔ Secure role-based management<br />
+				✔ Clean & responsive dashboard<br />
+				✔ Fully integrated SMTP automation
+			</div>
+
+			<div class="preview-section card">
+				<h2>System Preview</h2>
+				<div class="preview-image">
+					<img
+						src="/images/certifikat_generator.png"
+						alt="Certificate Generator Preview" />
+				</div>
+			</div>
+
+			<div class="cta">
+				<a href="../index.html#projects" class="btn-back">← Back to Home</a>
+			</div>
+
+			<div class="footer">Developed as Independent Web System Project</div>
+		</div>
+	</body>
+</html>
