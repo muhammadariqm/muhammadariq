@@ -18,6 +18,13 @@ body {
   color: white;
   font-family: 'Orbitron', sans-serif;
   overflow-x: hidden;
+
+  /* grid cyber background */
+  background-image:
+    linear-gradient(rgba(0,255,150,0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,150,0.15) 1px, transparent 1px);
+
+  background-size: 40px 40px;
 }
 
 /* ================= NAVBAR ================= */
@@ -119,13 +126,20 @@ body {
 /* ================= HERO ================= */
 .hero {
   height: 100vh;
-  background: linear-gradient(135deg, #001a00, #000);
+  background:
+    linear-gradient(rgba(0,255,150,0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,150,0.15) 1px, transparent 1px),
+    linear-gradient(135deg, #001a00, #000);
+
+  background-size: 40px 40px, 40px 40px, cover;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
   padding: 0 20px;
+  border-bottom: var(--neon) 2px solid;
 }
 
 .hero h1 {
@@ -197,7 +211,7 @@ h2 {
   margin-bottom: 30px;
   padding: 25px;
   border: 1px solid var(--neon);
-  background: rgba(57,255,20,0.05);
+  background: var(--dark);
   transition: .4s;
 }
 
@@ -218,6 +232,7 @@ h2 {
   padding: 20px;
   min-width: 200px;
   border: 1px solid var(--neon);
+  background: var(--dark);
   transition: .3s;
 }
 
@@ -309,9 +324,9 @@ h2 {
 .input-group input,
 .input-group textarea {
   width: 100%;
-  padding: 18px;              /* lebih tinggi */
+  padding: 18px;              
   font-size: 16px;
-  background: transparent;
+  background: var(--dark);
   border: 2px solid var(--neon);
   color: white;
   outline: none;
@@ -351,10 +366,16 @@ h2 {
 /* ================= FOOTER ================= */
 
 .footer {
-  background: #000;
+  background-image: 
+    linear-gradient(rgba(0,255,150,0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,150,0.15) 1px, transparent 1px),
+    linear-gradient(135deg, #001a00, #000);
+
+  background-size: 40px 40px, 40px 40px, cover;
+
   padding: 60px 10%;
   text-align: center;
-  border-top: 1px solid var(--neon);
+  border-top: 2px solid var(--neon);
 }
 
 .footer-logo {
