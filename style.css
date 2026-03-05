@@ -21,8 +21,8 @@ body {
 
   /* grid cyber background */
   background-image:
-    linear-gradient(rgba(0,255,150,0.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,150,0.15) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
 
   background-size: 40px 40px;
 }
@@ -171,9 +171,9 @@ body {
 .hero {
   height: 100vh;
   background:
-    linear-gradient(rgba(0,255,150,0.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,150,0.15) 1px, transparent 1px),
-    linear-gradient(135deg, #001a00, #000);
+    linear-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    linear-gradient(135deg, #212221, #000);
 
   background-size: 40px 40px, 40px 40px, cover;
 
@@ -411,9 +411,9 @@ h2 {
 
 .footer {
   background-image: 
-    linear-gradient(rgba(0,255,150,0.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,150,0.15) 1px, transparent 1px),
-    linear-gradient(135deg, #001a00, #000);
+    linear-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    linear-gradient(135deg, #212221, #000);
 
   background-size: 40px 40px, 40px 40px, cover;
 
