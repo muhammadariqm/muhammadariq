@@ -14,17 +14,16 @@ html {
 }
 
 body {
-  background: var(--dark);
   color: white;
   font-family: 'Orbitron', sans-serif;
   overflow-x: hidden;
 
-  /* grid cyber background */
-  background-image:
+  background:
     linear-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+    linear-gradient(90deg, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    linear-gradient(135deg, #000);
 
-  background-size: 40px 40px;
+  background-size: 40px 40px, 40px 40px, cover;
 }
 
 /* ================= NAVBAR ================= */
@@ -47,7 +46,7 @@ body {
   backdrop-filter: blur(10px);
 
   border-radius: 50px;
-  border: 1px solid rgba(0,255,150,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   z-index: 999;
@@ -413,7 +412,7 @@ h2 {
   background-image: 
     linear-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
-    linear-gradient(135deg, #212221, #000);
+    linear-gradient(363deg, #212221, #000);
 
   background-size: 40px 40px, 40px 40px, cover;
 
