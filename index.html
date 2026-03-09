@@ -23,6 +23,7 @@
 		<link rel="stylesheet" href="style.css" />
 	</head>
 	<body>
+		<canvas id="particles"></canvas>
 		<div class="cursor"></div>
 
 		<!-- NAV -->
@@ -325,6 +326,23 @@
 			</div>
 		</section>
 
+		<!-- GALLERY -->
+		<section class="GALLERY">
+			<canvas class="gallery-particles"></canvas>
+
+			<h2>My Gallery</h2>
+			<div class="my_gallery">
+				<div class="gall_img">
+					<img src="images/17.jpeg" alt="Gallery 1" />
+				</div>
+
+				<div class="gall_img">
+					<img src="images/16.jpeg" alt="Gallery 2" />
+				</div>
+			</div>
+			<canvas class="gallery-particles"></canvas>
+		</section>
+
 		<!-- CONTACT -->
 		<section class="contact reveal" id="contact">
 			<h2>Contact Me</h2>
@@ -376,6 +394,11 @@
 					<a href="https://www.instagram.com/kurik.kurik.boy/" target="_blank"
 						>Instagram</a
 					>
+					<a
+						href="https://wa.me/6288239351320?text=Hallo Saya dari Portofolio"
+						target="_blank"
+						>WhatsApp</a
+					>
 				</div>
 
 				<p class="footer-copy">© 2024</p>
@@ -396,14 +419,14 @@
 				.addEventListener("submit", function (event) {
 					event.preventDefault();
 
-					const form = this; // 🔥 simpan referensi form
+					const form = this;
 					const status = document.getElementById("status-message");
 
 					emailjs.sendForm("service_gr9ldub", "template_w3pzeud", form).then(
 						function () {
 							status.innerHTML = "✅ Message sent successfully!";
 
-							form.reset(); // 🔥 ini pasti jalan
+							form.reset();
 						},
 						function (error) {
 							console.log(error);
@@ -411,6 +434,46 @@
 						},
 					);
 				});
+		</script>
+		<script>
+			const canvas = document.getElementById("particles");
+			const ctx = canvas.getContext("2d");
+
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+
+			let particles = [];
+
+			for (let i = 0; i < 80; i++) {
+				particles.push({
+					x: Math.random() * canvas.width,
+					y: Math.random() * canvas.height,
+					size: Math.random() * 2,
+					speedX: (Math.random() - 0.5) * 0.5,
+					speedY: (Math.random() - 0.5) * 0.5,
+				});
+			}
+
+			function animate() {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+				particles.forEach((p) => {
+					p.x += p.speedX;
+					p.y += p.speedY;
+
+					ctx.beginPath();
+					ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+					ctx.fillStyle = "rgba(0,255,255,0.6)";
+					ctx.fill();
+
+					if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+					if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+				});
+
+				requestAnimationFrame(animate);
+			}
+
+			animate();
 		</script>
 	</body>
 </html>
