@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<title>Straw Hat Adventure – Interactive Story</title>
+
+		<link
+			href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Inter:wght@400;600&display=swap"
+			rel="stylesheet" />
+
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: "Inter", sans-serif;
+				background: #060b1a;
+				color: #e2e8f0;
+				overflow-x: hidden;
+			}
+
+			/* Glow background */
+			body::before {
+				content: "";
+				position: fixed;
+				width: 600px;
+				height: 600px;
+				background: radial-gradient(circle, #ff5f1f 0%, transparent 70%);
+				top: -200px;
+				left: -200px;
+				opacity: 0.15;
+				z-index: -1;
+			}
+
+			body::after {
+				content: "";
+				position: fixed;
+				width: 600px;
+				height: 600px;
+				background: radial-gradient(circle, #ffd700 0%, transparent 70%);
+				bottom: -200px;
+				right: -200px;
+				opacity: 0.15;
+				z-index: -1;
+			}
+
+			.container {
+				max-width: 1200px;
+				margin: auto;
+				padding: 120px 20px;
+			}
+
+			/* HERO */
+
+			.hero {
+				text-align: center;
+				margin-bottom: 100px;
+			}
+
+			.hero h1 {
+				font-family: "Orbitron", sans-serif;
+				font-size: 46px;
+				background: linear-gradient(90deg, #ff5f1f, #ffd700);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				margin-bottom: 20px;
+			}
+
+			.subtitle {
+				color: #94a3b8;
+				font-size: 18px;
+				margin-bottom: 30px;
+			}
+
+			.badges span {
+				display: inline-block;
+				background: rgba(255, 255, 255, 0.05);
+				padding: 8px 16px;
+				margin: 6px;
+				border-radius: 30px;
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				font-size: 13px;
+			}
+
+			/* GRID */
+
+			.grid {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 40px;
+				margin-bottom: 80px;
+			}
+
+			.card {
+				background: rgba(255, 255, 255, 0.05);
+				backdrop-filter: blur(20px);
+				padding: 40px;
+				border-radius: 20px;
+				border: 1px solid rgba(255, 255, 255, 0.08);
+				transition: 0.4s;
+			}
+
+			.card:hover {
+				transform: translateY(-10px);
+				box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+			}
+
+			.card h2 {
+				color: #ffd700;
+				margin-bottom: 20px;
+			}
+
+			.card ul {
+				padding-left: 20px;
+				line-height: 1.9;
+			}
+
+			/* Highlight */
+
+			.highlight {
+				background: linear-gradient(90deg, #ff5f1f, #ffd700);
+				padding: 30px;
+				border-radius: 20px;
+				font-weight: 600;
+				line-height: 1.8;
+			}
+
+			/* Preview */
+
+			.preview-section {
+				margin-top: 60px;
+			}
+
+			.preview-image {
+				margin-top: 30px;
+				text-align: center;
+			}
+
+			.preview-image img {
+				width: 100%;
+				max-width: 900px;
+				border-radius: 20px;
+				box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+				transition: 0.4s;
+			}
+
+			.preview-image img:hover {
+				transform: scale(1.03);
+			}
+
+			/* CTA */
+
+			.cta {
+				text-align: center;
+				margin-top: 100px;
+			}
+
+			.btn-back {
+				padding: 15px 35px;
+				background: linear-gradient(90deg, #ff5f1f, #ffd700);
+				border: none;
+				border-radius: 12px;
+				font-weight: 600;
+				color: white;
+				text-decoration: none;
+				transition: 0.3s;
+			}
+
+			.btn-back:hover {
+				transform: translateY(-4px);
+				box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+			}
+
+			.footer {
+				margin-top: 120px;
+				text-align: center;
+				color: #64748b;
+				font-size: 14px;
+			}
+
+			@media (max-width: 900px) {
+				.grid {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="hero">
+				<h1>Straw Hat Adventure</h1>
+
+				<p class="subtitle">
+					Interactive Story Website Inspired by the Adventure of the Straw Hat
+					Pirates
+				</p>
+
+				<div class="badges">
+					<span>HTML</span>
+					<span>CSS</span>
+					<span>JavaScript</span>
+					<span>Visual Novel UI</span>
+					<span>Interactive Story</span>
+				</div>
+			</div>
+
+			<div class="grid">
+				<div class="card">
+					<h2>Problem</h2>
+					<p>
+						Traditional storytelling websites are static and lack immersive
+						interaction for users.
+					</p>
+				</div>
+
+				<div class="card">
+					<h2>Solution</h2>
+					<p>
+						Built an interactive web experience that allows users to follow a
+						dynamic story through character dialogue, scene transitions, and
+						visual novel styled UI.
+					</p>
+				</div>
+			</div>
+
+			<div class="grid">
+				<div class="card">
+					<h2>Core Features</h2>
+					<ul>
+						<li>Interactive dialogue system</li>
+						<li>Dynamic background scenes</li>
+						<li>Character rendering system</li>
+						<li>Story progression navigation</li>
+						<li>Visual novel styled interface</li>
+					</ul>
+				</div>
+
+				<div class="card">
+					<h2>System Components</h2>
+					<ul>
+						<li>Dialogue Engine</li>
+						<li>Scene Management</li>
+						<li>Character UI Renderer</li>
+						<li>Story Script System</li>
+						<li>Responsive Layout</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="card highlight">
+				✔ Interactive dialogue storytelling<br />
+				✔ Dynamic scene transitions<br />
+				✔ Game-inspired visual novel interface<br />
+				✔ Character-driven narrative experience<br />
+				✔ Lightweight front-end architecture
+			</div>
+
+			<div class="preview-section card">
+				<h2>Preview</h2>
+
+				<div class="preview-image">
+					<img src="../images/onepiece1.png" />
+				</div>
+				<div class="preview-image">
+					<img src="../images/onepiece2.png" />
+				</div>
+				<div class="preview-image">
+					<img src="../images/onepiece3.png" />
+				</div>
+				<div class="preview-image">
+					<img src="../images/onepiece4.png" />
+				</div>
+				<div class="preview-image">
+					<img src="../images/onepiece5.png" />
+				</div>
+				<div class="preview-image">
+					<img src="../images/onepiece6.png" />
+				</div>
+				<div class="preview-image">
+					<img src="../images/onepiece7.png" />
+				</div>
+				<div class="preview-image">
+					<img src="../images/onepiece8.png" />
+				</div>
+				<div class="preview-image">
+					<img src="../images/onepiece9.png" />
+				</div>
+				<div class="preview-image">
+					<img src="../images/onepiece10.png" />
+				</div>
+				<div class="preview-image">
+					<img src="../images/onepiece11.png" />
+				</div>
+				<div class="preview-image">
+					<img src="../images/onepiece12.png" />
+				</div>
+			</div>
+
+			<div class="cta">
+				<a href="../index.html#projects" class="btn-back">← Back to Home</a>
+			</div>
+
+			<div class="footer">
+				Developed as Creative Frontend Interactive Story Project
+			</div>
+		</div>
+	</body>
+</html>
