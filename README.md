@@ -6,11 +6,11 @@ This project may contain personal information, assets, configurations, and origi
 
 Unauthorized actions including but not limited to:
 
-- Copying this project and claiming it as your own  
-- Reusing the code for commercial purposes  
-- Redistributing any part of this repository  
-- Modifying and republishing without permission  
-- Extracting personal data or assets  
+- Copying this project and claiming it as your own
+- Reusing the code for commercial purposes
+- Redistributing any part of this repository
+- Modifying and republishing without permission
+- Extracting personal data or assets
 
 are strictly prohibited.
 
@@ -19,3 +19,7 @@ All rights reserved © 2026 Muhammad Ariq Mubarak
 If you would like to reference, collaborate, or use any part of this project, please contact me first.
 
 Thank you for respecting my work.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
