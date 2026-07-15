@@ -1,0 +1,1401 @@
+<!doctype html>
+<html lang="id">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Home Lab Wazuh - Security Monitoring Documentation</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;600;800;900&display=swap"
+			rel="stylesheet" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+		<style>
+			/* CSS Variables */
+			:root {
+				--bg-color: #050816;
+				--primary: #00adb5;
+				--secondary: #4f46e5;
+				--text-color: #e2e8f0;
+				--text-muted: #94a3b8;
+				--glass-bg: rgba(13, 20, 47, 0.45);
+				--glass-border: rgba(0, 173, 181, 0.15);
+				--glow-color: rgba(0, 173, 181, 0.3);
+				--font-title: "Orbitron", sans-serif;
+				--font-body: "Inter", sans-serif;
+			}
+
+			/* Base & Reset Styles */
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+				scroll-behavior: smooth;
+			}
+
+			body {
+				background-color: var(--bg-color);
+				color: var(--text-color);
+				font-family: var(--font-body);
+				line-height: 1.6;
+				overflow-x: hidden;
+				position: relative;
+			}
+
+			/* Glowing Background Accents */
+			body::before {
+				content: "";
+				position: absolute;
+				width: 300px;
+				height: 300px;
+				background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+				top: 10%;
+				left: -100px;
+				opacity: 0.15;
+				pointer-events: none;
+				z-index: -1;
+			}
+
+			body::after {
+				content: "";
+				position: absolute;
+				width: 400px;
+				height: 400px;
+				background: radial-gradient(
+					circle,
+					var(--secondary) 0%,
+					transparent 70%
+				);
+				bottom: 20%;
+				right: -150px;
+				opacity: 0.15;
+				pointer-events: none;
+				z-index: -1;
+			}
+
+			/* Container */
+			.container {
+				width: 100%;
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 0 20px;
+			}
+
+			/* Loading Animation */
+			#loader {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: var(--bg-color);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				z-index: 9999;
+				transition: opacity 0.5s ease;
+			}
+			.spinner {
+				width: 50px;
+				height: 50px;
+				border: 3px solid rgba(0, 173, 181, 0.1);
+				border-radius: 50%;
+				border-top-color: var(--primary);
+				animation: spin 1s linear infinite;
+			}
+			@keyframes spin {
+				to {
+					transform: rotate(360deg);
+				}
+			}
+
+			/* Sticky Navigation */
+			header {
+				position: sticky;
+				top: 0;
+				background: rgba(5, 8, 22, 0.85);
+				backdrop-filter: blur(12px);
+				-webkit-backdrop-filter: blur(12px);
+				border-bottom: 1px solid var(--glass-border);
+				z-index: 100;
+				padding: 15px 0;
+			}
+			.nav-wrapper {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.logo {
+				font-family: var(--font-title);
+				font-weight: 800;
+				font-size: 1.3rem;
+				color: var(--primary);
+				text-decoration: none;
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				text-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
+			}
+			.nav-links {
+				display: flex;
+				gap: 20px;
+				list-style: none;
+			}
+			.nav-links a {
+				color: var(--text-color);
+				text-decoration: none;
+				font-size: 0.9rem;
+				font-weight: 500;
+				transition: color 0.3s;
+			}
+			.nav-links a:hover {
+				color: var(--primary);
+			}
+
+			/* Hero Section */
+			.hero {
+				padding: 60px 0 40px 0;
+				text-align: center;
+				animation: fadeIn 1s ease-out;
+			}
+			@keyframes fadeIn {
+				from {
+					opacity: 0;
+					transform: translateY(20px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+			.hero h1 {
+				font-family: var(--font-title);
+				font-size: calc(1.8rem + 1.5vw); /* Responsive Typography */
+				margin-bottom: 15px;
+				color: #fff;
+				text-shadow: 0 0 20px rgba(0, 173, 181, 0.4);
+				letter-spacing: 2px;
+			}
+			.hero p {
+				font-size: calc(1rem + 0.2vw);
+				color: var(--text-muted);
+				margin-bottom: 30px;
+			}
+			.badge-container {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 10px;
+				margin-bottom: 20px;
+			}
+			.badge {
+				background: rgba(0, 173, 181, 0.1);
+				border: 1px solid var(--primary);
+				color: var(--primary);
+				padding: 6px 14px;
+				border-radius: 20px;
+				font-size: 0.75rem;
+				font-family: var(--font-title);
+				text-transform: uppercase;
+			}
+
+			/* Glassmorphism Card Style */
+			.glass-card {
+				background: var(--glass-bg);
+				border: 1px solid var(--glass-border);
+				border-radius: 12px;
+				padding: 25px;
+				backdrop-filter: blur(8px);
+				-webkit-backdrop-filter: blur(8px);
+				box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+				transition:
+					transform 0.3s ease,
+					border-color 0.3s ease,
+					box-shadow 0.3s ease;
+			}
+			.glass-card:hover {
+				transform: translateY(-3px);
+				border-color: var(--primary);
+				box-shadow: 0 12px 40px 0 rgba(0, 173, 181, 0.2);
+			}
+
+			/* Grid - Navigation Card Menu (Responsif Otomatis) */
+			.menu-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+				gap: 15px;
+				margin-bottom: 50px;
+			}
+			.menu-item {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				text-decoration: none;
+				color: var(--text-color);
+				font-weight: 500;
+				font-size: 0.9rem;
+				cursor: pointer;
+			}
+			.menu-item i {
+				color: var(--primary);
+				font-size: 1.1rem;
+				flex-shrink: 0;
+			}
+			.menu-item:hover {
+				color: var(--primary);
+			}
+
+			/* Documentation Layout Structure */
+			.layout-grid {
+				display: flex;
+				flex-direction: column;
+				gap: 30px;
+				margin-bottom: 60px;
+			}
+
+			/* Progress Indicator */
+			.progress-bar-container {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 4px;
+				background: rgba(255, 255, 255, 0.05);
+				z-index: 102;
+			}
+			#progress-bar {
+				height: 100%;
+				width: 0%;
+				background: linear-gradient(90deg, var(--primary), var(--secondary));
+				transition: width 0.1s ease;
+			}
+
+			/* Timeline Layout */
+			.timeline-container {
+				position: relative;
+				padding-left: 25px;
+				border-left: 2px dashed rgba(0, 173, 181, 0.3);
+			}
+			.timeline-node {
+				position: relative;
+				margin-bottom: 35px;
+			}
+			.timeline-node::before {
+				content: "";
+				position: absolute;
+				left: -36px;
+				top: 6px;
+				width: 16px;
+				height: 16px;
+				border-radius: 50%;
+				background: var(--bg-color);
+				border: 3px solid var(--primary);
+				box-shadow: 0 0 8px var(--primary);
+			}
+
+			/* Step Interactive Collapsible Headers */
+			.step-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				cursor: pointer;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+				padding-bottom: 12px;
+				margin-bottom: 15px;
+				gap: 10px;
+			}
+			.step-title {
+				font-family: var(--font-title);
+				font-size: calc(1.1rem + 0.2vw);
+				color: #fff;
+				display: flex;
+				align-items: center;
+				flex-wrap: wrap;
+				gap: 6px;
+			}
+			.step-title span {
+				color: var(--primary);
+			}
+			.collapse-btn {
+				background: none;
+				border: none;
+				color: var(--text-muted);
+				cursor: pointer;
+				font-size: 1rem;
+				transition: transform 0.3s ease;
+				flex-shrink: 0;
+			}
+			.step-content {
+				transition:
+					max-height 0.4s ease,
+					opacity 0.4s ease;
+				max-height: 3000px;
+				overflow: hidden;
+				opacity: 1;
+			}
+			.step-content.collapsed {
+				max-height: 0 !important;
+				opacity: 0 !important;
+				margin: 0;
+			}
+			.rotated {
+				transform: rotate(180deg);
+			}
+
+			/* Code Blocks & Copy Script Button */
+			.code-block-wrapper {
+				position: relative;
+				margin: 15px 0;
+				width: 100%;
+			}
+			pre {
+				background: rgba(10, 15, 30, 0.85);
+				border: 1px solid rgba(0, 173, 181, 0.2);
+				border-radius: 8px;
+				padding: 15px;
+				overflow-x: auto;
+				color: #38ef7d;
+				font-family: "Courier New", Courier, monospace;
+				font-size: 0.85rem;
+				white-space: pre;
+				word-wrap: normal;
+			}
+			.copy-btn {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				background: rgba(0, 173, 181, 0.2);
+				border: 1px solid var(--primary);
+				color: var(--primary);
+				border-radius: 4px;
+				padding: 4px 8px;
+				font-size: 0.7rem;
+				cursor: pointer;
+				transition: all 0.2s ease;
+				z-index: 5;
+			}
+			.copy-btn:hover {
+				background: var(--primary);
+				color: #000;
+			}
+
+			/* Alert Box Setup */
+			.alert-box {
+				background: rgba(249, 115, 22, 0.1);
+				border-left: 4px solid #f97316;
+				border-top: 1px solid rgba(249, 115, 22, 0.15);
+				border-right: 1px solid rgba(249, 115, 22, 0.15);
+				border-bottom: 1px solid rgba(249, 115, 22, 0.15);
+				padding: 15px;
+				border-radius: 0 8px 8px 0;
+				margin: 15px 0;
+				color: #ffedd5;
+				font-size: 0.9rem;
+			}
+			.alert-box i {
+				color: #f97316;
+				margin-right: 6px;
+			}
+
+			/* Lists */
+			.req-list,
+			.check-list {
+				list-style: none;
+				margin: 15px 0;
+			}
+			.req-list li {
+				position: relative;
+				padding-left: 25px;
+				margin-bottom: 8px;
+				font-size: 0.95rem;
+			}
+			.req-list li::before {
+				content: "\f05a";
+				font-family: "Font Awesome 6 Free";
+				font-weight: 900;
+				position: absolute;
+				left: 0;
+				color: var(--primary);
+			}
+
+			/* Grid System Requirements */
+			.grid-2col {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 20px;
+			}
+
+			/* Outcome Component Results Grid */
+			.outcomes {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+				gap: 15px;
+				margin-top: 15px;
+			}
+			.outcome-card {
+				padding: 15px;
+				border-color: rgba(16, 185, 129, 0.2);
+			}
+			.outcome-card h4 {
+				color: #10b981;
+				font-size: 0.95rem;
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			}
+			.outcome-card p {
+				font-size: 0.8rem;
+				color: var(--text-muted);
+				margin-top: 5px;
+			}
+
+			/* Screenshot / Gallery Elements */
+			.screenshot-placeholder {
+				background: rgba(255, 255, 255, 0.04);
+				border: 1px dashed rgba(255, 255, 255, 0.15);
+				border-radius: 8px;
+				height: auto;
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				color: var(--text-muted);
+				cursor: pointer;
+				transition: all 0.3s;
+				margin: 15px 0;
+				text-align: center;
+				padding: 10px;
+			}
+			.screenshot-placeholder:hover {
+				border-color: var(--primary);
+				background: rgba(0, 173, 181, 0.04);
+				color: var(--primary);
+			}
+			.screenshot-placeholder i {
+				font-size: 2rem;
+				margin-bottom: 8px;
+			}
+			.screenshot-placeholder span {
+				font-size: 0.8rem;
+			}
+
+			/* Lightbox for Screenshots */
+			.lightbox {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(5, 8, 22, 0.95);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				z-index: 1000;
+				opacity: 0;
+				pointer-events: none;
+				transition: opacity 0.3s ease;
+				padding: 20px;
+			}
+			.lightbox.active {
+				opacity: 1;
+				pointer-events: auto;
+			}
+			.lightbox-content {
+				text-align: center;
+				position: relative;
+				background: var(--glass-bg);
+				border: 1px solid var(--glass-border);
+				border-radius: 12px;
+				padding: 20px;
+				width: 100%;
+				max-width: 600px;
+			}
+			.lightbox-content p {
+				margin-top: 15px;
+				font-family: var(--font-title);
+				color: var(--primary);
+				font-size: 0.9rem;
+			}
+			.lightbox-close {
+				position: absolute;
+				top: -40px;
+				right: 0;
+				color: #fff;
+				font-size: 1.5rem;
+				cursor: pointer;
+			}
+
+			/* Action Buttons */
+			.back-btn-container {
+				text-align: center;
+				margin: 40px 0;
+			}
+			.back-btn {
+				display: inline-flex;
+				align-items: center;
+				gap: 10px;
+				padding: 12px 30px;
+				background: linear-gradient(135deg, var(--secondary), var(--primary));
+				border: none;
+				border-radius: 30px;
+				color: #fff;
+				font-family: var(--font-title);
+				font-weight: 600;
+				font-size: 0.9rem;
+				text-decoration: none;
+				box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+				transition:
+					transform 0.3s ease,
+					box-shadow 0.3s ease;
+			}
+			.back-btn:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 6px 20px rgba(0, 173, 181, 0.5);
+			}
+
+			/* Footer Section */
+			footer {
+				border-top: 1px solid var(--glass-border);
+				padding: 30px 0;
+				background: rgba(3, 5, 15, 0.9);
+				text-align: center;
+				color: var(--text-muted);
+				font-size: 0.85rem;
+			}
+			footer h3 {
+				font-family: var(--font-title);
+				color: var(--primary);
+				margin-bottom: 6px;
+				font-size: 1.1rem;
+			}
+
+			/* ---------------------------------------------------- */
+			/* MEDIA QUERIES - UNTUK RESPONSIF TABLET DAN MOBILE   */
+			/* ---------------------------------------------------- */
+
+			/* Tablet & Mobile Layout Adjustment */
+			@media (max-width: 768px) {
+				header {
+					padding: 12px 0;
+				}
+				.nav-links {
+					display: none; /* Menyederhanakan menu navigasi di atas pada layar kecil */
+				}
+				.logo {
+					font-size: 1.1rem;
+					margin: 0 auto; /* Tengah pada mobile */
+				}
+				.timeline-container {
+					padding-left: 20px;
+					border-left: 1px dashed rgba(0, 173, 181, 0.4);
+				}
+				.timeline-node::before {
+					left: -29px;
+					width: 14px;
+					height: 14px;
+					top: 5px;
+				}
+				.glass-card {
+					padding: 20px 15px; /* Kurangi padding agar space konten lebih luas */
+				}
+				.screenshot-placeholder {
+					height: 150px;
+				}
+			}
+
+			/* Small Mobile Devices Profile */
+			@media (max-width: 480px) {
+				.hero {
+					padding: 40px 0 25px 0;
+				}
+				.badge {
+					padding: 4px 10px;
+					font-size: 0.65rem;
+				}
+				pre {
+					font-size: 0.75rem;
+					padding: 10px;
+				}
+				.copy-btn {
+					padding: 2px 6px;
+					font-size: 0.65rem;
+					top: 6px;
+					right: 6px;
+				}
+				#scrollTopBtn {
+					bottom: 15px;
+					right: 15px;
+					width: 35px;
+					height: 35px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="loader">
+			<div class="spinner"></div>
+		</div>
+
+		<div class="progress-bar-container">
+			<div id="progress-bar"></div>
+		</div>
+
+		<header>
+			<div class="container nav-wrapper">
+				<a href="#" class="logo">
+					<i class="fa-solid fa-shield-halved"></i> LAB: WAZUH
+				</a>
+				<ul class="nav-links">
+					<li><a href="#overview">Overview</a></li>
+					<li><a href="#hardware-requirements">Requirements</a></li>
+					<li><a href="#step-1">Steps</a></li>
+					<li><a href="#conclusion">Conclusion</a></li>
+				</ul>
+			</div>
+		</header>
+
+		<section class="hero container">
+			<h1>SOC Home Lab with Wazuh</h1>
+			<p>Installation, Configuration and Monitoring Documentation</p>
+			<div class="badge-container">
+				<div class="badge"><i class="fa-brands fa-linux"></i> Kali Linux</div>
+				<div class="badge">
+					<i class="fa-brands fa-windows"></i> Windows Agent
+				</div>
+				<div class="badge"><i class="fa-solid fa-server"></i> Wazuh 4.14</div>
+				<div class="badge">
+					<i class="fa-solid fa-eye"></i> Security Monitoring
+				</div>
+				<div class="badge">
+					<i class="fa-solid fa-chart-line"></i> Syscollector
+				</div>
+				<div class="badge">
+					<i class="fa-solid fa-folder-open"></i> File Integrity Monitoring
+				</div>
+			</div>
+		</section>
+
+		<section class="container" style="margin-bottom: 25px">
+			<h2
+				style="
+					font-family: var(--font-title);
+					margin-bottom: 15px;
+					font-size: 1rem;
+					color: var(--primary);
+				">
+				<i class="fa-solid fa-compass"></i> NAVIGASI DOKUMENTASI
+			</h2>
+			<div class="menu-grid">
+				<a href="#overview" class="glass-card menu-item"
+					><i class="fa-solid fa-circle-info"></i> Project Overview</a
+				>
+				<a href="#hardware-requirements" class="glass-card menu-item"
+					><i class="fa-solid fa-microchip"></i> Hardware Requirements</a
+				>
+				<a href="#software-requirements" class="glass-card menu-item"
+					><i class="fa-solid fa-laptop-code"></i> Software Requirements</a
+				>
+				<a href="#step-1" class="glass-card menu-item"
+					><i class="fa-solid fa-terminal"></i> Install Wazuh Manager</a
+				>
+				<a href="#step-2" class="glass-card menu-item"
+					><i class="fa-solid fa-right-to-bracket"></i> Login Dashboard</a
+				>
+				<a href="#step-3" class="glass-card menu-item"
+					><i class="fa-solid fa-user-plus"></i> Deploy Windows Agent</a
+				>
+				<a href="#step-4" class="glass-card menu-item"
+					><i class="fa-solid fa-download"></i> Install Wazuh Agent</a
+				>
+				<a href="#step-5" class="glass-card menu-item"
+					><i class="fa-solid fa-clipboard-check"></i> Verify Service</a
+				>
+				<a href="#step-6" class="glass-card menu-item"
+					><i class="fa-solid fa-wrench"></i> Troubleshooting</a
+				>
+				<a href="#step-7" class="glass-card menu-item"
+					><i class="fa-solid fa-folder-shield"></i> File Integrity
+					Monitoring</a
+				>
+				<a href="#step-8" class="glass-card menu-item"
+					><i class="fa-solid fa-chart-pie"></i> Monitoring Result</a
+				>
+				<a href="#conclusion" class="glass-card menu-item"
+					><i class="fa-solid fa-flag-checkered"></i> Conclusion</a
+				>
+			</div>
+		</section>
+
+		<main class="container layout-grid">
+			<section id="overview" class="glass-card">
+				<h2
+					style="
+						font-family: var(--font-title);
+						color: #fff;
+						margin-bottom: 12px;
+						font-size: 1.3rem;
+					">
+					<i
+						class="fa-solid fa-network-wired"
+						style="color: var(--primary)"></i>
+					Project Overview
+				</h2>
+				<p style="font-size: 0.95rem">
+					Proyek ini merupakan implementasi nyata pembangunan
+					<strong
+						>Home Lab SIEM (Security Information and Event Management)</strong
+					>
+					menggunakan platform <strong>Wazuh</strong>. Dengan memasang Wazuh
+					Manager pada Kali Linux dan mengintegrasikan agen pemantau pada
+					Windows endpoint, lab ini berfungsi sebagai pusat analisis log dan
+					deteksi ancaman real-time.
+				</p>
+				<h3
+					style="
+						font-family: var(--font-title);
+						font-size: 1rem;
+						color: var(--primary);
+						margin-top: 20px;
+					">
+					Tujuan Proyek:
+				</h3>
+				<ul class="req-list">
+					<li>Membangun infrastruktur terpusat Home Lab SIEM.</li>
+					<li>
+						Monitoring endpoint dan pengumpulan Windows Security Event Log.
+					</li>
+					<li>Monitoring keamanan menyeluruh pada OS Windows.</li>
+					<li>
+						Implementasi deteksi modifikasi lewat File Integrity Monitoring
+						(FIM).
+					</li>
+					<li>
+						Audit regulasi menggunakan Security Configuration Assessment (SCA).
+					</li>
+					<li>
+						Pemantauan berkala data sistem internal via modul Syscollector.
+					</li>
+				</ul>
+			</section>
+
+			<div class="grid-2col">
+				<section id="hardware-requirements" class="glass-card">
+					<h2
+						style="
+							font-family: var(--font-title);
+							color: #fff;
+							margin-bottom: 12px;
+							font-size: 1.2rem;
+						">
+						<i class="fa-solid fa-hard-drive" style="color: var(--primary)"></i>
+						Hardware Requirements
+					</h2>
+					<ul class="req-list">
+						<li><strong>CPU:</strong> Minimal 2 Core</li>
+						<li><strong>RAM:</strong> Minimal 4 GB</li>
+						<li><strong>Storage:</strong> 40 GB</li>
+						<li><strong>Network:</strong> NAT Mode</li>
+						<li><strong>Internet:</strong> Koneksi Aktif</li>
+					</ul>
+				</section>
+
+				<section id="software-requirements" class="glass-card">
+					<h2
+						style="
+							font-family: var(--font-title);
+							color: #fff;
+							margin-bottom: 12px;
+							font-size: 1.2rem;
+						">
+						<i
+							class="fa-solid fa-box-archive"
+							style="color: var(--primary)"></i>
+						Software Requirements
+					</h2>
+					<ul class="req-list">
+						<li><strong>Manager Host:</strong> Kali Linux</li>
+						<li><strong>Target Endpoint:</strong> Windows 11</li>
+						<li><strong>Wazuh SIEM:</strong> Versi 4.14</li>
+						<li><strong>Shell Host:</strong> PowerShell Administrator</li>
+						<li><strong>Browser:</strong> Chrome / Firefox</li>
+					</ul>
+				</section>
+			</div>
+
+			<!-- Topologi & Flow Lab (FIM & Malware Detection) -->
+			<section id="topology" class="glass-card">
+				<h2
+					style="
+						font-family: var(--font-title);
+						color: #fff;
+						margin-bottom: 15px;
+						font-size: 1.3rem;
+					">
+					<i
+						class="fa-solid fa-diagram-project"
+						style="color: var(--primary)"></i>
+					Topologi & Flow Lab
+				</h2>
+				<p style="font-size: 0.95rem; text-align: justify; margin-bottom: 20px">
+					Berikut adalah visualisasi lengkap mengenai arsitektur topologi
+					jaringan serta alur pengujian (<em>flow</em>) untuk modul
+					<strong>File Integrity Monitoring (FIM)</strong> dan
+					<strong>Malware Detection (EICAR Test)</strong> di dalam lingkungan
+					lab:
+				</p>
+
+				<!-- Tampilan Gambar Langsung (Tanpa Placeholder/Tombol Buka) -->
+				<div
+					style="
+						text-align: center;
+						margin: 25px 0;
+						background: rgba(13, 20, 47, 0.4);
+						padding: 15px;
+						border-radius: 12px;
+						border: 1px solid var(--glass-border);
+						box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+					">
+					<img
+						src="/images/topology-flow.png"
+						alt="Topologi dan Flow Lab Wazuh FIM & Malware Detection"
+						style="
+							width: 100%;
+							max-width: 950px;
+							height: auto;
+							border-radius: 8px;
+							display: block;
+							margin: 0 auto;
+							border: 1px solid rgba(0, 173, 181, 0.3);
+							box-shadow: 0 0 20px rgba(0, 173, 181, 0.2);
+						" />
+					<p
+						style="
+							font-family: var(--font-body);
+							font-size: 0.8rem;
+							color: var(--text-muted);
+							margin-top: 12px;
+							font-style: italic;
+						">
+						Diagram: Arsitektur Topologi & Alur Proses Deteksi FIM & Malware
+						(EICAR)
+					</p>
+				</div>
+
+				<p style="font-size: 0.95rem; text-align: justify; margin-top: 20px">
+					Berdasarkan skema alur di atas, pengujian lab dibagi menjadi dua
+					mekanisme utama:
+				</p>
+				<ul class="req-list" style="margin-top: 10px">
+					<li>
+						<strong>File Integrity Monitoring (FIM):</strong> Mendeteksi setiap
+						modifikasi, pembuatan, atau penghapusan file pada direktori penting
+						(contoh: <code>C:\Data\test.txt</code>), kemudian Wazuh Agent
+						mengirimkan event tersebut ke Manager untuk memicu alert.
+					</li>
+					<li>
+						<strong>Malware Detection (EICAR Test):</strong> Menjalankan atau
+						menyimpan file uji EICAR di Windows. Wazuh Agent langsung memindai
+						dan mengirimkan alert ancaman malware secara real-time ke dashboard.
+					</li>
+				</ul>
+			</section>
+
+			<div class="timeline-container">
+				<div id="step-1" class="timeline-node glass-card">
+					<div class="step-header">
+						<h2 class="step-title">
+							<span>Step 1 —</span> Install Wazuh Manager
+						</h2>
+						<button class="collapse-btn">
+							<i class="fa-solid fa-chevron-up"></i>
+						</button>
+					</div>
+					<div class="step-content">
+						<p style="font-size: 0.95rem">
+							Proses deployment komponen manajemen utama Wazuh (All-In-One
+							Script) dieksekusi di dalam mesin Kali Linux menggunakan satu
+							baris perintah otomatis.
+						</p>
+						<div class="code-block-wrapper">
+							<button class="copy-btn">
+								<i class="fa-regular fa-copy"></i> Copy
+							</button>
+							<pre>
+curl -sO https://packages.wazuh.com/4.14/wazuh-install.sh && sudo bash ./wazuh-install.sh -a</pre
+							>
+						</div>
+						<p style="font-size: 0.9rem; color: var(--text-muted)">
+							Hasil instalasi berupa backup otomatis berkas konfigurasi user di
+							folder
+							<code>/etc/wazuh-indexer/internalusers-backup</code> beserta
+							output detail URL kredensial login admin.
+						</p>
+					</div>
+				</div>
+
+				<div id="step-2" class="timeline-node glass-card">
+					<div class="step-header">
+						<h2 class="step-title"><span>Step 2 —</span> Login Dashboard</h2>
+						<button class="collapse-btn">
+							<i class="fa-solid fa-chevron-up"></i>
+						</button>
+					</div>
+					<div class="step-content">
+						<p style="font-size: 0.95rem">
+							Akses visual monitoring dashboard menggunakan alamat IP lokal
+							server Wazuh Manager melalui web browser.
+						</p>
+						<ul class="req-list" style="margin-top: 10px">
+							<li>
+								<strong>URL Akses:</strong> <code>https://192.168.226.135</code>
+							</li>
+							<li><strong>Username:</strong> <code>admin</code></li>
+							<li>
+								<strong>Password:</strong>
+								<code>mKaST*14amWm?Ra524ouG?8*ExhGw0Ez</code>
+							</li>
+						</ul>
+						<div
+							class="screenshot-placeholder"
+							data-image="/images/wazuh.jpg"
+							data-caption="Menu verifikasi login dashboard utama Wazuh">
+							<i class="fa-solid fa-images"></i>
+							<span>Buka Screenshot Halaman Login</span>
+						</div>
+					</div>
+				</div>
+
+				<div id="step-3" class="timeline-node glass-card">
+					<div class="step-header">
+						<h2 class="step-title">
+							<span>Step 3 —</span> Deploy Windows Agent
+						</h2>
+						<button class="collapse-btn">
+							<i class="fa-solid fa-chevron-up"></i>
+						</button>
+					</div>
+					<div class="step-content">
+						<p style="font-size: 0.95rem">
+							Tambahkan target host baru dengan menekan tombol
+							<strong>"Deploy new agent"</strong> dari konsol Web Wazuh:
+						</p>
+						<ul class="req-list" style="margin-top: 10px">
+							<li>Pilih opsi platform OS: <strong>Windows</strong></li>
+							<li>Masukkan IP Address Manager: <code>192.168.226.135</code></li>
+							<li>
+								Tentukan nama identitas agen, contoh: <code>Windows-2026</code>
+							</li>
+						</ul>
+						<div
+							class="screenshot-placeholder"
+							data-image="/images/wazuh-deploy.jpg"
+							data-caption="Langkah setup parameter deployment Windows agent di dashboard">
+							<i class="fa-solid fa-images"></i>
+							<span>Buka Screenshot Form Deployment</span>
+						</div>
+					</div>
+				</div>
+
+				<div id="step-4" class="timeline-node glass-card">
+					<div class="step-header">
+						<h2 class="step-title">
+							<span>Step 4 —</span> Install Windows Agent
+						</h2>
+						<button class="collapse-btn">
+							<i class="fa-solid fa-chevron-up"></i>
+						</button>
+					</div>
+					<div class="step-content">
+						<p style="font-size: 0.95rem">
+							Eksekusi script di terminal PowerShell dengan privilese
+							<strong>Run as Administrator</strong> pada sisi endpoint Windows
+							target.
+						</p>
+						<div class="code-block-wrapper">
+							<button class="copy-btn">
+								<i class="fa-regular fa-copy"></i> Copy
+							</button>
+							<pre>
+Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.14.6-1.msi -OutFile $env:tmp\wazuh-agent.msi; msiexec.exe /i $env:tmp\wazuh-agent.msi /q WAZUH_MANAGER='192.168.226.135' WAZUH_AGENT_NAME='Windows-2026'</pre
+							>
+						</div>
+						<p style="font-size: 0.9rem">
+							Gunakan perintah berikut untuk memvalidasi keberadaan file paket
+							installer msi:
+						</p>
+						<div class="code-block-wrapper">
+							<button class="copy-btn">
+								<i class="fa-regular fa-copy"></i> Copy
+							</button>
+							<pre>Test-Path "$env:TEMP\wazuh-agent.msi"</pre>
+						</div>
+						<div
+							class="screenshot-placeholder"
+							data-image="/images/wazuh-wizard.jpg"
+							data-caption="Instalasi agen menggunakan installer grafis msi package">
+							<i class="fa-solid fa-images"></i>
+							<span>Buka Screenshot Wizard UI Installer</span>
+						</div>
+					</div>
+				</div>
+
+				<div id="step-5" class="timeline-node glass-card">
+					<div class="step-header">
+						<h2 class="step-title"><span>Step 5 —</span> Verify Service</h2>
+						<button class="collapse-btn">
+							<i class="fa-solid fa-chevron-up"></i>
+						</button>
+					</div>
+					<div class="step-content">
+						<p style="font-size: 0.95rem">
+							Lakukan validasi status kelayakan operasi dari service agent
+							maupun manager server.
+						</p>
+						<p style="margin-top: 10px"><strong>PowerShell Windows:</strong></p>
+						<div class="code-block-wrapper">
+							<button class="copy-btn">
+								<i class="fa-regular fa-copy"></i> Copy
+							</button>
+							<pre>Get-Service WazuhSvc</pre>
+						</div>
+						<p><strong>Terminal Kali Linux:</strong></p>
+						<div class="code-block-wrapper">
+							<button class="copy-btn">
+								<i class="fa-regular fa-copy"></i> Copy
+							</button>
+							<pre>sudo systemctl status wazuh-manager</pre>
+						</div>
+						<p>
+							Untuk memicu pembaruan atau me-restart agen Windows, eksekusi:
+						</p>
+						<div class="code-block-wrapper">
+							<button class="copy-btn">
+								<i class="fa-regular fa-copy"></i> Copy
+							</button>
+							<pre>Restart-Service WazuhSvc</pre>
+						</div>
+						<div
+							class="screenshot-placeholder"
+							data-image="/images/wazuh-status.jpg"
+							data-caption="Verifikasi status operasional wazuh-manager di server Linux">
+							<i class="fa-solid fa-images"></i>
+							<span>Buka Screenshot Verifikasi Status</span>
+						</div>
+					</div>
+				</div>
+
+				<div id="step-6" class="timeline-node glass-card">
+					<div class="step-header">
+						<h2 class="step-title"><span>Step 6 —</span> Troubleshooting</h2>
+						<button class="collapse-btn">
+							<i class="fa-solid fa-chevron-up"></i>
+						</button>
+					</div>
+					<div class="step-content">
+						<p style="font-size: 0.95rem">
+							Jika status agen terdeteksi 'Disconnected' berkelanjutan, periksa
+							kecocokan data server pada file konfigurasi lokal Windows.
+						</p>
+						<div class="alert-box">
+							<p>
+								<i class="fa-solid fa-triangle-exclamation"></i>
+								<strong>Catatan Penting:</strong> Jalankan text editor (seperti
+								Notepad) dengan opsi
+								<strong>Run as Administrator</strong> sebelum memodifikasi
+								berkas konfigurasi di bawah ini:
+							</p>
+							<p style="margin-top: 5px">
+								<code>C:\Program Files (x86)\ossec-agent\ossec.conf</code>
+							</p>
+						</div>
+						<p>Ubah alamat tujuan agen yang semula default bernilai:</p>
+						<div class="code-block-wrapper">
+							<pre>&lt;address&gt;0.0.0.0&lt;/address&gt;</pre>
+						</div>
+						<p>Arahkan menuju IP statis Wazuh Manager Anda:</p>
+						<div class="code-block-wrapper">
+							<pre>&lt;address&gt;192.168.226.135&lt;/address&gt;</pre>
+						</div>
+						<p style="font-size: 0.9rem; margin-top: 10px">
+							Gunakan command network berikut untuk menguji konektivitas port
+							TCP 1514:
+						</p>
+						<div class="code-block-wrapper">
+							<button class="copy-btn">
+								<i class="fa-regular fa-copy"></i> Copy
+							</button>
+							<pre>Test-NetConnection 192.168.226.135 -Port 1514</pre>
+						</div>
+					</div>
+				</div>
+
+				<div id="step-7" class="timeline-node glass-card">
+					<div class="step-header">
+						<h2 class="step-title">
+							<span>Step 7 —</span> File Integrity Monitoring
+						</h2>
+						<button class="collapse-btn">
+							<i class="fa-solid fa-chevron-up"></i>
+						</button>
+					</div>
+					<div class="step-content">
+						<p style="font-size: 0.95rem">
+							Konfigurasikan pengawasan berkas real-time dengan mendaftarkan
+							direktori khusus ke dalam berkas <code>ossec.conf</code> milik
+							agen di bawah tag elemen induk <code>&lt;syscheck&gt;</code>:
+						</p>
+						<div class="code-block-wrapper">
+							<button class="copy-btn">
+								<i class="fa-regular fa-copy"></i> Copy
+							</button>
+							<pre>
+&lt;directories realtime="yes"&gt;C:\Users\Administrator\Hacker&lt;/directories&gt;
+&lt;directories realtime="yes" check_all="yes"&gt;D:\hackeren&lt;/directories&gt;</pre
+							>
+						</div>
+						<p>
+							Simpan perubahan berkas, lalu lakukan penyegaran service agen
+							melalui PowerShell:
+						</p>
+						<div class="code-block-wrapper">
+							<button class="copy-btn">
+								<i class="fa-regular fa-copy"></i> Copy
+							</button>
+							<pre>Restart-Service WazuhSvc</pre>
+						</div>
+						<div
+							class="screenshot-placeholder"
+							data-image="/images/wazuh-fim.jpg"
+							data-caption="Menu restart manual via Windows Services Management UI">
+							<i class="fa-solid fa-images"></i>
+							<span>Buka Screenshot Modul Windows Services</span>
+						</div>
+					</div>
+				</div>
+
+				<div id="step-8" class="timeline-node glass-card">
+					<div class="step-header">
+						<h2 class="step-title"><span>Step 8 —</span> Monitoring Result</h2>
+						<button class="collapse-btn">
+							<i class="fa-solid fa-chevron-up"></i>
+						</button>
+					</div>
+					<div class="step-content">
+						<p style="font-size: 0.95rem">
+							Berikut matrik pencapaian hasil akhir validasi fungsionalitas
+							monitoring perangkat lab:
+						</p>
+						<div class="outcomes">
+							<div class="glass-card outcome-card">
+								<h4>
+									<i class="fa-solid fa-circle-check"></i> Agent Connected
+								</h4>
+								<p>Koneksi agen via port 1514 berstatus berhasil.</p>
+							</div>
+							<div class="glass-card outcome-card">
+								<h4>
+									<i class="fa-solid fa-circle-check"></i> Service Running
+								</h4>
+								<p>Modul service WazuhSvc aktif di Windows.</p>
+							</div>
+							<div class="glass-card outcome-card">
+								<h4><i class="fa-solid fa-circle-check"></i> Status Active</h4>
+								<p>Dashboard mendeteksi status agen sebagai active.</p>
+							</div>
+							<div class="glass-card outcome-card">
+								<h4><i class="fa-solid fa-circle-check"></i> Log Collected</h4>
+								<p>Security event log terkirim ke server manager.</p>
+							</div>
+							<div class="glass-card outcome-card">
+								<h4><i class="fa-solid fa-circle-check"></i> FIM Running</h4>
+								<p>Deteksi modifikasi file beroperasi secara real-time.</p>
+							</div>
+							<div class="glass-card outcome-card">
+								<h4>
+									<i class="fa-solid fa-circle-check"></i> Syscollector Active
+								</h4>
+								<p>Inventori paket hardware & software terhimpun otomatis.</p>
+							</div>
+						</div>
+						<div
+							class="screenshot-placeholder"
+							style="margin-top: 20px"
+							data-image="/images/wazuh-monitoring.jpg"
+							data-caption="Visualisasi grafik event alerts FIM di dashboard monitoring">
+							<i class="fa-solid fa-images"></i>
+							<span>Buka Screenshot Dashboard FIM Alerts</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<section id="conclusion" class="glass-card">
+				<h2
+					style="
+						font-family: var(--font-title);
+						color: #fff;
+						margin-bottom: 12px;
+						font-size: 1.3rem;
+					">
+					<i
+						class="fa-solid fa-flag-checkered"
+						style="color: var(--primary)"></i>
+					Kesimpulan
+				</h2>
+				<p style="font-size: 0.95rem">
+					Seluruh tahapan instalasi, konfigurasi, dan verifikasi komponen proyek
+					Home Lab SIEM ini berhasil diselesaikan dengan baik. Windows Agent
+					kini telah terhubung secara aman dengan Wazuh Manager, dan seluruh
+					fitur penting mulai dari pengumpulan log hingga monitoring integritas
+					file (FIM) berfungsi dengan stabilitas tinggi.
+				</p>
+			</section>
+		</main>
+
+		<div class="back-btn-container">
+			<a href="../index.html#projects" class="back-btn">
+				<i class="fa-solid fa-arrow-left"></i> Back to Projects
+			</a>
+		</div>
+
+		<button id="scrollTopBtn" title="Kembali ke atas">
+			<i class="fa-solid fa-chevron-up"></i>
+		</button>
+
+		<div id="lightbox" class="lightbox">
+			<div class="lightbox-content">
+				<span class="lightbox-close"><i class="fa-solid fa-xmark"></i></span>
+				<div
+					style="
+						background: rgba(0, 0, 0, 0.4);
+						border-radius: 8px;
+						padding: 35px;
+						border: 1px dashed var(--primary);
+						color: var(--primary);
+						font-family: var(--font-title);
+						font-size: 1rem;
+					">
+					<i
+						class="fa-solid fa-image"
+						style="font-size: 2.5rem; margin-bottom: 10px; display: block"></i>
+					<span id="lightbox-img-name">Wazuh Gallery Placeholder</span>
+				</div>
+				<p id="lightbox-caption">Deskripsi Screenshot</p>
+			</div>
+		</div>
+
+		<footer>
+			<div class="container">
+				<h3>Home Lab Wazuh Documentation</h3>
+				<p>Security Monitoring using Wazuh SIEM Platform</p>
+				<p style="font-size: 0.75rem; opacity: 0.4; margin-top: 10px">
+					&copy; 2026. All Rights Reserved.
+				</p>
+			</div>
+		</footer>
+
+		<script>
+			// Loading Disabler
+			window.addEventListener("load", () => {
+				const loader = document.getElementById("loader");
+				setTimeout(() => {
+					loader.style.opacity = "0";
+					setTimeout(() => (loader.style.display = "none"), 500);
+				}, 200);
+			});
+
+			// Tracking Scroll Engine for Top-Progress Bar & Scroll Button Toggle
+			const progressBar = document.getElementById("progress-bar");
+			const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+			window.addEventListener("scroll", () => {
+				const winScroll =
+					document.documentElement.scrollTop || document.body.scrollTop;
+				const height =
+					document.documentElement.scrollHeight -
+					document.documentElement.clientHeight;
+				const scrolled = (winScroll / height) * 100;
+				progressBar.style.width = scrolled + "%";
+
+				if (winScroll > 300) {
+					scrollTopBtn.classList.add("show");
+				} else {
+					scrollTopBtn.classList.remove("show");
+				}
+			});
+
+			scrollTopBtn.addEventListener("click", () => {
+				window.scrollTo({ top: 0, behavior: "smooth" });
+			});
+
+			// Copy Text Clipboard Functionality
+			document.querySelectorAll(".copy-btn").forEach((button) => {
+				button.addEventListener("click", () => {
+					const codeBlock = button.nextElementSibling;
+					navigator.clipboard.writeText(codeBlock.innerText).then(() => {
+						button.innerHTML = '<i class="fa-solid fa-check"></i> Terkopil!';
+						button.style.background = "#10B981";
+						button.style.borderColor = "#10B981";
+						button.style.color = "#fff";
+
+						setTimeout(() => {
+							button.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
+							button.style.background = "rgba(0, 173, 181, 0.2)";
+							button.style.borderColor = "var(--primary)";
+							button.style.color = "var(--primary)";
+						}, 2000);
+					});
+				});
+			});
+
+			// Collapsible Content Handler
+			document.querySelectorAll(".step-header").forEach((header) => {
+				header.addEventListener("click", () => {
+					const content = header.nextElementSibling;
+					const icon = header.querySelector(".collapse-btn i");
+
+					content.classList.toggle("collapsed");
+					icon.classList.toggle("rotated");
+				});
+			});
+
+			// Image Gallery Modal Control (Lightbox Terupdate)
+			const lightbox = document.getElementById("lightbox");
+			const lightboxContent = document.querySelector(".lightbox-content");
+			const lightboxCaption = document.getElementById("lightbox-caption");
+			const closeLightbox = document.querySelector(".lightbox-close");
+
+			document
+				.querySelectorAll(".screenshot-placeholder")
+				.forEach((placeholder) => {
+					placeholder.addEventListener("click", () => {
+						const imgSrc = placeholder.getAttribute("data-image");
+						const caption = placeholder.getAttribute("data-caption");
+
+						// Mengganti placeholder text di dalam modal dengan tag <img> asli secara dinamis
+						lightboxContent.innerHTML = `
+            <span class="lightbox-close"><i class="fa-solid fa-xmark"></i></span>
+            <img src="${imgSrc}" alt="${caption}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+            <p id="lightbox-caption" style="margin-top: 15px; font-family: var(--font-title); color: var(--primary); font-size: 0.9rem;">${caption}</p>
+        `;
+
+						// Daftarkan kembali event close karena innerHTML di-rewrite
+						document
+							.querySelector(".lightbox-close")
+							.addEventListener("click", () => {
+								lightbox.classList.remove("active");
+							});
+
+						lightbox.classList.add("active");
+					});
+				});
+
+			lightbox.addEventListener("click", (e) => {
+				if (e.target === lightbox) lightbox.classList.remove("active");
+			});
+		</script>
+	</body>
+</html>

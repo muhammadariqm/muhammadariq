@@ -1,0 +1,1380 @@
+<!doctype html>
+<html lang="id">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SCA Documentation - Security Monitoring Lab</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;600;800;900&display=swap"
+			rel="stylesheet" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+		<style>
+			/* CSS Variables */
+			:root {
+				--bg-color: #050816;
+				--primary: #00adb5;
+				--secondary: #4f46e5;
+				--text-color: #e2e8f0;
+				--text-muted: #94a3b8;
+				--glass-bg: rgba(13, 20, 47, 0.45);
+				--glass-border: rgba(0, 173, 181, 0.15);
+				--glow-color: rgba(0, 173, 181, 0.3);
+				--font-title: "Orbitron", sans-serif;
+				--font-body: "Inter", sans-serif;
+				--success: #10b981;
+				--danger: #ef4444;
+			}
+
+			/* Base & Reset Styles */
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+				scroll-behavior: smooth;
+			}
+
+			body {
+				background-color: var(--bg-color);
+				color: var(--text-color);
+				font-family: var(--font-body);
+				line-height: 1.6;
+				overflow-x: hidden;
+				position: relative;
+			}
+
+			/* Glowing Background Accents */
+			body::before {
+				content: "";
+				position: absolute;
+				width: 300px;
+				height: 300px;
+				background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+				top: 15%;
+				left: -100px;
+				opacity: 0.12;
+				pointer-events: none;
+				z-index: -1;
+			}
+
+			body::after {
+				content: "";
+				position: absolute;
+				width: 400px;
+				height: 400px;
+				background: radial-gradient(
+					circle,
+					var(--secondary) 0%,
+					transparent 70%
+				);
+				bottom: 30%;
+				right: -150px;
+				opacity: 0.12;
+				pointer-events: none;
+				z-index: -1;
+			}
+
+			/* Container */
+			.container {
+				width: 100%;
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 0 20px;
+			}
+
+			/* Loading Animation */
+			#loader {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: var(--bg-color);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				z-index: 9999;
+				transition: opacity 0.5s ease;
+			}
+			.spinner {
+				width: 50px;
+				height: 50px;
+				border: 3px solid rgba(0, 173, 181, 0.1);
+				border-radius: 50%;
+				border-top-color: var(--primary);
+				animation: spin 1s linear infinite;
+			}
+			@keyframes spin {
+				to {
+					transform: rotate(360deg);
+				}
+			}
+
+			/* Sticky Navigation */
+			header {
+				position: sticky;
+				top: 0;
+				background: rgba(5, 8, 22, 0.85);
+				backdrop-filter: blur(12px);
+				-webkit-backdrop-filter: blur(12px);
+				border-bottom: 1px solid var(--glass-border);
+				z-index: 100;
+				padding: 15px 0;
+			}
+			.nav-wrapper {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.logo {
+				font-family: var(--font-title);
+				font-weight: 800;
+				font-size: 1.3rem;
+				color: var(--primary);
+				text-decoration: none;
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				text-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
+			}
+			.nav-links {
+				display: flex;
+				gap: 20px;
+				list-style: none;
+			}
+			.nav-links a {
+				color: var(--text-color);
+				text-decoration: none;
+				font-size: 0.9rem;
+				font-weight: 500;
+				transition: color 0.3s;
+			}
+			.nav-links a:hover {
+				color: var(--primary);
+			}
+
+			/* Hero Section */
+			.hero {
+				padding: 60px 0 40px 0;
+				text-align: center;
+				animation: fadeIn 1s ease-out;
+			}
+			@keyframes fadeIn {
+				from {
+					opacity: 0;
+					transform: translateY(20px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+			.hero h1 {
+				font-family: var(--font-title);
+				font-size: calc(1.8rem + 1.5vw);
+				margin-bottom: 15px;
+				color: #fff;
+				text-shadow: 0 0 20px rgba(0, 173, 181, 0.4);
+				letter-spacing: 2px;
+			}
+			.hero p {
+				font-size: calc(1rem + 0.2vw);
+				color: var(--text-muted);
+				margin-bottom: 30px;
+			}
+			.badge-container {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 10px;
+				margin-bottom: 20px;
+			}
+			.badge {
+				background: rgba(0, 173, 181, 0.1);
+				border: 1px solid var(--primary);
+				color: var(--primary);
+				padding: 6px 14px;
+				border-radius: 20px;
+				font-size: 0.75rem;
+				font-family: var(--font-title);
+				text-transform: uppercase;
+			}
+
+			/* Glassmorphism Card Style */
+			.glass-card {
+				background: var(--glass-bg);
+				border: 1px solid var(--glass-border);
+				border-radius: 12px;
+				padding: 25px;
+				backdrop-filter: blur(8px);
+				-webkit-backdrop-filter: blur(8px);
+				box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+				transition:
+					transform 0.3s ease,
+					border-color 0.3s ease,
+					box-shadow 0.3s ease;
+			}
+			.glass-card:hover {
+				transform: translateY(-3px);
+				border-color: var(--primary);
+				box-shadow: 0 12px 40px 0 rgba(0, 173, 181, 0.2);
+			}
+
+			/* Document Navigation Card Grid (Responsif Otomatis) */
+			.menu-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+				gap: 15px;
+				margin-bottom: 50px;
+			}
+			.menu-item {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				text-decoration: none;
+				color: var(--text-color);
+				font-weight: 500;
+				font-size: 0.9rem;
+				cursor: pointer;
+			}
+			.menu-item i {
+				color: var(--primary);
+				font-size: 1.1rem;
+				flex-shrink: 0;
+			}
+			.menu-item:hover {
+				color: var(--primary);
+			}
+
+			/* Documentation Layout Structure */
+			.layout-grid {
+				display: flex;
+				flex-direction: column;
+				gap: 30px;
+				margin-bottom: 60px;
+			}
+
+			/* Progress Indicator */
+			.progress-bar-container {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 4px;
+				background: rgba(255, 255, 255, 0.05);
+				z-index: 102;
+			}
+			#progress-bar {
+				height: 100%;
+				width: 0%;
+				background: linear-gradient(90deg, var(--primary), var(--secondary));
+				transition: width 0.1s ease;
+			}
+
+			/* List Items Styling */
+			.req-list {
+				list-style: none;
+				margin: 15px 0;
+			}
+			.req-list li {
+				position: relative;
+				padding-left: 25px;
+				margin-bottom: 10px;
+				font-size: 0.95rem;
+			}
+			.req-list li::before {
+				content: "\f05a";
+				font-family: "Font Awesome 6 Free";
+				font-weight: 900;
+				position: absolute;
+				left: 0;
+				color: var(--primary);
+			}
+
+			/* Interactive Architecture Flow Component */
+			.architecture-wrapper {
+				background: rgba(255, 255, 255, 0.01);
+				border: 1px solid rgba(0, 173, 181, 0.1);
+				border-radius: 12px;
+				padding: 25px;
+				margin: 20px 0;
+			}
+			.architecture-flow {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 15px;
+				flex-wrap: wrap;
+			}
+			.arch-node {
+				background: rgba(13, 20, 47, 0.7);
+				border: 1px solid var(--glass-border);
+				border-radius: 10px;
+				padding: 15px;
+				text-align: center;
+				min-width: 160px;
+				flex: 1;
+				max-width: 200px;
+				box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+				transition: all 0.3s ease;
+			}
+			.arch-node:hover {
+				border-color: var(--primary);
+				box-shadow: 0 0 15px var(--glow-color);
+				transform: translateY(-2px);
+			}
+			.arch-node i {
+				font-size: 1.8rem;
+				color: var(--primary);
+				margin-bottom: 8px;
+			}
+			.arch-node h4 {
+				font-family: var(--font-title);
+				font-size: 0.8rem;
+				color: #fff;
+			}
+			.arch-node p {
+				font-size: 0.7rem;
+				color: var(--text-muted);
+				margin-top: 4px;
+			}
+			.arch-arrow {
+				display: flex;
+				align-items: center;
+				color: var(--primary);
+				font-size: 1.1rem;
+				animation: pulseGlow 2s infinite ease-in-out;
+			}
+			@keyframes pulseGlow {
+				0%,
+				100% {
+					opacity: 0.5;
+					transform: scale(1);
+				}
+				50% {
+					opacity: 1;
+					transform: scale(1.1);
+				}
+			}
+
+			/* Timeline Layout */
+			.timeline-container {
+				position: relative;
+				padding-left: 25px;
+				border-left: 2px dashed rgba(0, 173, 181, 0.3);
+			}
+			.timeline-node {
+				position: relative;
+				margin-bottom: 35px;
+			}
+			.timeline-node::before {
+				content: "";
+				position: absolute;
+				left: -36px;
+				top: 6px;
+				width: 16px;
+				height: 16px;
+				border-radius: 50%;
+				background: var(--bg-color);
+				border: 3px solid var(--primary);
+				box-shadow: 0 0 8px var(--primary);
+			}
+
+			/* Step Interactive Collapsible Headers */
+			.step-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				cursor: pointer;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+				padding-bottom: 12px;
+				margin-bottom: 15px;
+				gap: 10px;
+			}
+			.step-title {
+				font-family: var(--font-title);
+				font-size: calc(1.1rem + 0.2vw);
+				color: #fff;
+				display: flex;
+				align-items: center;
+				flex-wrap: wrap;
+				gap: 6px;
+			}
+			.step-title span {
+				color: var(--primary);
+			}
+			.collapse-btn {
+				background: none;
+				border: none;
+				color: var(--text-muted);
+				cursor: pointer;
+				font-size: 1rem;
+				transition: transform 0.3s ease;
+				flex-shrink: 0;
+			}
+			.step-content {
+				transition:
+					max-height 0.4s ease,
+					opacity 0.4s ease;
+				max-height: 3000px;
+				overflow: hidden;
+				opacity: 1;
+			}
+			.step-content.collapsed {
+				max-height: 0 !important;
+				opacity: 0 !important;
+				margin: 0;
+			}
+			.rotated {
+				transform: rotate(180deg);
+			}
+
+			/* Code Blocks & Copy Script Button */
+			.code-block-wrapper {
+				position: relative;
+				margin: 15px 0;
+				width: 100%;
+			}
+			pre {
+				background: rgba(10, 15, 30, 0.85);
+				border: 1px solid rgba(0, 173, 181, 0.2);
+				border-radius: 8px;
+				padding: 15px;
+				overflow-x: auto;
+				color: #38ef7d;
+				font-family: "Courier New", Courier, monospace;
+				font-size: 0.85rem;
+				white-space: pre;
+				word-wrap: normal;
+			}
+			.copy-btn {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				background: rgba(0, 173, 181, 0.2);
+				border: 1px solid var(--primary);
+				color: var(--primary);
+				border-radius: 4px;
+				padding: 4px 8px;
+				font-size: 0.7rem;
+				cursor: pointer;
+				transition: all 0.2s ease;
+				z-index: 5;
+			}
+			.copy-btn:hover {
+				background: var(--primary);
+				color: #000;
+			}
+
+			/* Responsive Table */
+			.table-responsive {
+				width: 100%;
+				overflow-x: auto;
+				margin: 20px 0;
+				border-radius: 8px;
+				border: 1px solid var(--glass-border);
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				text-align: left;
+				font-size: 0.9rem;
+				background: rgba(13, 20, 47, 0.3);
+			}
+			th,
+			td {
+				padding: 12px 15px;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+			}
+			th {
+				background-color: rgba(79, 70, 229, 0.15);
+				color: var(--primary);
+				font-family: var(--font-title);
+				font-size: 0.85rem;
+				letter-spacing: 1px;
+				text-transform: uppercase;
+			}
+			tr:hover {
+				background-color: rgba(255, 255, 255, 0.02);
+			}
+			.badge-status {
+				padding: 4px 8px;
+				border-radius: 4px;
+				font-size: 0.75rem;
+				font-weight: 600;
+				display: inline-block;
+			}
+			.badge-status.failed {
+				background: rgba(239, 68, 68, 0.15);
+				color: var(--danger);
+				border: 1px solid var(--danger);
+			}
+			.badge-status.passed {
+				background: rgba(16, 185, 129, 0.15);
+				color: var(--success);
+				border: 1px solid var(--success);
+			}
+
+			/* Screenshot / Gallery Elements */
+			.screenshot-placeholder {
+				background: rgba(255, 255, 255, 0.03);
+				border: 1px dashed rgba(0, 173, 181, 0.3);
+				border-radius: 12px;
+				padding: 20px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 12px;
+				cursor: pointer;
+				transition: all 0.3s ease;
+				margin: 20px 0;
+				width: 100%;
+				height: auto;
+			}
+			.screenshot-placeholder:hover {
+				border-color: var(--primary);
+				background: rgba(0, 173, 181, 0.05);
+				box-shadow: 0 0 15px rgba(0, 173, 181, 0.15);
+			}
+			.screenshot-placeholder i {
+				font-size: 1.8rem;
+				color: var(--primary);
+			}
+			.screenshot-placeholder span {
+				font-size: 0.85rem;
+				font-weight: 500;
+				color: var(--text-muted);
+				text-align: center;
+			}
+			.screenshot-placeholder img {
+				width: 100%;
+				max-width: 500px;
+				height: auto;
+				border-radius: 8px;
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+				transition:
+					transform 0.3s ease,
+					border-color 0.3s ease;
+				margin-top: 5px;
+			}
+			.screenshot-placeholder:hover img {
+				transform: scale(1.02);
+				border-color: var(--primary);
+			}
+
+			/* Lightbox Window */
+			.lightbox {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(5, 8, 22, 0.95);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				z-index: 1000;
+				opacity: 0;
+				pointer-events: none;
+				transition: opacity 0.3s ease;
+				padding: 20px;
+			}
+			.lightbox.active {
+				opacity: 1;
+				pointer-events: auto;
+			}
+			.lightbox-content {
+				text-align: center;
+				position: relative;
+				background: var(--glass-bg);
+				border: 1px solid var(--glass-border);
+				border-radius: 12px;
+				padding: 20px;
+				width: 100%;
+				max-width: 600px;
+			}
+			.lightbox-content p {
+				margin-top: 15px;
+				font-family: var(--font-title);
+				color: var(--primary);
+				font-size: 0.9rem;
+			}
+			.lightbox-close {
+				position: absolute;
+				top: -40px;
+				right: 0;
+				color: #fff;
+				font-size: 1.5rem;
+				cursor: pointer;
+			}
+
+			/* Action Buttons */
+			.back-btn-container {
+				text-align: center;
+				margin: 40px 0;
+			}
+			.back-btn {
+				display: inline-flex;
+				align-items: center;
+				gap: 10px;
+				padding: 12px 30px;
+				background: linear-gradient(135deg, var(--secondary), var(--primary));
+				border: none;
+				border-radius: 30px;
+				color: #fff;
+				font-family: var(--font-title);
+				font-weight: 600;
+				font-size: 0.9rem;
+				text-decoration: none;
+				box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+				transition:
+					transform 0.3s ease,
+					box-shadow 0.3s ease;
+			}
+			.back-btn:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 6px 20px rgba(0, 173, 181, 0.5);
+			}
+
+			/* Scroll To Top Button */
+			#scrollTopBtn {
+				position: fixed;
+				bottom: 25px;
+				right: 25px;
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+				background: var(--glass-bg);
+				border: 1px solid var(--glass-border);
+				color: var(--primary);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				cursor: pointer;
+				opacity: 0;
+				visibility: hidden;
+				transition: all 0.3s;
+				z-index: 99;
+			}
+			#scrollTopBtn.show {
+				opacity: 1;
+				visibility: visible;
+			}
+			#scrollTopBtn:hover {
+				background: var(--primary);
+				color: #000;
+			}
+
+			/* Footer Section */
+			footer {
+				border-top: 1px solid var(--glass-border);
+				padding: 30px 0;
+				background: rgba(3, 5, 15, 0.9);
+				text-align: center;
+				color: var(--text-muted);
+				font-size: 0.85rem;
+			}
+			footer h3 {
+				font-family: var(--font-title);
+				color: var(--primary);
+				margin-bottom: 6px;
+				font-size: 1.1rem;
+			}
+
+			/* ----------------------------------------- */
+			/* MEDIA QUERIES - UNTUK LAYAR TABLET & HP   */
+			/* ----------------------------------------- */
+			@media (max-width: 768px) {
+				header {
+					padding: 12px 0;
+				}
+				.nav-links {
+					display: none;
+				}
+				.logo {
+					font-size: 1.1rem;
+					margin: 0 auto;
+				}
+				.architecture-flow {
+					flex-direction: column;
+					gap: 15px;
+				}
+				.arch-arrow i {
+					transform: rotate(90deg);
+				} /* Rotasi tanda panah jadi ke bawah pada HP */
+				.arch-node {
+					max-width: 100%;
+					width: 100%;
+				}
+				.timeline-container {
+					padding-left: 20px;
+					border-left: 1px dashed rgba(0, 173, 181, 0.4);
+				}
+				.timeline-node::before {
+					left: -29px;
+					width: 14px;
+					height: 14px;
+					top: 5px;
+				}
+				.glass-card {
+					padding: 20px 15px;
+				}
+			}
+
+			@media (max-width: 480px) {
+				.hero {
+					padding: 40px 0 25px 0;
+				}
+				.badge {
+					padding: 4px 10px;
+					font-size: 0.65rem;
+				}
+				pre {
+					font-size: 0.75rem;
+					padding: 10px;
+				}
+				.copy-btn {
+					padding: 2px 6px;
+					font-size: 0.65rem;
+					top: 6px;
+					right: 6px;
+				}
+				#scrollTopBtn {
+					bottom: 15px;
+					right: 15px;
+					width: 35px;
+					height: 35px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="loader">
+			<div class="spinner"></div>
+		</div>
+
+		<div class="progress-bar-container">
+			<div id="progress-bar"></div>
+		</div>
+
+		<header>
+			<div class="container nav-wrapper">
+				<a href="#" class="logo">
+					<i class="fa-solid fa-shield-halved"></i> LAB: WAZUH
+				</a>
+			</div>
+		</header>
+
+		<section class="hero container">
+			<h1>Security Configuration Assessment (SCA)</h1>
+			<p>
+				Evaluasi & Audit Kepatuhan Konfigurasi Keamanan Endpoint Berdasarkan
+				Standar CIS Benchmark
+			</p>
+			<div class="badge-container">
+				<div class="badge"><i class="fa-brands fa-windows"></i> Windows 11</div>
+				<div class="badge">
+					<i class="fa-solid fa-file-shield"></i> CIS Benchmark
+				</div>
+				<div class="badge">
+					<i class="fa-solid fa-clipboard-check"></i> Security Auditing
+				</div>
+				<div class="badge">
+					<i class="fa-solid fa-rotate"></i> Auto Remediation Validation
+				</div>
+			</div>
+		</section>
+
+		<section class="container" style="margin-bottom: 25px">
+			<h2
+				style="
+					font-family: var(--font-title);
+					margin-bottom: 15px;
+					font-size: 1rem;
+					color: var(--primary);
+				">
+				<i class="fa-solid fa-compass"></i> NAVIGASI SUB-BAB
+			</h2>
+			<div class="menu-grid">
+				<a href="#overview" class="glass-card menu-item"
+					><i class="fa-solid fa-circle-info"></i> 1. Pendahuluan</a
+				>
+				<a href="#objectives" class="glass-card menu-item"
+					><i class="fa-solid fa-crosshairs"></i> 2. Tujuan Implementasi</a
+				>
+				<a href="#architecture" class="glass-card menu-item"
+					><i class="fa-solid fa-network-wired"></i> 3. Arsitektur Alur Kerja</a
+				>
+				<a href="#configuration" class="glass-card menu-item"
+					><i class="fa-solid fa-sliders"></i> 4. Langkah Konfigurasi</a
+				>
+				<a href="#testing" class="glass-card menu-item"
+					><i class="fa-solid fa-vial"></i> 5. Skenario Pengujian</a
+				>
+				<a href="#remediation" class="glass-card menu-item"
+					><i class="fa-solid fa-screwdriver-wrench"></i> 6. Proses
+					Remediation</a
+				>
+				<a href="#results" class="glass-card menu-item"
+					><i class="fa-solid fa-chart-line"></i> 7. Hasil Akhir & Analisis</a
+				>
+			</div>
+		</section>
+
+		<main class="container layout-grid">
+			<section id="overview" class="glass-card">
+				<h2
+					style="
+						font-family: var(--font-title);
+						color: #fff;
+						margin-bottom: 12px;
+						font-size: 1.3rem;
+					">
+					<i class="fa-solid fa-door-open" style="color: var(--primary)"></i> 1.
+					Pendahuluan
+				</h2>
+				<p style="font-size: 0.95rem">
+					<strong>Security Configuration Assessment (SCA)</strong> merupakan
+					salah satu modul fundamental pada platform Wazuh yang digunakan untuk
+					mengevaluasi dan memverifikasi konfigurasi keamanan sistem operasi dan
+					aplikasi berdasarkan standar keamanan internasional yang diakui secara
+					global seperti
+					<strong>CIS (Center for Internet Security) Benchmarks</strong>.
+				</p>
+				<p style="font-size: 0.95rem; margin-top: 10px">
+					Melalui SCA, administrator sistem dapat secara proaktif
+					mengidentifikasi celah keamanan (misconfigured settings), hak istimewa
+					berlebih yang tidak aman, atau kebijakan akses yang lemah pada host
+					target, sehingga langkah-langkah perbaikan (remediation) dapat segera
+					dilakukan untuk memperkecil *attack surface*.
+				</p>
+			</section>
+
+			<section id="objectives" class="glass-card">
+				<h2
+					style="
+						font-family: var(--font-title);
+						color: #fff;
+						margin-bottom: 12px;
+						font-size: 1.3rem;
+					">
+					<i class="fa-solid fa-bullseye" style="color: var(--primary)"></i> 2.
+					Tujuan Implementasi
+				</h2>
+				<p style="font-size: 0.95rem">
+					Implementasi modul Security Configuration Assessment ini dirancang
+					untuk mencapai beberapa objektif keamanan utama di bawah ini:
+				</p>
+				<ul class="req-list">
+					<li>
+						<strong>Menilai Kepatuhan:</strong> Menganalisis tingkat kepatuhan
+						konfigurasi keamanan sistem operasi host secara berkala.
+					</li>
+					<li>
+						<strong>Deteksi Deviasi:</strong> Mengidentifikasi kebijakan
+						konfigurasi sistem lokal yang tidak sesuai atau melanggar aturan
+						standar CIS Benchmark.
+					</li>
+					<li>
+						<strong>Panduan Remediasi:</strong> Menyediakan rekomendasi teknis
+						perbaikan yang presisi untuk setiap konfigurasi kebijakan keamanan
+						yang berstatus <em>Failed</em> (Gagal).
+					</li>
+					<li>
+						<strong>Verifikasi Otomatis:</strong> Memvalidasi hasil perbaikan
+						(remediation) secara real-time melalui proses pemindaian ulang
+						otomatis setelah konfigurasi diterapkan.
+					</li>
+				</ul>
+			</section>
+
+			<section id="architecture" class="glass-card">
+				<h2
+					style="
+						font-family: var(--font-title);
+						color: #fff;
+						margin-bottom: 15px;
+						font-size: 1.3rem;
+					">
+					<i
+						class="fa-solid fa-diagram-project"
+						style="color: var(--primary)"></i>
+					3. Arsitektur Proses
+				</h2>
+				<p style="font-size: 0.95rem; margin-bottom: 15px">
+					Alur pemindaian, transmisi, analisis, dan visualisasi data keamanan
+					SCA dari endpoint menuju ke pusat monitoring:
+				</p>
+				<div class="architecture-wrapper">
+					<div class="architecture-flow">
+						<div class="arch-node">
+							<i class="fa-brands fa-windows"></i>
+							<h4>Endpoint Windows</h4>
+							<p>Host Target</p>
+						</div>
+						<div class="arch-arrow">
+							<i class="fa-solid fa-circle-chevron-right"></i>
+						</div>
+						<div class="arch-node">
+							<i class="fa-solid fa-user-shield"></i>
+							<h4>Wazuh Agent</h4>
+							<p>Eksekusi Scan Lokal</p>
+						</div>
+						<div class="arch-arrow">
+							<i class="fa-solid fa-circle-chevron-right"></i>
+						</div>
+						<div class="arch-node">
+							<i class="fa-solid fa-shield-halved"></i>
+							<h4>Modul SCA</h4>
+							<p>Evaluasi CIS Policy</p>
+						</div>
+						<div class="arch-arrow">
+							<i class="fa-solid fa-circle-chevron-right"></i>
+						</div>
+						<div class="arch-node">
+							<i class="fa-solid fa-server"></i>
+							<h4>Wazuh Manager</h4>
+							<p>Komparasi & DB Alert</p>
+						</div>
+						<div class="arch-arrow">
+							<i class="fa-solid fa-circle-chevron-right"></i>
+						</div>
+						<div class="arch-node">
+							<i class="fa-solid fa-chart-column"></i>
+							<h4>Wazuh Dashboard</h4>
+							<p>Visualisasi Score</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<div class="timeline-container">
+				<div id="configuration" class="timeline-node glass-card">
+					<div class="step-header">
+						<h2 class="step-title">
+							<span>4. Langkah Konfigurasi —</span> Aktivasi Modul
+						</h2>
+						<button class="collapse-btn">
+							<i class="fa-solid fa-chevron-up"></i>
+						</button>
+					</div>
+					<div class="step-content">
+						<p style="font-size: 0.95rem">
+							Secara default, modul SCA telah terpasang dan aktif saat instalasi
+							Wazuh Agent selesai dilakukan. Pemindaian otomatis berjalan
+							berdasarkan file policy CIS yang sesuai dengan versi sistem
+							operasi target. Blok konfigurasi di bawah ini dideklarasikan pada
+							file <code>ossec.conf</code> milik agent:
+						</p>
+						<div class="code-block-wrapper">
+							<button class="copy-btn">
+								<i class="fa-regular fa-copy"></i> Copy
+							</button>
+							<pre>
+&lt;sca&gt;
+  &lt;enabled&gt;yes&lt;/enabled&gt;
+  &lt;scan_on_start&gt;yes&lt;/scan_on_start&gt;
+  &lt;interval&gt;12h&lt;/interval&gt;
+  &lt;skip_nfs&gt;yes&lt;/skip_nfs&gt;
+&lt;/sca&gt;</pre
+							>
+						</div>
+						<div
+							class="screenshot-placeholder"
+							data-image="/images/sca-1.png"
+							data-caption="Dashboard Utama modul Security Configuration Assessment (SCA) di Web UI">
+							<i class="fa-solid fa-images"></i>
+							<span>Buka Screenshot Dashboard Utama SCA (SCA-1)</span>
+						</div>
+					</div>
+				</div>
+
+				<div id="testing" class="timeline-node glass-card">
+					<div class="step-header">
+						<h2 class="step-title">
+							<span>5. Pengujian —</span> Aturan CIS Benchmark
+						</h2>
+						<button class="collapse-btn">
+							<i class="fa-solid fa-chevron-up"></i>
+						</button>
+					</div>
+					<div class="step-content">
+						<p style="font-size: 0.95rem">
+							Untuk memvalidasi cara kerja sistem, dilakukan pengujian audit
+							kebijakan keamanan akun lokal menggunakan parameter aturan CIS
+							berikut:
+						</p>
+						<ul class="req-list" style="margin-top: 10px">
+							<li><strong>Rule ID:</strong> <code>26000</code></li>
+							<li>
+								<strong>Deskripsi Aturan:</strong>
+								<em
+									>Ensure 'Enforce password history' is set to '24 or more
+									password(s)'.</em
+								>
+							</li>
+							<li>
+								<strong>Kondisi Awal:</strong> Status terdeteksi
+								<strong style="color: var(--danger)">Failed</strong>
+							</li>
+							<li>
+								<strong>Penyebab:</strong> Nilai penyimpanan riwayat password
+								(Password History) pada sistem Windows target saat ini masih
+								bernilai <code>0</code> (Disabled).
+							</li>
+						</ul>
+						<div
+							class="screenshot-placeholder"
+							data-image="/images/sca-failed.png"
+							data-caption="Detail Rule ID 26000 berstatus Failed sebelum dilakukan langkah perbaikan">
+							<i class="fa-solid fa-images"></i>
+							<span>Buka Screenshot Detail Rule Failed (SCA-2)</span>
+						</div>
+					</div>
+				</div>
+
+				<div id="remediation" class="timeline-node glass-card">
+					<div class="step-header">
+						<h2 class="step-title">
+							<span>6. Remediation —</span> Perbaikan Konfigurasi
+						</h2>
+						<button class="collapse-btn">
+							<i class="fa-solid fa-chevron-up"></i>
+						</button>
+					</div>
+					<div class="step-content">
+						<p style="font-size: 0.95rem">
+							Guna menyelaraskan sistem dengan standar CIS Benchmark, jalankan
+							shell <strong>Command Prompt (cmd.exe)</strong> dengan hak akses
+							<strong>Administrator</strong> di endpoint Windows, kemudian
+							eksekusi perintah perbaikan berikut:
+						</p>
+						<div class="code-block-wrapper">
+							<button class="copy-btn">
+								<i class="fa-regular fa-copy"></i> Copy
+							</button>
+							<pre>
+net accounts /uniquepw:24
+net accounts /minpwage:1
+net accounts /minpwlen:14
+net accounts /lockoutthreshold:5</pre
+							>
+						</div>
+						<div
+							class="screenshot-placeholder"
+							data-image="/images/sca-3.png"
+							data-caption="Eksekusi command net accounts di Command Prompt Administrator untuk perbaikan nilai">
+							<i class="fa-solid fa-images"></i>
+							<span>Buka Screenshot CMD Sebelum Remediation (SCA-3)</span>
+						</div>
+						<p style="font-size: 0.95rem; margin-top: 10px">
+							Lakukan verifikasi lokal hasil konfigurasi baru dengan perintah:
+						</p>
+						<div class="code-block-wrapper">
+							<button class="copy-btn">
+								<i class="fa-regular fa-copy"></i> Copy
+							</button>
+							<pre>net accounts</pre>
+						</div>
+						<p style="font-size: 0.9rem">
+							Output verifikasi yang berhasil di dalam konsol terminal:
+						</p>
+						<div class="code-block-wrapper">
+							<pre>
+Force user logoff how long after time expires?:       Never
+Minimum password age (days):                          1
+Maximum password age (days):                          42
+Minimum password length:                              14
+Length of password history maintained:                24
+Lockout threshold:                                    5
+Lockout duration (minutes):                           30
+Lockout observation window (minutes):                 30
+Computer role:                                        WORKSTATION</pre
+							>
+						</div>
+						<div
+							class="screenshot-placeholder"
+							data-image="/images/sca-4.png"
+							data-caption="Hasil verifikasi output command net accounts yang baru">
+							<i class="fa-solid fa-images"></i>
+							<span>Buka Screenshot CMD Setelah Remediation (SCA-4)</span>
+						</div>
+					</div>
+				</div>
+
+				<div id="results" class="timeline-node glass-card">
+					<div class="step-header">
+						<h2 class="step-title">
+							<span>7. Hasil Pengujian —</span> Validasi Dashboard
+						</h2>
+						<button class="collapse-btn">
+							<i class="fa-solid fa-chevron-up"></i>
+						</button>
+					</div>
+					<div class="step-content">
+						<p style="font-size: 0.95rem">
+							Setelah perbaikan konfigurasi diterapkan di sisi sistem operasi
+							Windows, modul SCA akan otomatis memindai ulang host pada jadwal
+							berikutnya (atau dipicu secara manual lewat restart service).
+						</p>
+						<p style="font-size: 0.95rem; margin-top: 8px">
+							Status pemeriksaan untuk <strong>Rule ID 26000</strong> kini telah
+							berubah menjadi
+							<strong style="color: var(--success)">Passed</strong>
+							(Lolos/Sukses) di dashboard monitoring.
+						</p>
+
+						<div class="table-responsive">
+							<table>
+								<thead>
+									<tr>
+										<th>Parameter Pembanding</th>
+										<th>Kondisi Sebelum Perbaikan</th>
+										<th>Kondisi Setelah Perbaikan</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><strong>Status Rule ID 26000</strong></td>
+										<td>
+											<span class="badge-status failed"
+												><i class="fa-solid fa-triangle-exclamation"></i>
+												FAILED</span
+											>
+										</td>
+										<td>
+											<span class="badge-status passed"
+												><i class="fa-solid fa-circle-check"></i> PASSED</span
+											>
+										</td>
+									</tr>
+									<tr>
+										<td><strong>Riwayat Password Keamanan</strong></td>
+										<td><code>Password History = 0</code></td>
+										<td><code>Password History = 24</code></td>
+									</tr>
+									<tr>
+										<td><strong>SCA Compliance Score</strong></td>
+										<td>Skor Keamanan Rendah</td>
+										<td>Skor Kepatuhan Meningkat Tajam</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+						<div
+							class="screenshot-placeholder"
+							style="margin-top: 20px"
+							data-image="/images/sca-passed.png"
+							data-caption="Dashboard Wazuh SCA memperlihatkan status Rule 26000 telah berubah menjadi Passed">
+							<i class="fa-solid fa-images"></i>
+							<span>Buka Screenshot Verifikasi Dashboard Passed (SCA-5)</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<section class="glass-card">
+				<h2
+					style="
+						font-family: var(--font-title);
+						color: #fff;
+						margin-bottom: 12px;
+						font-size: 1.3rem;
+					">
+					<i
+						class="fa-solid fa-magnifying-glass-chart"
+						style="color: var(--primary)"></i>
+					8. Analisis Hasil Audit
+				</h2>
+				<p style="font-size: 0.95rem">
+					Pemantauan yang dilakukan membuktikan bahwa modul
+					<strong>SCA Wazuh</strong> bekerja secara akurat dan sangat responsif
+					terhadap perubahan kebijakan konfigurasi keamanan yang diterapkan pada
+					host.
+				</p>
+				<p style="font-size: 0.95rem; margin-top: 10px">
+					Mekanisme audit terintegrasi ini tidak hanya mengidentifikasi
+					kerentanan secara statis, namun secara dinamis memperbarui status
+					kepatuhan berdasarkan kondisi nyata di endpoint tanpa membutuhkan
+					intervensi manual yang rumit dari sisi operator keamanan. Hal ini
+					mendukung siklus deteksi, perbaikan (*remediation*), dan pelaporan
+					kepatuhan secara berkelanjutan (*Continuous Compliance*).
+				</p>
+			</section>
+
+			<section id="conclusion" class="glass-card">
+				<h2
+					style="
+						font-family: var(--font-title);
+						color: #fff;
+						margin-bottom: 12px;
+						font-size: 1.3rem;
+					">
+					<i
+						class="fa-solid fa-flag-checkered"
+						style="color: var(--primary)"></i>
+					Kesimpulan
+				</h2>
+				<p style="font-size: 0.95rem">
+					Implementasi modul
+					<strong>Security Configuration Assessment (SCA)</strong> pada Windows
+					11 menggunakan Wazuh SIEM berhasil dilakukan dengan stabilitas tinggi.
+					Sistem ini terbukti mampu memantau, mendeteksi penyimpangan
+					(deviations) kebijakan CIS Benchmark, memberikan instruksi langkah
+					remediation yang jelas, hingga memverifikasi kembali keberhasilan
+					implementasi kontrol keamanan tersebut secara otomatis.
+				</p>
+			</section>
+		</main>
+
+		<div class="back-btn-container">
+			<a href="../index.html#projects" class="back-btn">
+				<i class="fa-solid fa-arrow-left"></i> Back to Projects
+			</a>
+		</div>
+
+		<button id="scrollTopBtn" title="Kembali ke atas">
+			<i class="fa-solid fa-chevron-up"></i>
+		</button>
+
+		<div id="lightbox" class="lightbox">
+			<div class="lightbox-content">
+				<span class="lightbox-close"><i class="fa-solid fa-xmark"></i></span>
+				<div
+					style="
+						background: rgba(0, 0, 0, 0.4);
+						border-radius: 8px;
+						padding: 35px;
+						border: 1px dashed var(--primary);
+						color: var(--primary);
+						font-family: var(--font-title);
+						font-size: 1rem;
+					">
+					<i
+						class="fa-solid fa-image"
+						style="font-size: 2.5rem; margin-bottom: 10px; display: block"></i>
+					<span id="lightbox-img-name">SCA Image Gallery Placeholder</span>
+				</div>
+				<p id="lightbox-caption">Deskripsi Gambar Screenshot</p>
+			</div>
+		</div>
+
+		<footer>
+			<div class="container">
+				<h3>SCA Audit & Compliance Documentation</h3>
+				<p>Home Lab Security Configuration Assessment - Wazuh SIEM Platform</p>
+				<p style="font-size: 0.75rem; opacity: 0.4; margin-top: 10px">
+					&copy; 2026. Hak Cipta Dilindungi Undang-Undang.
+				</p>
+			</div>
+		</footer>
+
+		<script>
+			// Loading Disabler
+			window.addEventListener("load", () => {
+				const loader = document.getElementById("loader");
+				setTimeout(() => {
+					loader.style.opacity = "0";
+					setTimeout(() => (loader.style.display = "none"), 500);
+				}, 200);
+			});
+
+			// Tracking Scroll Engine for Top-Progress Bar & Scroll Button Toggle
+			const progressBar = document.getElementById("progress-bar");
+			const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+			window.addEventListener("scroll", () => {
+				const winScroll =
+					document.documentElement.scrollTop || document.body.scrollTop;
+				const height =
+					document.documentElement.scrollHeight -
+					document.documentElement.clientHeight;
+				const scrolled = (winScroll / height) * 100;
+				progressBar.style.width = scrolled + "%";
+
+				if (winScroll > 300) {
+					scrollTopBtn.classList.add("show");
+				} else {
+					scrollTopBtn.classList.remove("show");
+				}
+			});
+
+			scrollTopBtn.addEventListener("click", () => {
+				window.scrollTo({ top: 0, behavior: "smooth" });
+			});
+
+			// Copy Text Clipboard Functionality
+			document.querySelectorAll(".copy-btn").forEach((button) => {
+				button.addEventListener("click", () => {
+					const codeBlock = button.nextElementSibling;
+					navigator.clipboard.writeText(codeBlock.innerText).then(() => {
+						button.innerHTML =
+							'<i class="fa-solid fa-check"></i> Salinan Berhasil!';
+						button.style.background = "#10B981";
+						button.style.borderColor = "#10B981";
+						button.style.color = "#fff";
+
+						setTimeout(() => {
+							button.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
+							button.style.background = "rgba(0, 173, 181, 0.2)";
+							button.style.borderColor = "var(--primary)";
+							button.style.color = "var(--primary)";
+						}, 2000);
+					});
+				});
+			});
+
+			// Collapsible Content Handler
+			document.querySelectorAll(".step-header").forEach((header) => {
+				header.addEventListener("click", () => {
+					const content = header.nextElementSibling;
+					const icon = header.querySelector(".collapse-btn i");
+
+					content.classList.toggle("collapsed");
+					icon.classList.toggle("rotated");
+				});
+			});
+
+			// Image Gallery Modal Control (Lightbox)
+			const lightbox = document.getElementById("lightbox");
+			const lightboxContent = document.querySelector(".lightbox-content");
+			const lightboxCaption = document.getElementById("lightbox-caption");
+			const closeLightbox = document.querySelector(".lightbox-close");
+
+			document
+				.querySelectorAll(".screenshot-placeholder")
+				.forEach((placeholder) => {
+					placeholder.addEventListener("click", () => {
+						const imgSrc = placeholder.getAttribute("data-image");
+						const caption = placeholder.getAttribute("data-caption");
+
+						// Mengganti placeholder text di dalam modal dengan tag <img> asli secara dinamis
+						lightboxContent.innerHTML = `
+            <span class="lightbox-close"><i class="fa-solid fa-xmark"></i></span>
+            <img src="${imgSrc}" alt="${caption}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+            <p id="lightbox-caption" style="margin-top: 15px; font-family: var(--font-title); color: var(--primary); font-size: 0.9rem;">${caption}</p>
+        `;
+
+						// Daftarkan kembali event close karena innerHTML di-rewrite
+						document
+							.querySelector(".lightbox-close")
+							.addEventListener("click", () => {
+								lightbox.classList.remove("active");
+							});
+
+						lightbox.classList.add("active");
+					});
+				});
+
+			lightbox.addEventListener("click", (e) => {
+				if (e.target === lightbox) lightbox.classList.remove("active");
+			});
+		</script>
+	</body>
+</html>
