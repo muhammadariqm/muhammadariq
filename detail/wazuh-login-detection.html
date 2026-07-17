@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="id">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Wazuh Detection - Failed Login</title>
+		<!-- Font Awesome untuk Ikon -->
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+		<!-- Google Fonts -->
+		<link
+			href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap"
+			rel="stylesheet" />
+
+		<style>
+			:root {
+				--bg-color: #0f172a;
+				--card-bg: rgba(30, 41, 59, 0.4);
+				--border-color: rgba(255, 255, 255, 0.08);
+				--accent-color: #0ea5e9;
+				--accent-hover: #38bdf8;
+				--text-primary: #f8fafc;
+				--text-secondary: #94a3b8;
+				--success-color: #10b981;
+				--warning-color: #f59e0b;
+			}
+
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+
+			body {
+				background-color: var(--bg-color);
+				color: var(--text-primary);
+				font-family: "Inter", sans-serif;
+				line-height: 1.6;
+				padding: 2rem 1rem;
+				overflow-x: hidden;
+			}
+
+			.container {
+				width: 100%;
+				max-width: 900px;
+				margin: 0 auto;
+			}
+
+			/* --- BACK BUTTON STYLE --- */
+			.back-btn-container {
+				display: flex;
+				justify-content: flex-start;
+				margin-bottom: 2rem;
+			}
+
+			.back-btn {
+				display: inline-flex;
+				align-items: center;
+				gap: 10px;
+				background-color: rgba(30, 41, 59, 0.7);
+				color: var(--text-primary);
+				text-decoration: none;
+				font-size: 0.95rem;
+				font-weight: 600;
+				padding: 0.75rem 1.5rem;
+				border-radius: 8px;
+				border: 1px solid var(--border-color);
+				transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+				cursor: pointer;
+				backdrop-filter: blur(8px);
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			}
+
+			.back-btn:hover {
+				background-color: var(--accent-color);
+				color: var(--bg-color);
+				border-color: var(--accent-hover);
+				box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+				transform: translateX(-4px);
+			}
+
+			.back-btn i {
+				font-size: 0.9rem;
+				transition: transform 0.3s ease;
+			}
+
+			.back-btn:hover i {
+				transform: translateX(-2px);
+			}
+
+			/* --- GLASSMORPHISM CARD STYLE --- */
+			header {
+				text-align: center;
+				margin-bottom: 2.5rem;
+				background: var(--card-bg);
+				border: 1px solid var(--border-color);
+				border-radius: 12px;
+				padding: 2.5rem 1.5rem;
+				backdrop-filter: blur(12px);
+				box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+			}
+
+			header h1 {
+				font-size: clamp(1.8rem, 4vw, 2.4rem);
+				font-weight: 700;
+				color: #ffffff;
+				margin-bottom: 0.5rem;
+			}
+
+			header h1 span {
+				color: var(--accent-color);
+			}
+
+			.doc-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				background-color: rgba(14, 165, 233, 0.1);
+				color: var(--accent-color);
+				padding: 0.4rem 1rem;
+				border-radius: 50px;
+				font-size: 0.85rem;
+				font-weight: 600;
+				border: 1px solid rgba(14, 165, 233, 0.2);
+				margin-bottom: 1rem;
+			}
+
+			section {
+				background: var(--card-bg);
+				border: 1px solid var(--border-color);
+				border-radius: 12px;
+				padding: 2rem;
+				margin-bottom: 1.5rem;
+				backdrop-filter: blur(12px);
+				box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+			}
+
+			section h2 {
+				font-size: 1.3rem;
+				color: #ffffff;
+				margin-bottom: 1.25rem;
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				font-weight: 600;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+				padding-bottom: 0.75rem;
+			}
+
+			section h2 i {
+				color: var(--accent-color);
+			}
+
+			p {
+				color: var(--text-secondary);
+				font-size: 0.95rem;
+				margin-bottom: 1rem;
+			}
+
+			p strong {
+				color: #ffffff;
+			}
+
+			/* --- SECTION IMAGE STYLING --- */
+			.image-gallery {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 1.5rem;
+				margin-top: 1rem;
+			}
+
+			.image-card {
+				background: rgba(15, 23, 42, 0.4);
+				border: 1px solid var(--border-color);
+				border-radius: 8px;
+				overflow: hidden;
+				transition: all 0.3s ease;
+			}
+
+			.image-wrapper {
+				width: 100%;
+				height: auto;
+				overflow: hidden;
+				border-bottom: 1px solid var(--border-color);
+			}
+
+			.image-card img {
+				width: 100%;
+				height: auto;
+				display: block;
+				object-fit: cover;
+				transition: transform 0.3s ease;
+			}
+
+			.image-caption {
+				padding: 0.75rem 1rem;
+				font-size: 0.85rem;
+				color: var(--text-secondary);
+				text-align: center;
+				font-family: "Fira Code", monospace;
+				background-color: rgba(15, 23, 42, 0.6);
+			}
+
+			/* Hover effect untuk gambar bukti */
+			.image-card:hover {
+				border-color: var(--accent-color);
+				box-shadow: 0 0 15px rgba(14, 165, 233, 0.2);
+				transform: translateY(-2px);
+			}
+
+			.image-card:hover img {
+				transform: scale(1.03);
+			}
+
+			/* --- DETECTION FLOWCHART --- */
+			.flowchart {
+				display: flex;
+				flex-direction: column;
+				gap: 0.75rem;
+				margin: 1.5rem 0;
+			}
+
+			.flow-node {
+				background-color: rgba(15, 23, 42, 0.6);
+				border: 1px solid var(--border-color);
+				padding: 0.85rem 1rem;
+				border-radius: 8px;
+				font-family: "Fira Code", monospace;
+				font-size: 0.85rem;
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				position: relative;
+			}
+
+			.flow-node::before {
+				content: "";
+				position: absolute;
+				left: 20px;
+				bottom: -12px;
+				width: 2px;
+				height: 12px;
+				background-color: rgba(255, 255, 255, 0.1);
+			}
+
+			.flow-node:last-child::before {
+				display: none;
+			}
+
+			.flow-node i {
+				color: var(--accent-color);
+				width: 16px;
+				text-align: center;
+			}
+
+			.flow-node.highlight i {
+				color: var(--warning-color);
+			}
+
+			.flow-node.success i {
+				color: var(--success-color);
+			}
+
+			/* --- STEP LIST --- */
+			.step-list {
+				list-style: none;
+				display: flex;
+				flex-direction: column;
+				gap: 1.5rem;
+			}
+
+			.step-item {
+				position: relative;
+				padding-left: 2.5rem;
+			}
+
+			.step-number {
+				position: absolute;
+				left: 0;
+				top: 2px;
+				width: 24px;
+				height: 24px;
+				background-color: rgba(255, 255, 255, 0.05);
+				color: var(--accent-color);
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 0.8rem;
+				font-weight: 700;
+				font-family: "Fira Code", monospace;
+				border: 1px solid var(--border-color);
+			}
+
+			.step-title {
+				font-size: 1rem;
+				font-weight: 600;
+				color: #ffffff;
+				margin-bottom: 0.35rem;
+			}
+
+			.sub-list {
+				list-style: none;
+				margin-top: 0.5rem;
+				padding-left: 0.5rem;
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+				gap: 0.5rem;
+			}
+
+			.sub-list li {
+				font-size: 0.85rem;
+				color: var(--text-secondary);
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			}
+
+			.sub-list li::before {
+				content: "➔";
+				color: var(--accent-color);
+				font-size: 0.75rem;
+			}
+
+			/* --- CLEAN DARK TABLES --- */
+			.table-responsive {
+				width: 100%;
+				overflow-x: auto;
+				border-radius: 8px;
+				border: 1px solid var(--border-color);
+				margin-top: 1rem;
+			}
+
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				text-align: left;
+				font-size: 0.9rem;
+			}
+
+			th,
+			td {
+				padding: 0.85rem 1rem;
+			}
+
+			th {
+				background-color: rgba(15, 23, 42, 0.8);
+				color: #ffffff;
+				font-weight: 600;
+				border-bottom: 1px solid var(--border-color);
+			}
+
+			td {
+				background-color: rgba(30, 41, 59, 0.2);
+				border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+				color: var(--text-secondary);
+			}
+
+			tr:last-child td {
+				border-bottom: none;
+			}
+
+			.badge-status {
+				background-color: rgba(16, 185, 129, 0.1);
+				color: var(--success-color);
+				padding: 0.2rem 0.6rem;
+				border-radius: 4px;
+				font-weight: 600;
+				font-size: 0.8rem;
+				border: 1px solid rgba(16, 185, 129, 0.2);
+			}
+
+			/* --- ANALISIS BOX --- */
+			.analysis-box {
+				border-left: 4px solid var(--accent-color);
+				background-color: rgba(15, 23, 42, 0.4);
+				padding: 1rem 1.25rem;
+				border-radius: 0 8px 8px 0;
+				margin-top: 1rem;
+			}
+
+			/* --- RESPONSIVE LAYOUT --- */
+			@media (max-width: 600px) {
+				section {
+					padding: 1.5rem 1rem;
+				}
+				.flow-node {
+					font-size: 0.75rem;
+					padding: 0.75rem;
+				}
+				th,
+				td {
+					padding: 0.65rem 0.75rem;
+					font-size: 0.85rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Header Dokumentasi -->
+		<header>
+			<div class="doc-badge">
+				<i class="fa-solid fa-shield-halved"></i> SIEM Lab Report
+			</div>
+			<h1>Failed Login Detection Using <span>Wazuh</span></h1>
+		</header>
+
+		<div class="container">
+			<!-- Section Gambar (Mengikuti Style User) -->
+			<section id="topology" class="glass-card">
+				<h2
+					style="
+						font-family: sans-serif;
+						color: #fff;
+						margin-bottom: 15px;
+						font-size: 1.3rem;
+					">
+					<i class="fa-solid fa-images" style="color: var(--primary)"></i>
+				</h2>
+				<p style="font-size: 0.95rem; margin-bottom: 20px">
+					Visualisasi log hasil pengujian dari Windows Event Viewer dan Alert
+					yang tertangkap di Wazuh Dashboard:
+				</p>
+
+				<div
+					style="
+						text-align: center;
+						margin: 25px 0;
+						background: rgba(13, 20, 47, 0.4);
+						padding: 15px;
+						border-radius: 12px;
+						border: 1px solid var(--glass-border);
+						box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+					">
+					<!-- Gambar 1 -->
+					<img
+						src="../images/flow-login.png"
+						alt="Windows Event ID 4625"
+						style="
+							width: 100%;
+							max-width: 950px;
+							height: auto;
+							border-radius: 8px;
+							margin-bottom: 15px;
+							border: 1px solid rgba(0, 173, 181, 0.3);
+						" />
+
+					<img
+						src="../images/login-detection.jpg"
+						alt="Windows Event ID 4625"
+						style="
+							width: 100%;
+							max-width: 950px;
+							height: auto;
+							border-radius: 8px;
+							margin-bottom: 15px;
+							border: 1px solid rgba(0, 173, 181, 0.3);
+						" />
+
+					<!-- Gambar 2 -->
+					<img
+						src="../images/login-detection2.jpg"
+						alt="Wazuh Alert"
+						style="
+							width: 100%;
+							max-width: 950px;
+							height: auto;
+							border-radius: 8px;
+							border: 1px solid rgba(0, 173, 181, 0.3);
+						" />
+
+					<p
+						style="
+							font-family: sans-serif;
+							font-size: 0.8rem;
+							color: var(--text-muted);
+							margin-top: 12px;
+							font-style: italic;
+						">
+						Alert pada Wazuh Dashboard
+					</p>
+				</div>
+			</section>
+
+			<!-- Penjelasan -->
+			<section class="glass-card">
+				<h2 style="color: #fff; font-size: 1.3rem; margin-bottom: 15px">
+					<i class="fa-solid fa-list-check" style="color: var(--primary)"></i>
+					Ringkasan Hasil
+				</h2>
+				<ul
+					style="
+						padding-left: 20px;
+						line-height: 1.8;
+						color: var(--text-secondary);
+					">
+					<li><strong>Event ID:</strong> 4625 (Failed Logon).</li>
+					<li><strong>Wazuh Rule ID:</strong> 60122 (Logon Failure).</li>
+					<li>
+						<strong>Analisis:</strong> Sistem berhasil mendeteksi anomali login
+						secara real-time.
+					</li>
+				</ul>
+			</section>
+
+			<!-- Bagian: Tujuan -->
+			<section>
+				<h2><i class="fa-solid fa-crosshairs"></i> Tujuan</h2>
+				<p>
+					Pengujian ini bertujuan untuk mengetahui apakah
+					<strong>Wazuh</strong> mampu mendeteksi percobaan login yang gagal
+					pada sistem operasi Windows melalui log keamanan (<em
+						>Windows Security Event Log</em
+					>).
+				</p>
+			</section>
+
+			<!-- Bagian: Skenario Pengujian -->
+			<section>
+				<h2><i class="fa-solid fa-flask"></i> Skenario Pengujian</h2>
+				<p>
+					Pengujian dilakukan dengan memasukkan password yang salah pada saat
+					proses login Windows. Sistem Windows akan mencatat aktivitas tersebut
+					sebagai log keamanan, kemudian log dikirim oleh
+					<strong>Wazuh Agent</strong> ke <strong>Wazuh Manager</strong> untuk
+					diproses. Apabila log sesuai dengan rule yang dimiliki Wazuh, maka
+					alert akan ditampilkan pada dashboard.
+				</p>
+			</section>
+
+			<!-- Bagian: Alur Deteksi -->
+			<section>
+				<h2><i class="fa-solid fa-route"></i> Alur Deteksi</h2>
+				<div class="flowchart">
+					<div class="flow-node">
+						<i class="fa-solid fa-user-xmark"></i> User melakukan login dengan
+						password salah
+					</div>
+					<div class="flow-node highlight">
+						<i class="fa-solid fa-file-shield"></i> Windows mencatat Event ID
+						4625 (Logon Failure)
+					</div>
+					<div class="flow-node">
+						<i class="fa-solid fa-terminal"></i> Wazuh Agent membaca Windows
+						Event Log
+					</div>
+					<div class="flow-node">
+						<i class="fa-solid fa-paper-plane"></i> Wazuh Agent mengirim log ke
+						Wazuh Manager
+					</div>
+					<div class="flow-node highlight">
+						<i class="fa-solid fa-gear"></i> Wazuh Manager mencocokkan log
+						dengan Rule 60122
+					</div>
+					<div class="flow-node">
+						<i class="fa-solid fa-bell"></i> Alert dibuat (Logon Failure -
+						Unknown user or bad password)
+					</div>
+					<div class="flow-node success">
+						<i class="fa-solid fa-chart-line"></i> Alert ditampilkan pada Wazuh
+						Dashboard
+					</div>
+				</div>
+			</section>
+
+			<!-- Bagian: Penjelasan Alur -->
+			<section>
+				<h2><i class="fa-solid fa-list-check"></i> Penjelasan Alur</h2>
+				<ul class="step-list">
+					<li class="step-item">
+						<div class="step-number">1</div>
+						<div class="step-title">
+							User melakukan login dengan password yang salah
+						</div>
+						<p>
+							Pengguna memasukkan username atau password yang tidak sesuai saat
+							login ke Windows.
+						</p>
+					</li>
+					<li class="step-item">
+						<div class="step-number">2</div>
+						<div class="step-title">Windows mencatat Event ID 4625</div>
+						<p>
+							Windows secara otomatis mencatat aktivitas tersebut pada Security
+							Event Log dengan Event ID 4625, yang menunjukkan bahwa proses
+							login gagal. Informasi yang tercatat antara lain:
+						</p>
+						<ul class="sub-list">
+							<li>Nama akun</li>
+							<li>Waktu kejadian</li>
+							<li>Jenis login</li>
+							<li>Alasan kegagalan login</li>
+						</ul>
+					</li>
+					<li class="step-item">
+						<div class="step-number">3</div>
+						<div class="step-title">Wazuh Agent membaca log</div>
+						<p>
+							Wazuh Agent yang terpasang pada komputer Windows membaca Event Log
+							secara otomatis tanpa memerlukan tindakan dari pengguna.
+						</p>
+					</li>
+					<li class="step-item">
+						<div class="step-number">4</div>
+						<div class="step-title">Wazuh Manager memproses log</div>
+						<p>
+							Log yang diterima kemudian dianalisis oleh Wazuh Manager dan
+							dibandingkan dengan kumpulan rule deteksi yang tersedia. Pada
+							pengujian ini, log sesuai dengan:
+						</p>
+						<div class="table-responsive">
+							<table>
+								<thead>
+									<tr>
+										<th>Informasi</th>
+										<th>Nilai</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><strong>Rule ID</strong></td>
+										<td>60122</td>
+									</tr>
+									<tr>
+										<td><strong>Rule Description</strong></td>
+										<td>Logon Failure - Unknown user or bad password</td>
+									</tr>
+									<tr>
+										<td><strong>Rule Level</strong></td>
+										<td>5</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</li>
+					<li class="step-item">
+						<div class="step-number">5</div>
+						<div class="step-title">Alert dibuat</div>
+						<p>
+							Setelah rule sesuai, Wazuh menghasilkan alert yang menandakan
+							adanya percobaan login yang gagal. Alert tersebut kemudian diberi
+							informasi tambahan berupa klasifikasi MITRE ATT&CK sesuai mapping
+							yang dimiliki Wazuh.
+						</p>
+					</li>
+					<li class="step-item">
+						<div class="step-number">6</div>
+						<div class="step-title">Alert ditampilkan pada Dashboard</div>
+						<p>
+							Alert dapat dilihat melalui Dashboard Wazuh sehingga administrator
+							atau analis SOC dapat melakukan monitoring terhadap aktivitas
+							login yang gagal.
+						</p>
+					</li>
+				</ul>
+			</section>
+
+			<!-- --- BARU: SECTION IMG (BUKTI PENGUJIAN) --- -->
+			<section>
+				<h2>
+					<i class="fa-solid fa-images"></i> Bukti Pengujian (Screenshots)
+				</h2>
+				<p>
+					Berikut adalah bukti tangkapan layar aktivitas log keamanan lokal dan
+					visualisasi peringatan pada sistem SIEM Wazuh:
+				</p>
+				<div class="image-gallery">
+					<!-- Gambar 1: Windows Event Viewer -->
+					<div class="image-card">
+						<div class="image-wrapper">
+							<img
+								src="../images/login-detection.jpg"
+								alt="Windows Security Log Event ID 4625" />
+						</div>
+						<div class="image-caption"></div>
+					</div>
+					<!-- Gambar 2: Wazuh Dashboard Alert -->
+					<div class="image-card">
+						<div class="image-wrapper">
+							<img
+								src="../images/login-detection2.jpg"
+								alt="Wazuh Dashboard Logon Failure Alert" />
+						</div>
+						<div class="image-caption"></div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Bagian: Hasil Pengujian -->
+			<section>
+				<h2>
+					<i class="fa-solid fa-square-poll-horizontal"></i> Hasil Pengujian
+				</h2>
+				<p>
+					Berdasarkan hasil pengujian, Wazuh berhasil mendeteksi percobaan login
+					yang gagal pada sistem operasi Windows.
+				</p>
+				<div class="table-responsive">
+					<table>
+						<thead>
+							<tr>
+								<th>Parameter</th>
+								<th>Hasil</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><strong>Event</strong></td>
+								<td>Failed Login</td>
+							</tr>
+							<tr>
+								<td><strong>Event ID</strong></td>
+								<td>4625</td>
+							</tr>
+							<tr>
+								<td><strong>Rule ID</strong></td>
+								<td>60122</td>
+							</tr>
+							<tr>
+								<td><strong>Rule Level</strong></td>
+								<td>5</td>
+							</tr>
+							<tr>
+								<td><strong>Status</strong></td>
+								<td><span class="badge-status">Berhasil Terdeteksi</span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<!-- Bagian: Analisis -->
+			<section>
+				<h2><i class="fa-solid fa-magnifying-glass-chart"></i> Analisis</h2>
+				<p>
+					Hasil pengujian menunjukkan bahwa Wazuh dapat membaca Windows Security
+					Event Log dan menghasilkan alert ketika terjadi percobaan login yang
+					gagal.
+				</p>
+				<div class="analysis-box">
+					<p style="margin-bottom: 0">
+						Alert tersebut dapat dimanfaatkan oleh administrator untuk melakukan
+						pemantauan terhadap aktivitas login yang mencurigakan, seperti
+						kesalahan password yang berulang atau indikasi percobaan akses tidak
+						sah (<em>Brute Force Attack</em>).
+					</p>
+				</div>
+			</section>
+
+			<!-- Bagian: Kesimpulan -->
+			<section>
+				<h2><i class="fa-solid fa-clipboard-check"></i> Kesimpulan</h2>
+				<p>
+					Berdasarkan pengujian yang telah dilakukan, sistem Wazuh berhasil
+					mendeteksi aktivitas Failed Login pada komputer Windows. Ketika
+					pengguna memasukkan password yang salah, Windows mencatat kejadian
+					tersebut sebagai Event ID 4625, kemudian Wazuh Agent mengirimkan log
+					ke Wazuh Manager untuk diproses. Setelah log sesuai dengan Rule ID
+					60122, Wazuh menghasilkan alert yang ditampilkan pada Dashboard
+					sehingga administrator dapat mengetahui adanya percobaan login yang
+					gagal dan melakukan pemantauan lebih lanjut.
+				</p>
+			</section>
+
+			<div class="back-btn-container">
+				<a href="../index.html#projects" class="back-btn">
+					<i class="fa-solid fa-arrow-left"></i> Back to Projects
+				</a>
+			</div>
+		</div>
+	</body>
+</html>
