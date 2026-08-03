@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="id">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Struktur & Peran Keamanan Siber - Blue Team & SOC</title>
+		<!-- Font Awesome untuk Ikon -->
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+		<!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+		<link
+			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+			rel="stylesheet" />
+
+		<style>
+			:root {
+				--bg-main: #0b0f19;
+				--bg-card: #151c2c;
+				--bg-card-hover: #1e2738;
+				--border-color: rgba(255, 255, 255, 0.07);
+				--accent-blue: #38bdf8;
+				--accent-blue-bg: rgba(56, 189, 248, 0.1);
+				--accent-purple: #818cf8;
+				--text-primary: #f1f5f9;
+				--text-secondary: #94a3b8;
+				--text-muted: #64748b;
+			}
+
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+
+			body {
+				background-color: var(--bg-main);
+				color: var(--text-primary);
+				font-family: "Plus Jakarta Sans", sans-serif;
+				line-height: 1.7;
+				padding: 2.5rem 1rem;
+				overflow-x: hidden;
+			}
+
+			.container {
+				width: 100%;
+				max-width: 860px;
+				margin: 0 auto;
+			}
+
+			/* --- HEADER DOKUMEN --- */
+			header {
+				margin-bottom: 2.5rem;
+				text-align: left;
+			}
+
+			.doc-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				background-color: var(--accent-blue-bg);
+				color: var(--accent-blue);
+				padding: 0.35rem 0.85rem;
+				border-radius: 20px;
+				font-size: 0.8rem;
+				font-weight: 600;
+				border: 1px solid rgba(56, 189, 248, 0.2);
+				margin-bottom: 1rem;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+			}
+
+			header h1 {
+				font-size: clamp(2rem, 5vw, 2.5rem);
+				font-weight: 700;
+				color: #ffffff;
+				letter-spacing: -0.02em;
+				line-height: 1.25;
+			}
+
+			header h1 span {
+				background: linear-gradient(
+					135deg,
+					var(--accent-blue),
+					var(--accent-purple)
+				);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+			}
+
+			header p {
+				color: var(--text-secondary);
+				font-size: 1.05rem;
+				margin-top: 0.75rem;
+			}
+
+			/* --- CARDS & SECTION --- */
+			section {
+				background-color: var(--bg-card);
+				border: 1px solid var(--border-color);
+				border-radius: 16px;
+				padding: 2rem;
+				margin-bottom: 1.5rem;
+				box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+				transition: border-color 0.3s ease;
+			}
+
+			section:hover {
+				border-color: rgba(255, 255, 255, 0.12);
+			}
+
+			section h2 {
+				font-size: 1.25rem;
+				color: #ffffff;
+				margin-bottom: 1.25rem;
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				font-weight: 600;
+			}
+
+			section h2 i {
+				color: var(--accent-blue);
+				background: var(--accent-blue-bg);
+				padding: 10px;
+				border-radius: 10px;
+				font-size: 1rem;
+			}
+
+			p {
+				color: var(--text-secondary);
+				font-size: 0.95rem;
+				margin-bottom: 1rem;
+			}
+
+			p strong,
+			li strong {
+				color: #ffffff;
+				font-weight: 600;
+			}
+
+			/* --- DAFTAR (LIST) --- */
+			.custom-list {
+				list-style: none;
+				padding-left: 0;
+				margin-bottom: 1rem;
+				display: flex;
+				flex-direction: column;
+				gap: 0.75rem;
+			}
+
+			.custom-list li {
+				position: relative;
+				padding-left: 1.75rem;
+				color: var(--text-secondary);
+				font-size: 0.95rem;
+			}
+
+			.custom-list li::before {
+				content: "";
+				position: absolute;
+				left: 0;
+				top: 0.6rem;
+				width: 6px;
+				height: 6px;
+				border-radius: 50%;
+				background-color: var(--accent-blue);
+				box-shadow: 0 0 8px var(--accent-blue);
+			}
+
+			/* --- GRID SUB-ROLES --- */
+			.sub-roles {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+				gap: 1rem;
+				margin-top: 1.25rem;
+			}
+
+			.role-card {
+				background-color: rgba(255, 255, 255, 0.02);
+				border: 1px solid var(--border-color);
+				border-radius: 12px;
+				padding: 1.25rem;
+				transition:
+					transform 0.2s ease,
+					background-color 0.2s ease;
+			}
+
+			.role-card:hover {
+				background-color: var(--bg-card-hover);
+				transform: translateY(-2px);
+			}
+
+			.role-card h4 {
+				color: var(--accent-blue);
+				font-size: 0.95rem;
+				margin-bottom: 0.5rem;
+				font-weight: 600;
+			}
+
+			.role-card p {
+				font-size: 0.875rem;
+				margin-bottom: 0;
+				color: var(--text-secondary);
+			}
+
+			/* --- STEP LIST --- */
+			.step-list {
+				list-style: none;
+				display: flex;
+				flex-direction: column;
+				gap: 1rem;
+				margin-top: 1.25rem;
+			}
+
+			.step-item {
+				display: flex;
+				gap: 1rem;
+				align-items: flex-start;
+				background-color: rgba(255, 255, 255, 0.02);
+				padding: 1rem 1.25rem;
+				border-radius: 12px;
+				border: 1px solid var(--border-color);
+			}
+
+			.step-number {
+				flex-shrink: 0;
+				width: 30px;
+				height: 30px;
+				background: var(--accent-blue-bg);
+				color: var(--accent-blue);
+				border-radius: 8px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 0.85rem;
+				font-weight: 700;
+				font-family: "JetBrains Mono", monospace;
+				border: 1px solid rgba(56, 189, 248, 0.2);
+			}
+
+			.step-text {
+				font-size: 0.925rem;
+				color: var(--text-secondary);
+			}
+
+			/* --- TABEL MODEREN --- */
+			.table-responsive {
+				width: 100%;
+				overflow-x: auto;
+				border-radius: 12px;
+				border: 1px solid var(--border-color);
+				margin-top: 1rem;
+			}
+
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				text-align: left;
+				font-size: 0.9rem;
+			}
+
+			th,
+			td {
+				padding: 1rem 1.25rem;
+			}
+
+			th {
+				background-color: rgba(255, 255, 255, 0.03);
+				color: #ffffff;
+				font-weight: 600;
+				border-bottom: 1px solid var(--border-color);
+			}
+
+			td {
+				border-bottom: 1px solid var(--border-color);
+				color: var(--text-secondary);
+			}
+
+			tr:last-child td {
+				border-bottom: none;
+			}
+
+			tr:hover td {
+				background-color: rgba(255, 255, 255, 0.015);
+			}
+
+			.badge-code {
+				background-color: var(--accent-blue-bg);
+				color: var(--accent-blue);
+				padding: 0.25rem 0.6rem;
+				border-radius: 6px;
+				font-family: "JetBrains Mono", monospace;
+				font-size: 0.825rem;
+				border: 1px solid rgba(56, 189, 248, 0.2);
+			}
+
+			/* --- NAVIGASI / TOMBOL --- */
+			.back-btn-container {
+				margin-top: 2rem;
+				margin-bottom: 1rem;
+			}
+
+			.back-btn {
+				display: inline-flex;
+				align-items: center;
+				gap: 10px;
+				background-color: var(--bg-card);
+				color: var(--text-primary);
+				text-decoration: none;
+				font-size: 0.9rem;
+				font-weight: 600;
+				padding: 0.8rem 1.5rem;
+				border-radius: 12px;
+				border: 1px solid var(--border-color);
+				transition: all 0.2s ease;
+			}
+
+			.back-btn:hover {
+				background-color: var(--bg-card-hover);
+				color: var(--accent-blue);
+				border-color: rgba(56, 189, 248, 0.3);
+				transform: translateX(-4px);
+			}
+
+			/* --- RESPONSIVE --- */
+			@media (max-width: 640px) {
+				body {
+					padding: 1.5rem 0.75rem;
+				}
+				section {
+					padding: 1.5rem 1.25rem;
+				}
+				.sub-roles {
+					grid-template-columns: 1fr;
+				}
+				th,
+				td {
+					padding: 0.75rem 1rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<!-- Header Utama -->
+			<header>
+				<div class="doc-badge">
+					<i class="fa-solid fa-shield-cat"></i> Dokumentasi Pembelajaran
+				</div>
+				<h1>Struktur & Peran <span>Keamanan Siber</span></h1>
+				<p>Panduan hirarki, divisi pertahanan, dan alur SOC analis.</p>
+			</header>
+
+			<!-- Bagian 1: Hirarki Keamanan -->
+			<section id="hierarchy">
+				<h2>
+					<i class="fa-solid fa-sitemap"></i>
+					Hirarki Keamanan (Security Hierarchy)
+				</h2>
+				<p>
+					Prioritas keamanan siber berbeda untuk setiap perusahaan. Bagi firma
+					hukum, fokus utamanya adalah kerahasiaan dokumen hukum. Bagi pabrik,
+					ketersediaan lini produksi. Bagi rumah sakit, keselamatan pasien.
+				</p>
+				<p>
+					Eksekutif puncak seperti CEO biasanya berfokus pada tujuan bisnis
+					utama dan tidak mengelola aspek teknis. Oleh sebab itu, mereka
+					merekrut seorang
+					<strong>Chief Information Security Officer (CISO)</strong> untuk
+					merancang strategi serta mengawasi departemen keamanan secara
+					menyeluruh.
+				</p>
+			</section>
+
+			<!-- Bagian 2: Departemen Keamanan -->
+			<section id="departments">
+				<h2>
+					<i class="fa-solid fa-building"></i>
+					Departemen Keamanan Utama
+				</h2>
+				<p>
+					Pada perusahaan kecil, tim IT sering kali merangkap tugas keamanan.
+					Namun pada organisasi besar, CISO memimpin beberapa divisi khusus:
+				</p>
+				<div class="sub-roles">
+					<div class="role-card">
+						<h4>Red Team</h4>
+						<p>
+							Pakar keamanan ofensif, <em>pentester</em>, atau
+							<em>ethical hacker</em> yang aktif mencari celah sistem.
+						</p>
+					</div>
+					<div class="role-card">
+						<h4>GRC Team</h4>
+						<p>
+							Spesialis penyusun kebijakan serta pemasti kepatuhan regulasi
+							(seperti PCI DSS).
+						</p>
+					</div>
+					<div class="role-card">
+						<h4>Blue Team</h4>
+						<p>
+							Tim pertahanan defensif yang memantau, mendeteksi, dan merespons
+							ancaman siber.
+						</p>
+					</div>
+				</div>
+			</section>
+
+			<!-- Bagian 3: Tim Defensif (Blue Team) -->
+			<section id="blue-team">
+				<h2>
+					<i class="fa-solid fa-shield-halved"></i>
+					Struktur Blue Team
+				</h2>
+				<p>
+					Blue Team berfokus pada keamanan defensif melalui pemantauan dan
+					respons cepat. Anggotanya bervariasi dari 3 hingga 50 staf depending
+					skala perusahaan.
+				</p>
+
+				<h3
+					style="
+						color: #ffffff;
+						font-size: 1.05rem;
+						margin: 1.5rem 0 0.75rem 0;
+						font-weight: 600;
+					">
+					1. Security Operations Center (SOC)
+				</h3>
+				<p>
+					Pusat garis pertahanan pertama yang beroperasi memantau alert dan
+					menangani serangan:
+				</p>
+				<ul class="custom-list">
+					<li>
+						<strong>SOC L1 Analyst:</strong> Anggota junior yang melakukan
+						pemilahan awal (<em>triage</em>) alert.
+					</li>
+					<li>
+						<strong>SOC L2 Analyst:</strong> Analis senior yang menginvestigasi
+						serangan tingkat lanjut.
+					</li>
+					<li>
+						<strong>SOC Engineer:</strong> Pakar konfigurasi dan pemeliharaan
+						alat seperti EDR dan SIEM.
+					</li>
+					<li>
+						<strong>SOC Manager:</strong> Penanggung jawab operasional
+						keseluruhan tim SOC.
+					</li>
+				</ul>
+
+				<h3
+					style="
+						color: #ffffff;
+						font-size: 1.05rem;
+						margin: 1.5rem 0 0.75rem 0;
+						font-weight: 600;
+					">
+					2. Cyber Incident Response Team (CIRT / CSIRT)
+				</h3>
+				<p>
+					Tim tanggap darurat yang dipanggil saat insiden kritis melampaui
+					kapasitas SOC normal. Contohnya meliputi tim nasional seperti
+					<strong>JPCERT</strong>, tim privat seperti <strong>Mandiant</strong>,
+					hingga <strong>AWS CIRT</strong>.
+				</p>
+
+				<h3
+					style="
+						color: #ffffff;
+						font-size: 1.05rem;
+						margin: 1.5rem 0 0.75rem 0;
+						font-weight: 600;
+					">
+					3. Peran Defensif Khusus
+				</h3>
+				<div class="sub-roles">
+					<div class="role-card">
+						<h4>Digital Forensics</h4>
+						<p>
+							Mengidentifikasi dan menganalisis jejak digital pada disk serta
+							memori.
+						</p>
+					</div>
+					<div class="role-card">
+						<h4>Threat Intelligence</h4>
+						<p>
+							Mengumpulkan data analisis mengenai kelompok dan teknik penyerang
+							baru.
+						</p>
+					</div>
+					<div class="role-card">
+						<h4>AppSec Engineer</h4>
+						<p>
+							Memastikan keamanan aplikasi sepanjang siklus pengembangannya
+							(SDLC).
+						</p>
+					</div>
+					<div class="role-card">
+						<h4>AI Researcher</h4>
+						<p>Riset ancaman berbasis AI serta metode perlindungannya.</p>
+					</div>
+				</div>
+			</section>
+
+			<!-- Bagian 4: Jalur Karir -->
+			<section id="soc-path">
+				<h2>
+					<i class="fa-solid fa-user-graduate"></i>
+					Jalur Karir & Pengembangan
+				</h2>
+				<p>
+					Memulai karir sebagai <strong>SOC L1 Analyst</strong> adalah titik
+					awal terbaik untuk membangun pemahaman lanskap siber secara nyata.
+				</p>
+
+				<div class="step-list">
+					<div class="step-item">
+						<div class="step-number">01</div>
+						<div class="step-text">
+							Kuasai fondasi utama SOC dan latih praktik analisis. Dasar IT &
+							Red Teaming sangat membantu.
+						</div>
+					</div>
+					<div class="step-item">
+						<div class="step-number">02</div>
+						<div class="step-text">
+							Aktif ikuti kompetisi CTF, pantau tren berita siber, dan
+							pertimbangkan sertifikasi SAL1.
+						</div>
+					</div>
+					<div class="step-item">
+						<div class="step-number">03</div>
+						<div class="step-text">
+							Pahami perbedaan pola kerja Internal SOC vs MSSP saat melamar
+							pekerjaan.
+						</div>
+					</div>
+					<div class="step-item">
+						<div class="step-number">04</div>
+						<div class="step-text">
+							Setelah mendapatkan pengalaman lapangan, kembangkan karir menuju
+							SOC L2 Analyst, CIRT, atau jalur spesialis lain.
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Bagian 5: Internal SOC vs MSSP -->
+			<section id="soc-vs-mssp">
+				<h2>
+					<i class="fa-solid fa-sliders"></i>
+					Internal SOC vs. MSSP
+				</h2>
+				<p>
+					<strong>MSSP (Managed Security Services Provider)</strong> adalah
+					pihak ketiga yang menyediakan layanan operasional SOC untuk banyak
+					klien eksternal.
+				</p>
+				<div class="table-responsive">
+					<table>
+						<thead>
+							<tr>
+								<th>Kategori</th>
+								<th>Internal SOC</th>
+								<th>MSSP</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><strong>Fokus Operasi</strong></td>
+								<td>Melindungi 1 infrastruktur perusahaan sendiri.</td>
+								<td>Mengelola keamanan dari banyak klien sekaligus.</td>
+							</tr>
+							<tr>
+								<td><strong>Lingkungan Kerja</strong></td>
+								<td>Lebih stabil & analitis pada sistem spesifik.</td>
+								<td>
+									Ritme cepat (high-pressure), menangani variasi serangan
+									tinggi.
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<!-- Bagian 6: Kunci Jawaban (Q&A) -->
+			<section id="qa">
+				<h2>
+					<i class="fa-solid fa-circle-check"></i>
+					Ringkasan Pertanyaan & Kunci Jawaban
+				</h2>
+				<div class="table-responsive">
+					<table>
+						<thead>
+							<tr>
+								<th>Pertanyaan Modul</th>
+								<th>Jawaban</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Siapa penanggung jawab utama keputusan keamanan siber?</td>
+								<td><strong>CISO</strong></td>
+							</tr>
+							<tr>
+								<td>Kategori peran untuk SOC Analyst dan Engineer?</td>
+								<td><strong>Blue Team</strong></td>
+							</tr>
+							<tr>
+								<td>Fokus utama Blue Team (Defensive / Offensive)?</td>
+								<td><strong>Defensive</strong></td>
+							</tr>
+							<tr>
+								<td>Tim penanganan insiden darurat/aktif?</td>
+								<td><strong>CIRT</strong></td>
+							</tr>
+							<tr>
+								<td>Perusahaan penyedia layanan SOC eksternal?</td>
+								<td><strong>MSSP</strong></td>
+							</tr>
+							<tr>
+								<td>Peran kelanjutan alami dari SOC L1 Analyst?</td>
+								<td><strong>SOC L2 Analyst</strong></td>
+							</tr>
+							<tr>
+								<td>Kode Flag Tantangan Akhir (Final Challenge)</td>
+								<td>
+									<span class="badge-code">THM{trysecureme_is_secured!}</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<!-- Tombol Navigasi Kembali -->
+			<div class="back-btn-container">
+				<a href="../index.html#projects" class="back-btn">
+					<i class="fa-solid fa-arrow-left"></i> Kembali ke Proyek
+				</a>
+			</div>
+		</div>
+	</body>
+</html>
