@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DocuForge — Product Blueprint</title>
+  <!-- Font Awesome untuk icon panah -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --bg-card: #111827;
+      --bg-card-hover: #1a2332;
+      --border: #1e293b;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --cyan: #22d3ee;
+      --cyan-dim: #0891b2;
+      --teal: #2dd4bf;
+      --purple: #a78bfa;
+      --pink: #f472b6;
+      --red: #f87171;
+      --green: #34d399;
+      --orange: #fb923c;
+      --blue: #60a5fa;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      background-image:
+        linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ===== Back Button ===== */
+    .back-btn-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem 0;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(17, 24, 39, 0.6);
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      color: var(--cyan);
+      border-color: rgba(34, 211, 238, 0.4);
+      background: rgba(34, 211, 238, 0.08);
+    }
+
+    .back-btn i {
+      font-size: 0.85rem;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 14, 23, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .logo {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .logo-main {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: 0.04em;
+      color: #fff;
+    }
+
+    .logo-main span {
+      color: var(--cyan);
+    }
+
+    .logo-sub {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--cyan);
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 3.5rem 1.5rem 3.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(34, 211, 238, 0.12);
+      border: 1px solid rgba(34, 211, 238, 0.35);
+      color: var(--cyan);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+    .hero h1 {
+      font-size: clamp(1.9rem, 5vw, 3rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 .gradient {
+      background: linear-gradient(90deg, var(--cyan), var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 640px;
+      margin: 1.2rem auto 2rem;
+    }
+
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.7rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+
+    .pill-pwn { background: rgba(248, 113, 113, 0.15); color: var(--red); border-color: rgba(248, 113, 113, 0.3); }
+    .pill-infra { background: rgba(96, 165, 250, 0.15); color: var(--blue); border-color: rgba(96, 165, 250, 0.3); }
+    .pill-crypto { background: rgba(167, 139, 250, 0.15); color: var(--purple); border-color: rgba(167, 139, 250, 0.3); }
+    .pill-rev { background: rgba(52, 211, 153, 0.15); color: var(--green); border-color: rgba(52, 211, 153, 0.3); }
+
+    /* Container */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    section {
+      margin-bottom: 3.5rem;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(34, 211, 238, 0.1);
+      border: 1px solid rgba(34, 211, 238, 0.25);
+      color: var(--cyan);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+      letter-spacing: 0.04em;
+    }
+
+    .section-label::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      background: var(--cyan);
+      border-radius: 50%;
+    }
+
+    h2 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 1.4rem 0 0.6rem;
+      color: var(--cyan);
+    }
+
+    p, li {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    ul, ol {
+      padding-left: 1.3rem;
+      margin: 0.5rem 0 1rem;
+    }
+
+    li {
+      margin-bottom: 0.35rem;
+    }
+
+    strong {
+      color: var(--text);
+    }
+
+    code {
+      background: rgba(34, 211, 238, 0.1);
+      color: var(--cyan);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.88em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    pre {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.1rem 1.3rem;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin: 1rem 0;
+      color: var(--text-muted);
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    /* Cards grid */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-top: 1.2rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem 1.3rem;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(34, 211, 238, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .card-num {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 0.35rem;
+    }
+
+    .card h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .card p {
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    .card .tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-top: 0.6rem;
+    }
+
+    .tag-ok { background: rgba(52, 211, 153, 0.15); color: var(--green); }
+    .tag-wip { background: rgba(251, 146, 60, 0.15); color: var(--orange); }
+    .tag-next { background: rgba(34, 211, 238, 0.15); color: var(--cyan); }
+
+    /* Flow box */
+    .flow {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.4rem;
+      margin: 1.2rem 0;
+      font-family: 'Consolas', monospace;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.55;
+    }
+
+    .flow .hl {
+      color: var(--cyan);
+    }
+
+    /* Architecture diagram style */
+    .arch-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.2rem 0;
+      text-align: center;
+    }
+
+    .arch-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.8rem;
+      margin: 0.6rem 0;
+    }
+
+    .arch-item {
+      background: rgba(34, 211, 238, 0.08);
+      border: 1px solid rgba(34, 211, 238, 0.25);
+      color: var(--cyan);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .arch-arrow {
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      align-self: center;
+    }
+
+    /* Priority list */
+    .priority {
+      list-style: none;
+      padding: 0;
+    }
+
+    .priority li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .priority li:last-child {
+      border-bottom: none;
+    }
+
+    .status {
+      flex-shrink: 0;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      min-width: 2.2rem;
+      text-align: center;
+    }
+
+    .status-done { background: rgba(52, 211, 153, 0.2); color: var(--green); }
+    .status-hot { background: rgba(248, 113, 113, 0.2); color: var(--red); }
+    .status-todo { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    footer span {
+      color: var(--cyan);
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+      }
+      nav {
+        gap: 1rem;
+      }
+      .hero {
+        padding: 2.5rem 1rem 2.5rem;
+      }
+      .back-btn-container {
+        padding: 1rem 1rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-main">DOCU<span>FORGE</span></div>
+      <div class="logo-sub">Product Blueprint v0.2</div>
+    </div>
+    <nav>
+      <a href="#overview">Overview</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#dfir">DFIR</a>
+      <a href="#features">Features</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#priority">Prioritas</a>
+    </nav>
+  </header>
+
+  <!-- Back Button -->
+  <div class="back-btn-container">
+    <a href="../index.html#projects" class="back-btn">
+      <i class="fa-solid fa-arrow-left"></i> Back to Projects
+    </a>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="badge">DOKUMENTASI TEKNIS</div>
+    <h1>UNIVERSAL AUTOMATED<br><span class="gradient">DOCUMENTATION ENGINE</span></h1>
+    <p>
+      DocuForge menganalisis project secara otomatis, mengubah struktur menjadi intermediate representation framework-agnostic, menyelesaikan hubungan antar komponen, dan menghasilkan dokumentasi teknis yang human-friendly.
+    </p>
+    <div class="pills">
+      <span class="pill pill-pwn">Laravel — Plugin</span>
+      <span class="pill pill-infra">Generic Scanner</span>
+      <span class="pill pill-crypto">TypeScript AST</span>
+      <span class="pill pill-rev">Monorepo Ready</span>
+    </div>
+  </section>
+
+  <div class="container">
+
+    <!-- 1. Overview -->
+    <section id="overview">
+      <div class="section-label">01 — VISION</div>
+      <h2>Product Vision</h2>
+      <p>
+        <strong>DocuForge</strong> bukan sekadar Laravel documentation generator. Laravel hanyalah salah satu plugin.
+        Target akhirnya adalah engine universal yang mendukung berbagai framework dan bahasa:
+      </p>
+      <div class="cards">
+        <div class="card"><h4>Web Frameworks</h4><p>Laravel, Express, NestJS, FastAPI, Django, Spring Boot</p></div>
+        <div class="card"><h4>Languages</h4><p>TypeScript, JavaScript, Python, PHP, Java, Go, Rust</p></div>
+        <div class="card"><h4>Output</h4><p>Markdown, HTML, VS Code, OpenAPI, Mermaid, Static Site</p></div>
+      </div>
+
+      <h3>Masalah yang Diselesaikan</h3>
+      <ul>
+        <li>Dokumentasi dibuat manual → cepat stale</li>
+        <li>Developer malas memperbarui dokumentasi</li>
+        <li>Sulit memahami project legacy</li>
+        <li>Architecture diagram & API docs harus dipelihara manual</li>
+        <li>Onboarding developer baru memakan waktu lama</li>
+      </ul>
+
+      <h3>Prinsip Inti</h3>
+      <p><strong>Scan once, understand everywhere.</strong></p>
+      <div class="flow">Laravel / Express / FastAPI
+        │
+        ▼
+   <span class="hl">Scanner (Plugin)</span>
+        │
+        ▼
+   <span class="hl">DFIR</span>  ← framework-agnostic
+        │
+        ▼
+   Analyzer + Relationship Engine
+        │
+        ▼
+   Documentation Generator
+        │
+   ┌────┼────┐
+Markdown HTML  VS Code</div>
+    </section>
+
+    <!-- 2. Architecture -->
+    <section id="architecture">
+      <div class="section-label">02 — ARCHITECTURE</div>
+      <h2>High-level Architecture</h2>
+
+      <div class="arch-box">
+        <div class="arch-item">DocuForge CLI</div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-item">Project Detector</div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-row">
+          <div class="arch-item">Laravel Scanner</div>
+          <div class="arch-item">Generic Scanner</div>
+          <div class="arch-item">Future Plugins</div>
+        </div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-item">DFIR</div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-item">Analyzer + Relationship Engine</div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-item">Generator</div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-row">
+          <div class="arch-item">Markdown</div>
+          <div class="arch-item">HTML</div>
+          <div class="arch-item">Future</div>
+        </div>
+      </div>
+
+      <h3>Project Detector</h3>
+      <p>Memilih scanner dengan confidence tertinggi. <strong>Specialized scanner always wins over generic scanner.</strong></p>
+
+      <h3>Plugin Architecture</h3>
+      <pre>interface Scanner {
+  metadata(): PluginMetadata;
+  detect(rootPath: string): Promise&lt;DetectionResult&gt; | DetectionResult;
+  scan(ctx: ScanContext): Promise&lt;DFIRDocument&gt; | DFIRDocument;
+}</pre>
+      <p>Contoh package: <code>@docuforge/plugin-laravel</code>, <code>@docuforge/plugin-generic</code>, <code>@docuforge/plugin-express</code>, dll.</p>
+
+      <h3>Scanner Layers (3 Level)</h3>
+      <div class="cards">
+        <div class="card">
+          <div class="card-num">Level 1</div>
+          <h4>Generic Project Scanner</h4>
+          <p>Metadata, package manager, dependencies, directory structure, source files</p>
+        </div>
+        <div class="card">
+          <div class="card-num">Level 2</div>
+          <h4>Language Analyzer</h4>
+          <p>Classes, interfaces, functions, methods, imports, exports, types, enums, decorators</p>
+        </div>
+        <div class="card">
+          <div class="card-num">Level 3</div>
+          <h4>Framework Scanner</h4>
+          <p>Routes, controllers, models, middleware, services, jobs, events (per framework)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. DFIR -->
+    <section id="dfir">
+      <div class="section-label">03 — DFIR</div>
+      <h2>DocuForge Intermediate Representation</h2>
+      <p>DFIR adalah bahasa universal antara scanner dan generator. Scanner boleh framework-specific, tapi output-nya harus framework-agnostic.</p>
+
+      <h3>Evolusi DFIR</h3>
+      <div class="cards">
+        <div class="card">
+          <div class="card-num">v0.1</div>
+          <h4>Web-oriented</h4>
+          <p>Route, Controller, Service, Model, Database, Dependencies, Relationships</p>
+          <span class="tag tag-ok">Current</span>
+        </div>
+        <div class="card">
+          <div class="card-num">v0.2</div>
+          <h4>Universal Source</h4>
+          <p>File, Module, Class, Interface, Function, Method, Import, Export, Type, Enum</p>
+          <span class="tag tag-next">Next</span>
+        </div>
+        <div class="card">
+          <div class="card-num">v0.3</div>
+          <h4>Architecture</h4>
+          <p>Component, Package, Module, Dependency, Relationship, External System</p>
+        </div>
+        <div class="card">
+          <div class="card-num">v1.0</div>
+          <h4>Stable Model</h4>
+          <p>Universal documentation model yang stabil</p>
+        </div>
+      </div>
+
+      <h3>Relationship Engine</h3>
+      <p>Fitur inti. Contoh resolving:</p>
+      <div class="flow">route:POST:/courses
+  → controller:CourseController
+    → service:CourseService
+      → model:Course
+        → table:courses</div>
+      <p>Dari relationship ini DocuForge dapat menghasilkan architecture graph (Mermaid-ready).</p>
+    </section>
+
+    <!-- 4. Features -->
+    <section id="features">
+      <div class="section-label">04 — FEATURES</div>
+      <h2>Fitur Utama & Roadmap Fitur</h2>
+
+      <div class="cards">
+        <div class="card">
+          <h4>CLI</h4>
+          <p><code>docuforge generate .</code><br>
+          Options: --output, --format, --watch, --verbose</p>
+        </div>
+        <div class="card">
+          <h4>Commands</h4>
+          <p>init · detect · scan · generate · serve · watch · diff · check</p>
+        </div>
+        <div class="card">
+          <h4>Watch Mode</h4>
+          <p>Incremental analysis: hanya file yang berubah di-scan ulang, relationship & docs di-update.</p>
+        </div>
+        <div class="card">
+          <h4>Drift Detection</h4>
+          <p>Membandingkan source vs documentation (missing route, signature mismatch, dll).</p>
+        </div>
+        <div class="card">
+          <h4>Monorepo Support</h4>
+          <p>Workspace, package, internal & external dependency (penting karena DocuForge sendiri monorepo).</p>
+        </div>
+        <div class="card">
+          <h4>Configuration</h4>
+          <p><code>.docuforge.json</code> + <code>.docuforgeignore</code></p>
+        </div>
+        <div class="card">
+          <h4>VS Code Extension</h4>
+          <p>Generate docs, open source location, explain file/function, show architecture.</p>
+        </div>
+        <div class="card">
+          <h4>Web UI (serve)</h4>
+          <p>Dashboard, architecture graph, API explorer, dependency graph, search.</p>
+        </div>
+        <div class="card">
+          <h4>AI Integration</h4>
+          <p>Opt-in. AI membaca DFIR + relationships untuk explain architecture, generate onboarding, summary.</p>
+        </div>
+      </div>
+
+      <h3>Security & Privacy</h3>
+      <p>Default: <strong>local analysis only</strong>. Source code tidak di-upload. AI bersifat opt-in.</p>
+
+      <h3>Performance Target</h3>
+      <ul>
+        <li>Small project → &lt; 2 detik</li>
+        <li>Medium project → &lt; 10 detik</li>
+        <li>Large project → incremental + cache + parallel analysis</li>
+      </ul>
+    </section>
+
+    <!-- 5. Package Architecture -->
+    <section>
+      <div class="section-label">05 — PACKAGE STRUCTURE</div>
+      <h2>Target Final Structure</h2>
+      <pre>docuforge/
+├── packages/
+│   ├── core/          (dfir, plugin, analyzer, relationship)
+│   ├── generator/     (markdown, html, json)
+│   └── cli/
+├── plugins/
+│   ├── generic/
+│   ├── laravel/
+│   ├── node / express /
+│   ├── python / fastapi / django
+│   └── spring /
+├── apps/
+│   └── docs-web/
+└── extensions/
+    └── vscode/</pre>
+    </section>
+
+    <!-- 6. Roadmap -->
+    <section id="roadmap">
+      <div class="section-label">06 — ROADMAP</div>
+      <h2>Development Phases</h2>
+      <div class="cards">
+        <div class="card">
+          <div class="card-num">Phase 0</div>
+          <h4>Foundation</h4>
+          <p>DFIR, Plugin Interface, Registry, CLI, Markdown Generator, Laravel Scanner</p>
+          <span class="tag tag-ok">Done</span>
+        </div>
+        <div class="card">
+          <div class="card-num">Phase 1</div>
+          <h4>Universal MVP</h4>
+          <p>Generic Scanner, Detection, Dependency Scan, TypeScript Analyzer, Monorepo</p>
+          <span class="tag tag-wip">Current</span>
+        </div>
+        <div class="card">
+          <div class="card-num">Phase 2</div>
+          <h4>TypeScript Intelligence</h4>
+          <p>AST Parser → Classes, Functions, Interfaces, Imports/Exports + Relationship Engine</p>
+        </div>
+        <div class="card">
+          <div class="card-num">Phase 3</div>
+          <h4>Framework Expansion</h4>
+          <p>Express, NestJS, FastAPI, Django, Spring Boot</p>
+        </div>
+        <div class="card">
+          <div class="card-num">Phase 4</div>
+          <h4>Documentation Web UI</h4>
+          <p><code>docuforge serve</code> — Dashboard, graphs, explorers</p>
+        </div>
+        <div class="card">
+          <div class="card-num">Phase 5–6</div>
+          <h4>VS Code + AI</h4>
+          <p>Extension + AI Assistant (explain, onboarding, drift detection)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Priority -->
+    <section id="priority">
+      <div class="section-label">07 — PRIORITAS SEKARANG</div>
+      <h2>Urutan Implementasi yang Sehat</h2>
+      <p>Karena Generic Scanner sudah berhasil jalan, jangan loncat ke VS Code atau AI dulu.</p>
+      <ul class="priority">
+        <li><span class="status status-done">✅</span> DFIR v0.1</li>
+        <li><span class="status status-done">✅</span> Plugin Architecture</li>
+        <li><span class="status status-done">✅</span> Laravel Scanner</li>
+        <li><span class="status status-done">✅</span> Generic Scanner + Detection + Dependency Scanner</li>
+        <li><span class="status status-hot">🔥</span> <strong>TypeScript / JavaScript AST Analyzer</strong> ← NEXT</li>
+        <li><span class="status status-todo">□</span> DFIR v0.2 — File / Module / Class / Function</li>
+        <li><span class="status status-todo">□</span> Relationship Engine upgrade</li>
+        <li><span class="status status-todo">□</span> Beautiful Markdown Generator</li>
+        <li><span class="status status-todo">□</span> Monorepo documentation</li>
+        <li><span class="status status-todo">□</span> Express / NestJS</li>
+        <li><span class="status status-todo">□</span> Python / FastAPI / Django</li>
+        <li><span class="status status-todo">□</span> HTML Documentation UI</li>
+        <li><span class="status status-todo">□</span> VS Code Extension</li>
+        <li><span class="status status-todo">□</span> AI Assistant</li>
+      </ul>
+
+      <p style="margin-top: 1.5rem;">
+        Dengan milestone yang baru tercapai, <strong>DocuForge sudah resmi berubah dari “Laravel documentation tool” menjadi “universal documentation engine”</strong> secara arsitektur. Generic fallback adalah fondasi penting untuk itu.
+      </p>
+    </section>
+
+  </div>
+
+  <footer>
+    <span>DocuForge Blueprint v0.2</span>
+  </footer>
+
+</body>
+</html>
