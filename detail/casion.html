@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DocuForge — Blueprint · Virtual Casino Web</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070b12;
+      --bg-soft: #0c121c;
+      --bg-card: #0f1623;
+      --bg-elevated: #141d2c;
+      --border: #1a2436;
+      --border-hover: #2a3a52;
+      --text: #f0f4fa;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent: #2dd4bf;
+      --accent-bright: #5eead4;
+      --accent-dim: rgba(45, 212, 191, 0.12);
+      --accent-border: rgba(45, 212, 191, 0.28);
+      --blue: #38bdf8;
+      --purple: #a78bfa;
+      --green: #4ade80;
+      --red: #f87171;
+      --orange: #fbbf24;
+      --radius: 14px;
+      --radius-sm: 10px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+      --nav-h: 60px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(45, 212, 191, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(45, 212, 191, 0.025) 1px, transparent 1px);
+      background-size: 56px 56px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--blue));
+      width: 0%;
+      z-index: 200;
+      transition: width 0.08s linear;
+    }
+
+    /* NAV */
+    .topnav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(7, 11, 18, 0.82);
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo-main { font-weight: 800; font-size: 1.05rem; letter-spacing: 0.04em; }
+    .logo-main span { color: var(--accent); }
+    .logo-ver {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .nav-links { display: flex; gap: 2px; list-style: none; }
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      padding: 7px 13px;
+      border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+    .nav-links a.active { color: var(--accent); background: var(--accent-dim); }
+
+    .nav-burger {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      z-index: 1;
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 88px 24px 64px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 650;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 7px 16px;
+      border-radius: 999px;
+      margin-bottom: 28px;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.1rem, 5.5vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.12;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 .line2 {
+      display: block;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-desc {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      max-width: 540px;
+      margin: 0 auto 32px;
+      line-height: 1.75;
+    }
+
+    .tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+    .tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+    .tag-red    { background: rgba(248,113,113,0.12); color: #f87171; border-color: rgba(248,113,113,0.25); }
+    .tag-blue   { background: rgba(56,189,248,0.12); color: #38bdf8; border-color: rgba(56,189,248,0.25); }
+    .tag-purple { background: rgba(167,139,250,0.12); color: #a78bfa; border-color: rgba(167,139,250,0.25); }
+    .tag-green  { background: rgba(74,222,128,0.12); color: #4ade80; border-color: rgba(74,222,128,0.25); }
+
+    /* LAYOUT */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 96px;
+    }
+
+    section {
+      margin-bottom: 80px;
+      scroll-margin-top: calc(var(--nav-h) + 24px);
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+
+    .section-label::before {
+      content: '';
+      width: 5px; height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    h2 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 650;
+      margin: 32px 0 12px;
+      color: var(--text);
+    }
+
+    h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 20px 0 8px;
+      color: var(--accent-bright);
+    }
+
+    p { color: var(--text-secondary); margin-bottom: 14px; font-size: 0.95rem; }
+    ul, ol { color: var(--text-secondary); padding-left: 1.35em; margin-bottom: 16px; font-size: 0.95rem; }
+    li { margin-bottom: 5px; }
+    strong { color: var(--text); font-weight: 600; }
+
+    code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--accent-dim);
+      color: var(--accent);
+      padding: 2px 7px;
+      border-radius: 5px;
+    }
+
+    pre {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 18px 20px;
+      overflow-x: auto;
+      margin: 16px 0;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    /* STATS */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      margin: 28px 0;
+    }
+
+    .stat {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 20px 16px;
+      text-align: center;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .stat:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+
+    .stat-num {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--accent), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 500;
+    }
+
+    /* CARDS */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+    .card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow);
+      transform: translateY(-3px);
+    }
+
+    .card-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      margin-bottom: 14px;
+    }
+
+    .card h4 { margin: 0 0 6px; color: var(--text); font-size: 1rem; }
+    .card p { font-size: 0.875rem; margin: 0; line-height: 1.6; }
+
+    /* TABLE */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    th {
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      font-weight: 600;
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(45, 212, 191, 0.03); }
+
+    /* FLOW */
+    .flow {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin: 20px 0;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .flow .hl { color: var(--accent); font-weight: 600; }
+
+    /* NOTE / WARN */
+    .note, .warn {
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 14px 18px;
+      margin: 20px 0;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .note { background: var(--accent-dim); border-left: 3px solid var(--accent); }
+    .note strong { color: var(--accent); }
+    .warn { background: rgba(251, 191, 36, 0.08); border-left: 3px solid var(--orange); }
+    .warn strong { color: var(--orange); }
+
+    /* CHECKLIST */
+    .checklist { list-style: none; padding: 0; margin: 16px 0; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    .checklist li:last-child { border-bottom: none; }
+
+    .ck, .cx {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+    .ck { background: rgba(74, 222, 128, 0.12); color: var(--green); }
+    .cx { background: rgba(248, 113, 113, 0.12); color: var(--red); }
+
+    /* ROADMAP */
+    .roadmap { position: relative; padding-left: 32px; margin: 28px 0; }
+    .roadmap::before {
+      content: '';
+      position: absolute;
+      left: 9px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent), var(--border));
+      border-radius: 1px;
+    }
+
+    .phase {
+      position: relative;
+      margin-bottom: 12px;
+      padding: 14px 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: border-color 0.2s;
+    }
+    .phase:hover { border-color: var(--border-hover); }
+    .phase::before {
+      content: '';
+      position: absolute;
+      left: -27px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2.5px solid var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+    .phase-num {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .phase-title {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 0.92rem;
+      margin-top: 2px;
+    }
+
+    /* FOOTER */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 36px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+    footer p + p { margin-top: 6px; }
+    footer strong { color: var(--text-secondary); }
+
+    /* MOBILE */
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 150;
+      background: rgba(7, 11, 18, 0.96);
+      backdrop-filter: blur(16px);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .mobile-overlay.open { display: flex; }
+    .mobile-overlay a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1.15rem;
+      font-weight: 500;
+      padding: 12px 28px;
+      border-radius: 10px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .mobile-overlay a:hover { color: var(--accent); background: var(--accent-dim); }
+    .mobile-close {
+      position: absolute;
+      top: 18px; right: 22px;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 860px) {
+      .nav-links { display: none; }
+      .nav-burger { display: flex; }
+      .hero { padding: 56px 20px 48px; }
+      .hero h1 { font-size: 1.9rem; }
+      .stats { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .card-grid { grid-template-columns: 1fr; }
+    }
+
+
+        /* ===== Back Button ===== */
+    .back-btn-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem 0;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(17, 24, 39, 0.6);
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      color: var(--cyan);
+      border-color: rgba(34, 211, 238, 0.4);
+      background: rgba(34, 211, 238, 0.08);
+    }
+
+    .back-btn i {
+      font-size: 0.85rem;
+    }
+
+.video-container {
+    width: min(80%, 800px);
+    margin: 40px auto;
+}
+
+.video-container video {
+    width: 100%;
+    display: block;
+    border-radius: 10px;
+}
+  </style>
+</head>
+<body>
+
+  <div class="progress" id="progress"></div>
+
+  <nav class="topnav">
+    <a href="#" class="logo">
+      <span class="logo-main">DOCU<span>FORGE</span></span>
+      <span class="logo-ver">Blueprint v1.0</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#overview" class="active">Overview</a></li>
+      <li><a href="#konsep">Konsep</a></li>
+      <li><a href="#role">Role</a></li>
+      <li><a href="#wallet">Wallet</a></li>
+      <li><a href="#slot">Slot</a></li>
+      <li><a href="#database">Database</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+    </ul>
+    <button class="nav-burger" onclick="toggleNav()" aria-label="Menu">☰</button>
+  </nav>
+
+      <!-- Back Button -->
+  <div class="back-btn-container">
+    <a href="../index.html#projects" class="back-btn">
+      <i class="fa-solid fa-arrow-left"></i> Back to Projects
+    </a>
+  </div>
+
+  <div class="mobile-overlay" id="mobileNav">
+    <button class="mobile-close" onclick="toggleNav()">✕</button>
+    <a href="#overview" onclick="toggleNav()">Overview</a>
+    <a href="#konsep" onclick="toggleNav()">Konsep</a>
+    <a href="#role" onclick="toggleNav()">Role</a>
+    <a href="#wallet" onclick="toggleNav()">Wallet</a>
+    <a href="#slot" onclick="toggleNav()">Slot Engine</a>
+    <a href="#database" onclick="toggleNav()">Database</a>
+    <a href="#architecture" onclick="toggleNav()">Architecture</a>
+    <a href="#roadmap" onclick="toggleNav()">Roadmap</a>
+  </div>
+
+  <header class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Dokumentasi Teknis
+    </div>
+    <h1>
+      Blueprint Project
+      <span class="line2">Virtual Casino Web</span>
+    </h1>
+    <p class="hero-desc">
+      Platform virtual casino berbasis web. User bermain dengan Virtual Coin;
+      admin mengontrol mesin, probabilitas, dan payout. Semua hasil ditentukan server-side RNG.
+    </p>
+    <div class="tags">
+      <span class="tag tag-red">Laravel 12</span>
+      <span class="tag tag-blue">Blade · CSS · JS</span>
+      <span class="tag tag-purple">MySQL</span>
+      <span class="tag tag-green">MVP 1.0</span>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- 01 OVERVIEW -->
+    <section id="overview">
+      <div class="section-label">01 — Overview</div>
+      <h2>Project Overview</h2>
+      <p>
+        Platform <strong>virtual casino game</strong> berbasis web. User punya saldo virtual untuk bermain.
+        Saldo tidak bisa ditambah sendiri — harus lewat request top-up yang disetujui admin.
+      </p>
+      <div class="stats">
+        <div class="stat"><div class="stat-num">2</div><div class="stat-label">Roles</div></div>
+        <div class="stat"><div class="stat-num">1</div><div class="stat-label">Game (Slot)</div></div>
+        <div class="stat"><div class="stat-num">10</div><div class="stat-label">DB Tables</div></div>
+        <div class="stat"><div class="stat-num">56</div><div class="stat-label">Routes</div></div>
+        <div class="stat"><div class="stat-num">23</div><div class="stat-label">Controllers</div></div>
+        <div class="stat"><div class="stat-num">9</div><div class="stat-label">Models</div></div>
+      </div>
+      <div class="note">
+        <strong>Batasan MVP:</strong> Tidak ada uang asli — no deposit, withdrawal, payment gateway, crypto, transfer antar-user, atau betting antar-user. Saldo hanya <strong>Virtual Coin</strong>.
+      </div>
+    </section>
+
+    <!-- 02 KONSEP -->
+    <section id="konsep">
+      <div class="section-label">02 — Konsep Utama</div>
+      <h2>Alur Sistem</h2>
+      <div class="flow">USER
+│
+├── Register / Login
+├── Melihat saldo
+├── Request Top Up
+│
+▼
+<span class="hl">ADMIN</span>
+│
+├── Review Request
+├── Approve  →  Saldo bertambah
+└── Reject   →  Status rejected
+│
+▼
+USER MEMAINKAN SLOT
+│
+├── Bet → Spin → Menang / Kalah
+│
+▼
+TRANSACTION + GAME HISTORY</div>
+      <h3>Inti Desain</h3>
+      <ul>
+        <li>Admin mengontrol <strong>konfigurasi mesin global</strong> (probabilitas &amp; payout)</li>
+        <li>User hanya bermain dengan <strong>saldo virtual</strong></li>
+        <li>Hasil spin ditentukan <strong>server-side RNG</strong></li>
+        <li>Setiap perubahan saldo &amp; permainan tercatat di <strong>transaction / history</strong></li>
+      </ul>
+    </section>
+
+    <!-- 03 ROLE -->
+    <section id="role">
+      <div class="section-label">03 — Role Sistem</div>
+      <h2>User &amp; Admin</h2>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon" style="background:rgba(56,189,248,0.12);color:#38bdf8">👤</div>
+          <h4>User</h4>
+          <p>Dashboard, Wallet, Request Top Up, Slot Machine, Game History, Transaction History. Tidak bisa ubah saldo, payout, atau konfigurasi mesin.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background:rgba(167,139,250,0.12);color:#a78bfa">🛡️</div>
+          <h4>Admin</h4>
+          <p>Overview, User Management, Top Up Approval, Machine Config, Game History, Transaction History, Statistics, System Settings.</p>
+        </div>
+      </div>
+      <h3>Authentication</h3>
+      <p>Register → Create User → Create Wallet (balance = 0). Role disimpan di <code>users.role</code> (<code>user</code> / <code>admin</code>).</p>
+    </section>
+
+    <!-- 04 WALLET -->
+    <section id="wallet">
+      <div class="section-label">04 — Wallet &amp; Top Up</div>
+      <h2>Wallet System</h2>
+      <p>Setiap user punya satu wallet. Saldo hanya berubah lewat operasi server yang valid.</p>
+      <h4>Jenis Perubahan Saldo</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Type</th><th>Contoh</th><th>Keterangan</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>TOPUP</code></td><td>+100.000</td><td>Admin approve top-up</td></tr>
+            <tr><td><code>BET</code></td><td>−10.000</td><td>User menempatkan taruhan</td></tr>
+            <tr><td><code>WIN</code></td><td>+50.000</td><td>Payout kemenangan</td></tr>
+            <tr><td><code>REFUND</code></td><td>+10.000</td><td>Pengembalian (jika perlu)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Top Up Flow</h3>
+      <div class="flow">USER → Request Top Up  (status: PENDING)
+│
+▼
+ADMIN → Review
+│
+├── APPROVE → Wallet +amount · Transaction TOPUP · status=approved
+└── REJECT  → status=rejected · saldo tidak berubah</div>
+      <div class="note">
+        <strong>Keamanan saldo:</strong> Semua operasi memakai DB transaction — BEGIN → Lock Wallet → Check → Deduct/Add → Create Transaction → Create Game Session → COMMIT. Error → ROLLBACK.
+      </div>
+    </section>
+
+    <!-- 05 SLOT -->
+    <section id="slot">
+      <div class="section-label">05 — Slot Machine</div>
+      <h2>Classic Slot Engine</h2>
+      <p>Game pertama: <strong>Classic Slot Machine</strong> 3 reel. Simbol memakai asset PNG/WebP (bukan emoji).</p>
+      <h3>Simbol &amp; Payout Default</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Combination</th><th>Multiplier</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>3 × Cherry</td><td>5×</td></tr>
+            <tr><td>3 × Lemon</td><td>5×</td></tr>
+            <tr><td>3 × Bell</td><td>10×</td></tr>
+            <tr><td>3 × Diamond</td><td>20×</td></tr>
+            <tr><td>3 × Crown</td><td>25×</td></tr>
+            <tr><td>3 × Lucky 7</td><td>50×</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Game Flow (Server-side)</h3>
+      <div class="flow">USER tekan SPIN
+│
+▼
+SERVER
+├── Cek machine status
+├── Cek bet (min / max)
+├── Cek saldo
+├── Lock wallet
+├── Generate RNG
+├── Tentukan result
+├── Hitung payout
+├── Update wallet
+├── Simpan transaction
+└── Simpan game session
+│
+▼
+HASIL → CLIENT → ANIMASI REEL → TAMPILKAN</div>
+      <div class="warn">
+        <strong>Penting:</strong> Browser <em>tidak boleh</em> mengirim result / payout. Browser hanya <code>POST /game/slot/spin</code>. Server yang menentukan semuanya.
+      </div>
+      <h3>Win Probability</h3>
+      <p>Default <strong>10%</strong>. Dipakai sebagai parameter RNG — bukan pola tetap “setiap 10 spin pasti menang”. Hasil tetap acak.</p>
+      <h3>Admin Machine Config</h3>
+      <ul>
+        <li>Status (Active / Inactive)</li>
+        <li>Win Probability</li>
+        <li>Min Bet / Max Bet</li>
+        <li>Payout per simbol (multiplier)</li>
+      </ul>
+      <p>Setiap perubahan konfigurasi dicatat di audit log.</p>
+      <h3>Animasi Reel</h3>
+      <p>Mesin, frame, tombol, background diam. Hanya REEL 1 → REEL 2 → REEL 3 yang bergerak dan berhenti berurutan.</p>
+    </section>
+
+    <!-- 06 DATABASE -->
+    <section id="database">
+      <div class="section-label">06 — Database Blueprint</div>
+      <h2>Schema &amp; Relationships</h2>
+      <h3>Tabel Utama</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Table</th><th>Key Columns</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>users</code></td><td>id, name, email, password, role</td></tr>
+            <tr><td><code>wallets</code></td><td>id, user_id, balance</td></tr>
+            <tr><td><code>top_up_requests</code></td><td>id, user_id, amount, status, processed_by</td></tr>
+            <tr><td><code>transactions</code></td><td>id, user_id, type, amount, balance_before, balance_after</td></tr>
+            <tr><td><code>games</code></td><td>id, name, slug, is_active</td></tr>
+            <tr><td><code>game_histories</code></td><td>id, user_id, game_id, bet, result, winnings</td></tr>
+            <tr><td><code>game_settings</code></td><td>win_probability, min_bet, max_bet, multipliers</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Relationships</h3>
+      <div class="flow">USER
+├──── 1 : 1 ──── WALLET
+├──── 1 : N ──── TOPUP_REQUEST
+├──── 1 : N ──── TRANSACTION
+└──── 1 : N ──── GAME_HISTORY
+                      │
+                      N : 1
+                      ▼
+                     GAME
+                      │
+                      ├── GAME_SETTINGS
+                      └── PAYOUT_SETTINGS</div>
+    </section>
+
+    <!-- 07 ARCHITECTURE -->
+    <section id="architecture">
+      <div class="section-label">07 — Architecture</div>
+      <h2>Laravel Structure &amp; Routes</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4>Auth</h4>
+          <p>showLogin, login, showRegister, register, logout</p>
+        </div>
+        <div class="card">
+          <h4>User Area</h4>
+          <p>Dashboard, Wallet, TopUp, Transaction, Slot, GameHistory, Settings</p>
+        </div>
+        <div class="card">
+          <h4>Admin</h4>
+          <p>Dashboard, User, TopUp (approve/reject), Machine, Transaction, GameHistory</p>
+        </div>
+        <div class="card">
+          <h4>Games</h4>
+          <p>Slot (spin), FlipCoin, Roulette, Dice — server-side result</p>
+        </div>
+      </div>
+      <h3>Route Blueprint</h3>
+      <pre>/login  /register  /logout
+/dashboard  /wallet  /topup  /transactions  /game-history
+/game/slot  /game/slot/spin
+/admin/dashboard  /admin/users  /admin/topups
+/admin/machines  /admin/transactions  /admin/game-history</pre>
+      <p>Route <code>/admin/*</code> hanya untuk role admin (middleware).</p>
+      <h3>Asset Structure (Slot)</h3>
+      <pre>public/assets/slot/
+├── machine/   frame · background · spin-button
+├── symbols/   cherry · lemon · grape · watermelon · bell · diamond · bar · crown · seven
+└── effects/   win · coins · glow</pre>
+    </section>
+
+    <!-- 08 FEATURES -->
+    <section id="features">
+      <div class="section-label">08 — Fitur MVP</div>
+      <h2>Yang Dikunci vs Ditunda</h2>
+      <h3>Fitur MVP</h3>
+      <ul class="checklist">
+        <li><span class="ck">✓</span> Register &amp; Login</li>
+        <li><span class="ck">✓</span> User / Admin Role</li>
+        <li><span class="ck">✓</span> User Wallet + Virtual Coin</li>
+        <li><span class="ck">✓</span> Top Up Request + Admin Approve/Reject</li>
+        <li><span class="ck">✓</span> Transaction History</li>
+        <li><span class="ck">✓</span> 1 Slot Machine (Classic)</li>
+        <li><span class="ck">✓</span> Server-side RNG + Configurable Win Probability</li>
+        <li><span class="ck">✓</span> Configurable Payout + Min/Max Bet</li>
+        <li><span class="ck">✓</span> Slot Reel Animation</li>
+        <li><span class="ck">✓</span> Game History (User &amp; Admin)</li>
+        <li><span class="ck">✓</span> Admin Statistics &amp; Audit konfigurasi</li>
+      </ul>
+      <h3>Ditunda</h3>
+      <ul class="checklist">
+        <li><span class="cx">✕</span> Blackjack, Roulette, Poker (sebagai core MVP)</li>
+        <li><span class="cx">✕</span> Jackpot progresif, Multiplayer, Tournament</li>
+        <li><span class="cx">✕</span> Referral, Bonus harian, Chat</li>
+        <li><span class="cx">✕</span> Payment Gateway, Deposit/Withdrawal uang asli</li>
+        <li><span class="cx">✕</span> Cryptocurrency, Mobile App</li>
+      </ul>
+    </section>
+
+    <!-- 09 ROADMAP -->
+    <section id="roadmap">
+      <div class="section-label">09 — Development Roadmap</div>
+      <h2>Phase 01 → 17</h2>
+      <p>Development tidak langsung bikin game. Ikuti urutan ini:</p>
+      <div class="roadmap">
+        <div class="phase"><div class="phase-num">Phase 01</div><div class="phase-title">Laravel Setup</div></div>
+        <div class="phase"><div class="phase-num">Phase 02</div><div class="phase-title">Database + Migration</div></div>
+        <div class="phase"><div class="phase-num">Phase 03</div><div class="phase-title">Authentication</div></div>
+        <div class="phase"><div class="phase-num">Phase 04</div><div class="phase-title">Role User / Admin</div></div>
+        <div class="phase"><div class="phase-num">Phase 05</div><div class="phase-title">Wallet System</div></div>
+        <div class="phase"><div class="phase-num">Phase 06</div><div class="phase-title">Top Up Request</div></div>
+        <div class="phase"><div class="phase-num">Phase 07</div><div class="phase-title">Admin Approval</div></div>
+        <div class="phase"><div class="phase-num">Phase 08</div><div class="phase-title">Transaction System</div></div>
+        <div class="phase"><div class="phase-num">Phase 09</div><div class="phase-title">Slot Engine</div></div>
+        <div class="phase"><div class="phase-num">Phase 10</div><div class="phase-title">RNG + Probability</div></div>
+        <div class="phase"><div class="phase-num">Phase 11</div><div class="phase-title">Payout System</div></div>
+        <div class="phase"><div class="phase-num">Phase 12</div><div class="phase-title">Slot Animation</div></div>
+        <div class="phase"><div class="phase-num">Phase 13</div><div class="phase-title">Game History</div></div>
+        <div class="phase"><div class="phase-num">Phase 14</div><div class="phase-title">Admin Dashboard</div></div>
+        <div class="phase"><div class="phase-num">Phase 15</div><div class="phase-title">Statistics</div></div>
+        <div class="phase"><div class="phase-num">Phase 16</div><div class="phase-title">Security Testing</div></div>
+        <div class="phase"><div class="phase-num">Phase 17</div><div class="phase-title">UI Polish</div></div>
+      </div>
+    </section>
+
+    <!-- 10 TARGET -->
+    <section id="target">
+      <div class="section-label">10 — Target Akhir MVP</div>
+      <h2>Flow Lengkap</h2>
+      <div class="flow">ADMIN ──Configure Machine──► SLOT ENGINE
+                                      │
+                                 RNG · Probability · Payout
+                                      │
+USER ──Request Top Up──► ADMIN APPROVE ──► WALLET (Virtual Coin)
+                                              │
+                                              │ Bet
+                                              ▼
+                                           SLOT
+                                    Spin → RNG → Result → Payout
+                                              │
+                                    ┌─────────┴─────────┐
+                                    ▼                   ▼
+                              Transaction          Game History</div>
+      <div class="note">
+        Dengan blueprint ini, coding bisa dimulai dari <strong>Phase 01 → database/migration</strong> tanpa mengubah arsitektur di tengah jalan.
+      </div>
+    </section>
+
+  </div>
+
+      <div class="video-container">
+        <video controls>
+            <source src="/images/casion.mp4" type="video/mp4">
+            Browser kamu tidak mendukung video.
+        </video>
+    </div>
+
+  <footer>
+    <span>Documentation</span>
+  </footer>
+
+  <script>
+    const progress = document.getElementById('progress');
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      progress.style.width = pct + '%';
+    }, { passive: true });
+
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 120) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    }, { passive: true });
+
+    function toggleNav() {
+      document.getElementById('mobileNav').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>
