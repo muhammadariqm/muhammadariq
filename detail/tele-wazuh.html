@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wazuh → Telegram Real-Time Alert Integration | Dokumentasi Teknis</title>
+<meta name="description" content="Dokumentasi teknis integrasi Wazuh SIEM dengan Telegram Bot untuk notifikasi security alert real-time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   TOKENS
+   ========================================================================== */
+:root {
+  --bg: #070b14;
+  --bg-soft: #0b1120;
+  --surface: rgba(18, 26, 45, 0.62);
+  --surface-solid: #101a2e;
+  --border: rgba(148, 163, 184, 0.14);
+  --border-strong: rgba(148, 163, 184, 0.26);
+
+  --text: #e7ecf6;
+  --text-muted: #8b96ad;
+  --text-faint: #5b6478;
+
+  --accent: #3fa9ff;
+  --accent-soft: rgba(63, 169, 255, 0.14);
+  --accent-2: #22d3ee;
+
+  --ok: #2fd699;
+  --ok-soft: rgba(47, 214, 153, 0.14);
+
+  --alert: #ff6a52;
+  --alert-soft: rgba(255, 106, 82, 0.14);
+  --warn: #ffab40;
+  --warn-soft: rgba(255, 171, 64, 0.12);
+
+  --font-head: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --sidebar-w: 280px;
+
+  --shadow-glow: 0 0 0 1px var(--border), 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="light"] {
+  --bg: #f3f5f9;
+  --bg-soft: #e9edf5;
+  --surface: rgba(255, 255, 255, 0.72);
+  --surface-solid: #ffffff;
+  --border: rgba(15, 23, 42, 0.1);
+  --border-strong: rgba(15, 23, 42, 0.18);
+  --text: #10182b;
+  --text-muted: #57607a;
+  --text-faint: #8b93a8;
+  --accent-soft: rgba(63, 169, 255, 0.12);
+  --ok-soft: rgba(47, 214, 153, 0.12);
+  --alert-soft: rgba(255, 106, 82, 0.12);
+  --warn-soft: rgba(255, 171, 64, 0.14);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html, body { max-width: 100%; overflow-x: hidden; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  background-image:
+    radial-gradient(1200px 600px at 85% -10%, rgba(63, 169, 255, 0.08), transparent 60%),
+    radial-gradient(900px 500px at -10% 40%, rgba(34, 211, 238, 0.06), transparent 60%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  transition: background-color .25s ease, color .25s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+::selection { background: var(--accent-soft); color: var(--text); }
+
+a { color: inherit; text-decoration: none; }
+code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--accent-soft);
+  color: var(--accent-2);
+  padding: 0.12em 0.42em;
+  border-radius: 5px;
+}
+
+/* ==========================================================================
+   PROGRESS BAR
+   ========================================================================== */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  z-index: 999;
+  transition: width 0.1s ease-out;
+}
+
+/* ==========================================================================
+   SIDEBAR
+   ========================================================================== */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--bg-soft);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.sidebar-head {
+  padding: 28px 22px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark {
+  color: var(--accent);
+  font-size: 20px;
+  line-height: 1;
+}
+.brand-name {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 15.5px;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.brand-name span { color: var(--accent-2); }
+.brand-sub {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin-top: 1px;
+}
+
+.agent-status {
+  margin-top: 16px;
+  font-size: 11.5px;
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 8px var(--ok);
+  flex-shrink: 0;
+}
+
+.sidebar-search {
+  padding: 16px 22px 8px;
+  position: relative;
+}
+.sidebar-search input {
+  width: 100%;
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  outline: none;
+}
+.sidebar-search input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.sidebar-search input::placeholder { color: var(--text-faint); }
+
+.search-results {
+  position: absolute;
+  left: 22px; right: 22px; top: 100%;
+  margin-top: 6px;
+  background: var(--surface-solid);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-glow);
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: 50;
+  display: none;
+}
+.search-results.is-open { display: block; }
+.search-result-item {
+  display: block;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover, .search-result-item:focus {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+.search-result-empty {
+  padding: 10px 12px;
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.nav-link {
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  color: var(--text-muted);
+  border-left: 2px solid transparent;
+  transition: background-color .15s ease, color .15s ease;
+}
+.nav-link:hover { color: var(--text); background: var(--surface); }
+.nav-link.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  font-weight: 500;
+}
+
+.sidebar-foot {
+  padding: 16px 22px 22px;
+  border-top: 1px solid var(--border);
+}
+.theme-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease;
+}
+.theme-toggle:hover { color: var(--text); border-color: var(--border-strong); }
+
+.mobile-nav-toggle {
+  display: none;
+  position: fixed;
+  top: 16px; left: 16px;
+  z-index: 200;
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--surface-solid);
+  border: 1px solid var(--border-strong);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+}
+.mobile-nav-toggle span {
+  width: 18px; height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform .2s ease, opacity .2s ease;
+}
+.mobile-nav-toggle.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.mobile-nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+.mobile-nav-toggle.is-open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 5, 12, 0.6);
+  z-index: 90;
+}
+
+/* ==========================================================================
+   CONTENT
+   ========================================================================== */
+.content {
+  margin-left: var(--sidebar-w);
+  max-width: 880px;
+  padding: 64px 56px 40px;
+}
+
+.section { padding: 30px 0 62px; border-bottom: 1px solid var(--border); }
+.section:last-of-type { border-bottom: none; }
+
+.section h2 {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin: 0 0 10px;
+  scroll-margin-top: 28px;
+}
+.section h3 {
+  font-family: var(--font-head);
+  font-size: 17px;
+  font-weight: 600;
+  margin: 30px 0 12px;
+}
+.section-intro {
+  color: var(--text-muted);
+  font-size: 15px;
+  max-width: 62ch;
+  margin: 0 0 26px;
+}
+
+/* HERO */
+.hero-section { padding-top: 8px; border-bottom: 1px solid var(--border); }
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--ok-soft);
+  color: var(--ok);
+  border: 1px solid rgba(47, 214, 153, 0.28);
+  margin-bottom: 22px;
+}
+.status-pill::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+.status-pill--ok { }
+
+h1 {
+  font-family: var(--font-head);
+  font-size: 42px;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  margin: 0 0 20px;
+  max-width: 16ch;
+}
+
+.lead {
+  font-size: 16.5px;
+  color: var(--text-muted);
+  max-width: 66ch;
+  margin: 0 0 32px;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 20px 22px;
+  backdrop-filter: blur(14px);
+}
+.card h3 {
+  font-family: var(--font-head);
+  font-size: 14.5px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+.card p {
+  font-size: 13.6px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* EYEBROW LABEL (topology / flow lab headers) */
+.eyebrow-label {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid rgba(63, 169, 255, 0.3);
+  padding: 5px 11px;
+  border-radius: 6px;
+  margin: 6px 0 18px;
+}
+
+/* TOPOLOGY DIAGRAM */
+.topology-diagram {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+.topology-diagram::-webkit-scrollbar { height: 6px; }
+.topology-diagram::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+.topo-node {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 18px 24px;
+  width: 190px;
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  backdrop-filter: blur(14px);
+  position: relative;
+}
+.topo-node--end {
+  border-color: rgba(255, 106, 82, 0.4);
+  box-shadow: 0 0 0 1px rgba(255, 106, 82, 0.14), 0 0 24px -10px rgba(255, 106, 82, 0.35);
+}
+.topo-badge {
+  position: absolute;
+  top: -9px; left: 14px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #04101f;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.topo-icon { font-size: 22px; display: block; margin: 4px 0 10px; }
+.topo-title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 14.5px;
+  margin-bottom: 12px;
+}
+.topo-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.topo-list li {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding-left: 12px;
+  position: relative;
+  line-height: 1.45;
+}
+.topo-list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 6px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--accent-2);
+}
+.topo-connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  flex-shrink: 0;
+  position: relative;
+}
+.topo-connector::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 1px;
+  background: var(--border-strong);
+}
+.topo-connector::after {
+  content: '';
+  position: absolute;
+  right: 6px; top: 50%;
+  width: 6px; height: 6px;
+  border-right: 1.5px solid var(--text-faint);
+  border-bottom: 1.5px solid var(--text-faint);
+  transform: translateY(-50%) rotate(-45deg);
+}
+.topo-connector span {
+  position: relative;
+  background: var(--bg);
+  z-index: 1;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--text-faint);
+  text-align: center;
+  line-height: 1.3;
+  padding: 2px 4px;
+}
+
+/* EVENT FLOW (Flow Lab) */
+.event-flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.ef-step {
+  width: 176px;
+  flex-shrink: 0;
+  padding: 0 16px;
+  border-right: 1px dashed var(--border-strong);
+  position: relative;
+}
+.ef-step:last-child { border-right: none; }
+.ef-step:first-child { padding-left: 0; }
+.ef-badge {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #04101f;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.ef-step--end .ef-badge { background: var(--ok); }
+.ef-icon {
+  display: block;
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+.ef-title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 13.5px;
+  margin-bottom: 8px;
+  min-height: 34px;
+}
+.ef-desc {
+  font-size: 12.2px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+.ef-mini-alert {
+  margin-top: 12px;
+  border: 1px solid rgba(255, 106, 82, 0.35);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.ef-mini-alert-head {
+  background: var(--alert-soft);
+  color: var(--alert);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 10px;
+}
+.ef-mini-alert-body {
+  background: var(--surface-solid);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 8px 10px;
+  line-height: 1.6;
+}
+
+/* SUMMARY GRID (Ringkasan) */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.summary-item {
+  display: flex;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.summary-icon {
+  flex-shrink: 0;
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.summary-icon--blue { background: var(--accent-soft); }
+.summary-icon--red { background: var(--alert-soft); }
+.summary-icon--warn { background: var(--warn-soft); }
+.summary-icon--green { background: var(--ok-soft); }
+.summary-icon--purple { background: rgba(168, 130, 255, 0.14); }
+.summary-title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 13.5px;
+  margin-bottom: 5px;
+}
+.summary-title em { color: var(--text-faint); font-style: normal; font-size: 11px; }
+.summary-item p {
+  font-size: 12.4px;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* FLOW DIAGRAM */
+.flow-diagram {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.flow-node {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  min-width: 168px;
+  backdrop-filter: blur(14px);
+}
+.flow-icon { font-size: 18px; display: block; margin-bottom: 6px; }
+.flow-node-title { font-family: var(--font-head); font-size: 13.5px; font-weight: 600; }
+.flow-node-desc { font-size: 11.8px; color: var(--text-faint); margin-top: 3px; }
+.flow-node--highlight {
+  border-color: rgba(63, 169, 255, 0.4);
+  box-shadow: 0 0 0 1px rgba(63, 169, 255, 0.16), 0 0 24px -8px rgba(63, 169, 255, 0.35);
+}
+.flow-node--end {
+  border-color: rgba(47, 214, 153, 0.4);
+  box-shadow: 0 0 0 1px rgba(47, 214, 153, 0.16), 0 0 24px -8px rgba(47, 214, 153, 0.3);
+}
+.flow-node--alert {
+  border-color: rgba(255, 106, 82, 0.4);
+}
+.flow-arrow {
+  width: 28px; height: 1px;
+  background: var(--border-strong);
+  position: relative;
+  flex-shrink: 0;
+  margin: 0 2px;
+}
+.flow-arrow::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 50%;
+  width: 6px; height: 6px;
+  border-right: 1.5px solid var(--text-faint);
+  border-bottom: 1.5px solid var(--text-faint);
+  transform: translate(-2px, -50%) rotate(-45deg);
+}
+
+.flow-diagram--vertical {
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 320px;
+}
+.flow-diagram--vertical .flow-node { min-width: 240px; }
+.flow-arrow--vertical {
+  width: 1px; height: 22px;
+  margin: 0 0 0 20px;
+}
+.flow-arrow--vertical::after {
+  right: auto; top: auto;
+  left: 50%; bottom: 0;
+  transform: translate(-50%, 2px) rotate(45deg);
+}
+
+/* REQUIREMENTS */
+.req-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.req-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 13.8px;
+}
+.req-icon { font-size: 15px; }
+
+/* TABLE */
+.table-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.doc-table { width: 100%; min-width: 460px; border-collapse: collapse; font-size: 13.8px; }
+.doc-table th, .doc-table td {
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.doc-table th {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--surface);
+}
+.doc-table td:first-child { color: var(--accent-2); font-family: var(--font-mono); font-size: 12.8px; }
+.doc-table tr:last-child td { border-bottom: none; }
+.doc-table td { color: var(--text-muted); }
+
+/* STEP LIST */
+.step-list {
+  list-style: none;
+  counter-reset: step;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.step-list li {
+  counter-increment: step;
+  display: flex;
+  gap: 14px;
+  padding: 13px 4px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.step-list li:last-child { border-bottom: none; }
+.step-list li::before {
+  content: counter(step);
+  flex-shrink: 0;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.step-list li span { color: var(--text-muted); padding-top: 2px; }
+.step-list li span strong { color: var(--text); font-weight: 600; }
+
+/* CALLOUTS */
+.callout {
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  font-size: 13.6px;
+  margin: 18px 0;
+  border: 1px solid;
+}
+.callout--warning {
+  background: var(--warn-soft);
+  border-color: rgba(255, 171, 64, 0.32);
+  color: var(--text-muted);
+}
+.callout--warning strong { color: var(--warn); }
+.callout--info {
+  background: var(--accent-soft);
+  border-color: rgba(63, 169, 255, 0.3);
+  color: var(--text-muted);
+}
+
+/* CODE BLOCKS */
+.code-block-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 0 0 8px;
+  background: var(--surface-solid);
+}
+.code-block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.code-block-label {
+  font-size: 11.8px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.copy-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color .15s ease, border-color .15s ease;
+}
+.copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+.copy-btn.is-copied { color: var(--ok); border-color: var(--ok); }
+
+pre {
+  margin: 0;
+  padding: 16px 18px;
+  overflow-x: auto;
+}
+pre code {
+  background: none;
+  color: #cdd9ef;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.fig-caption {
+  font-size: 13px;
+  color: var(--text-faint);
+  margin: 10px 0 26px;
+}
+
+/* CHECKLIST */
+.checklist { list-style: none; padding: 0; margin: 0 0 8px; }
+.checklist li {
+  padding: 9px 0 9px 26px;
+  position: relative;
+  font-size: 13.8px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist li::before {
+  content: '✓';
+  position: absolute;
+  left: 0; top: 9px;
+  color: var(--ok);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ALERT CARD */
+.alert-card {
+  max-width: 420px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid rgba(255, 106, 82, 0.35);
+  box-shadow: 0 0 0 1px rgba(255, 106, 82, 0.12), 0 20px 50px -24px rgba(255, 106, 82, 0.4);
+}
+.alert-card-head {
+  background: var(--alert-soft);
+  color: var(--alert);
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 106, 82, 0.28);
+}
+.alert-card-body {
+  background: var(--surface-solid);
+  padding: 6px 18px 10px;
+}
+.alert-row {
+  display: grid;
+  grid-template-columns: 22px 76px 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.4px;
+}
+.alert-row:last-child { border-bottom: none; }
+.alert-icon { font-size: 13px; }
+.alert-label { color: var(--text-faint); font-family: var(--font-mono); font-size: 11.8px; }
+.alert-value { color: var(--text); font-weight: 500; overflow-wrap: anywhere; min-width: 0; }
+.alert-value--high { color: var(--alert); font-weight: 700; }
+.alert-value--mono { font-family: var(--font-mono); font-size: 12px; color: var(--accent-2); word-break: break-all; }
+
+/* ALERT SCREENSHOT */
+.alert-screenshot {
+  max-width: 420px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-glow);
+  margin-top: 18px;
+}
+.alert-screenshot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ACCORDION */
+.accordion { display: flex; flex-direction: column; gap: 8px; }
+.accordion-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface);
+}
+.accordion-trigger {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 14px 42px 14px 16px;
+  cursor: pointer;
+  position: relative;
+}
+.accordion-trigger::after {
+  content: '+';
+  position: absolute;
+  right: 16px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-faint);
+  font-size: 16px;
+  transition: transform .2s ease;
+}
+.accordion-item.is-open .accordion-trigger::after {
+  transform: translateY(-50%) rotate(45deg);
+  color: var(--accent);
+}
+.accordion-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .25s ease;
+}
+.accordion-panel p {
+  font-size: 13.4px;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+  padding: 0 16px;
+}
+.accordion-panel p:first-child { padding-top: 4px; }
+.accordion-panel p:last-child { padding-bottom: 16px; margin-bottom: 0; }
+.accordion-panel strong { color: var(--text); }
+
+/* FUTURE GRID */
+.future-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.future-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 13.6px;
+  color: var(--text-muted);
+}
+.future-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  background: rgba(148, 163, 184, 0.1);
+  padding: 3px 7px;
+  border-radius: 5px;
+  flex-shrink: 0;
+}
+
+/* FOOTER */
+.doc-footer {
+  padding: 40px 0 10px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+
+/* BACK TO TOP */
+.back-to-top {
+  position: fixed;
+  right: 28px; bottom: 28px;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--surface-solid);
+  border: 1px solid var(--border-strong);
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity .2s ease, transform .2s ease, color .15s ease, border-color .15s ease;
+  z-index: 80;
+  box-shadow: var(--shadow-glow);
+}
+.back-to-top.is-visible { opacity: 1; visibility: visible; transform: translateY(0); }
+.back-to-top:hover { color: var(--accent); border-color: var(--accent); }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  transform: translate(-50%, 12px);
+  background: var(--surface-solid);
+  border: 1px solid rgba(47, 214, 153, 0.35);
+  color: var(--ok);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-glow);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .2s ease, transform .2s ease;
+  z-index: 300;
+}
+.toast.is-visible { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .overview-grid { grid-template-columns: 1fr; }
+  .req-grid { grid-template-columns: repeat(2, 1fr); }
+  .future-grid { grid-template-columns: 1fr; }
+  .summary-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 860px) {
+  .mobile-nav-toggle { display: flex; }
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    box-shadow: 20px 0 40px rgba(0,0,0,0.4);
+  }
+  .sidebar.is-open { transform: translateX(0); }
+  .sidebar-overlay.is-visible { display: block; }
+  .content {
+    margin-left: 0;
+    padding: 90px 22px 40px;
+  }
+  h1 { font-size: 32px; max-width: none; }
+  .flow-diagram { flex-direction: column; align-items: flex-start; }
+  .flow-arrow { width: 1px; height: 22px; margin: 0 0 0 20px; }
+  .flow-arrow::after { right: auto; top: auto; left: 50%; bottom: 0; transform: translate(-50%, 2px) rotate(45deg); }
+  .req-grid { grid-template-columns: 1fr; }
+  .alert-card { max-width: 100%; }
+  .alert-screenshot { max-width: 100%; }
+  .topology-diagram { flex-direction: column; flex-wrap: nowrap; align-items: stretch; overflow-x: visible; padding-bottom: 0; }
+  .topo-node { width: 100%; }
+  .topo-connector { width: 100%; height: 34px; }
+  .topo-connector::before { left: 20px; right: auto; top: 0; bottom: 0; height: auto; width: 1px; }
+  .topo-connector::after { right: auto; left: 20px; top: auto; bottom: 4px; transform: translateX(-50%) rotate(45deg); }
+  .event-flow { flex-direction: column; overflow-x: visible; }
+  .ef-step { width: 100%; border-right: none; border-bottom: 1px dashed var(--border-strong); padding: 0 0 18px; margin-bottom: 18px; }
+  .ef-step:first-child { padding-left: 0; }
+  .ef-step:last-child { border-bottom: none; margin-bottom: 0; }
+  .ef-title { min-height: 0; }
+  .summary-grid { grid-template-columns: 1fr; }
+  .back-to-top { right: 16px; bottom: 16px; width: 40px; height: 40px; }
+  .toast { left: 16px; right: 16px; transform: translateY(12px); width: auto; text-align: center; }
+  .toast.is-visible { transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .content { padding: 78px 16px 32px; }
+  h1 { font-size: 27px; line-height: 1.2; }
+  .lead { font-size: 15px; }
+  .section h2 { font-size: 22px; }
+  .section { padding: 24px 0 44px; }
+  .card, .req-item, .summary-item, .topo-node, .flow-node { padding-left: 14px; padding-right: 14px; }
+  .code-block-head { flex-wrap: wrap; }
+  .alert-row { grid-template-columns: 18px 64px 1fr; font-size: 12.6px; }
+  .doc-table { min-width: 0; font-size: 12.8px; }
+  .doc-table th, .doc-table td { padding: 10px 12px; }
+  .step-list li { font-size: 13.2px; }
+  .sidebar-head { padding: 24px 18px 16px; }
+  .sidebar-search { padding: 14px 18px 8px; }
+  .sidebar-nav { padding: 10px 10px 16px; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Buka navigasi">
+  <span></span><span></span><span></span>
+</button>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <div class="brand">
+      <span class="brand-mark">◆</span>
+      <div>
+        <div class="brand-name">Wazuh<span>Telegram</span></div>
+        <div class="brand-sub">Alert Integration</div>
+      </div>
+    </div>
+    <div class="agent-status">
+      <span class="status-dot"></span> Agent · online
+    </div>
+  </div>
+
+  <div class="sidebar-search">
+    <input type="text" id="docSearch" placeholder="Cari dokumentasi…" autocomplete="off">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <nav class="sidebar-nav" id="sidebarNav">
+    <a href="#overview" class="nav-link" data-section="overview">Overview</a>
+    <a href="#architecture" class="nav-link" data-section="architecture">Architecture</a>
+    <a href="#requirements" class="nav-link" data-section="requirements">Requirements</a>
+    <a href="#environment" class="nav-link" data-section="environment">Environment</a>
+    <a href="#telegram-setup" class="nav-link" data-section="telegram-setup">Telegram Bot Setup</a>
+    <a href="#api-testing" class="nav-link" data-section="api-testing">Telegram API Testing</a>
+    <a href="#wazuh-integration" class="nav-link" data-section="wazuh-integration">Wazuh Custom Integration</a>
+    <a href="#wazuh-config" class="nav-link" data-section="wazuh-config">Wazuh Configuration</a>
+    <a href="#fim-testing" class="nav-link" data-section="fim-testing">FIM Testing</a>
+    <a href="#alert-flow" class="nav-link" data-section="alert-flow">Alert Flow</a>
+    <a href="#ringkasan" class="nav-link" data-section="ringkasan">Ringkasan</a>
+    <a href="#example-alert" class="nav-link" data-section="example-alert">Example Alert</a>
+  </nav>
+
+  <div class="sidebar-foot">
+    <button class="theme-toggle" id="themeToggle" aria-label="Ganti tema">
+      <svg id="themeIconDark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg id="themeIconLight" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <span id="themeLabel">Dark mode</span>
+    </button>
+  </div>
+</aside>
+
+<main class="content">
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="section hero-section">
+    <div class="status-pill status-pill--ok">Tested &amp; Verified · FIM → Telegram</div>
+    <h1>Wazuh SIEM → Telegram<br>Real-Time Security Alert Integration</h1>
+    <p class="lead">
+      Wazuh adalah platform SIEM open-source yang mengumpulkan dan menganalisis log dari endpoint untuk mendeteksi
+      ancaman keamanan. Project ini menghubungkan Wazuh Manager dengan Telegram Bot API, sehingga setiap kali
+      Wazuh mendeteksi perubahan mencurigakan pada sebuah endpoint, notifikasi terkirim langsung ke chat Telegram
+      tanpa perlu membuka dashboard.
+    </p>
+
+    <div class="overview-grid">
+      <div class="card">
+        <h3>Masalah yang diselesaikan</h3>
+        <p>Wazuh dashboard tidak selalu dipantau secara real-time. Alert kritikal bisa terlewat jika analis
+        tidak sedang membuka console. Integrasi Telegram memindahkan notifikasi ke channel yang selalu aktif
+        di perangkat analis.</p>
+      </div>
+      <div class="card">
+        <h3>Hasil akhir</h3>
+        <p>File Integrity Monitoring (FIM) pada endpoint Windows berhasil memicu Rule ID 550, dan alert tersebut
+        diteruskan secara otomatis ke Telegram dalam hitungan detik melalui custom integration berbasis Python.</p>
+      </div>
+      <div class="card">
+        <h3>Cakupan saat ini</h3>
+        <p>Yang sudah teruji: alert FIM (perubahan file) level 5 ke atas. Deteksi lain seperti failed login,
+        malware, dan PowerShell abuse belum diimplementasikan — lihat bagian Future Development.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section id="architecture" class="section">
+    <h2>Architecture</h2>
+    <p class="section-intro">Lima komponen inti membentuk lab ini: bot Telegram sebagai penerima notifikasi,
+    Wazuh Manager sebagai otak analisis, Wazuh Agent sebagai pengumpul data, endpoint Windows sebagai sumber
+    event, dan Telegram sebagai output akhir.</p>
+
+    <div class="eyebrow-label">Topologi Lab</div>
+    <div class="topology-diagram">
+      <div class="topo-node">
+        <div class="topo-badge">1</div>
+        <span class="topo-icon">💬</span>
+        <div class="topo-title">Telegram Bot</div>
+        <ul class="topo-list">
+          <li>Token Bot</li>
+          <li>Chat ID</li>
+          <li>Mengirim / menerima pesan via Telegram Bot API</li>
+        </ul>
+      </div>
+      <div class="topo-connector"><span>HTTPS<br>Bot API</span></div>
+      <div class="topo-node">
+        <div class="topo-badge">2</div>
+        <span class="topo-icon">🗄️</span>
+        <div class="topo-title">Wazuh Manager</div>
+        <ul class="topo-list">
+          <li>Menerima data dari agent</li>
+          <li>Menganalisis log &amp; event</li>
+          <li>Rule matching</li>
+          <li>Generate alert</li>
+        </ul>
+      </div>
+      <div class="topo-connector"><span>Data /<br>Event</span></div>
+      <div class="topo-node">
+        <div class="topo-badge">3</div>
+        <span class="topo-icon">📡</span>
+        <div class="topo-title">Wazuh Agent</div>
+        <ul class="topo-list">
+          <li>Mengirim data (logs &amp; events) ke Wazuh Manager</li>
+          <li>FIM, malware detection, system events</li>
+        </ul>
+      </div>
+      <div class="topo-connector"><span>Monitoring</span></div>
+      <div class="topo-node">
+        <div class="topo-badge">4</div>
+        <span class="topo-icon">🪟</span>
+        <div class="topo-title">Windows 10</div>
+        <ul class="topo-list">
+          <li>File / folder berubah (FIM)</li>
+          <li>EICAR test (malware) — belum diuji</li>
+          <li>System / security events</li>
+        </ul>
+      </div>
+      <div class="topo-connector"><span>Trigger<br>Event</span></div>
+      <div class="topo-node topo-node--end">
+        <div class="topo-badge">5</div>
+        <span class="topo-icon">🔔</span>
+        <div class="topo-title">Alert Telegram</div>
+        <ul class="topo-list">
+          <li>Alert dikirim real-time ke Telegram Bot (user)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- REQUIREMENTS -->
+  <section id="requirements" class="section">
+    <h2>Requirements</h2>
+    <p class="section-intro">Komponen yang dibutuhkan sebelum memulai integrasi.</p>
+    <div class="req-grid">
+      <div class="req-item"><span class="req-icon">🐧</span>Kali Linux</div>
+      <div class="req-item"><span class="req-icon">🛡️</span>Wazuh Manager</div>
+      <div class="req-item"><span class="req-icon">🪟</span>Windows Endpoint</div>
+      <div class="req-item"><span class="req-icon">📡</span>Wazuh Agent</div>
+      <div class="req-item"><span class="req-icon">💬</span>Telegram Account</div>
+      <div class="req-item"><span class="req-icon">🤖</span>Telegram Bot</div>
+      <div class="req-item"><span class="req-icon">🐍</span>Python 3</div>
+      <div class="req-item"><span class="req-icon">📦</span>python3-requests</div>
+      <div class="req-item"><span class="req-icon">🌐</span>Internet Connection</div>
+    </div>
+  </section>
+
+  <!-- ENVIRONMENT -->
+  <section id="environment" class="section">
+    <h2>Environment</h2>
+    <p class="section-intro">Peran setiap komponen dalam environment pengujian.</p>
+    <div class="table-wrap">
+      <table class="doc-table">
+        <thead><tr><th>Component</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td>Kali Linux</td><td>Wazuh Manager</td></tr>
+          <tr><td>Windows</td><td>Wazuh Agent / Endpoint</td></tr>
+          <tr><td>Telegram</td><td>Alert Notification</td></tr>
+          <tr><td>Python</td><td>Custom Integration</td></tr>
+          <tr><td>Telegram Bot API</td><td>Message Delivery</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- TELEGRAM BOT SETUP -->
+  <section id="telegram-setup" class="section">
+    <h2>Telegram Bot Setup</h2>
+    <p class="section-intro">Langkah membuat bot dan mendapatkan token serta chat ID yang dibutuhkan integrasi.</p>
+
+    <ol class="step-list">
+      <li><span>Buka <strong>BotFather</strong> di Telegram dan mulai percakapan.</span></li>
+      <li><span>Kirim perintah <code>/newbot</code> untuk membuat bot baru, lalu tentukan nama dan username bot.</span></li>
+      <li><span>BotFather akan memberikan <strong>bot token</strong> — simpan sebagai <code>TOKEN_BOT_KAMU</code>, jangan pernah membagikannya.</span></li>
+      <li><span>Buka bot yang baru dibuat dari hasil pencarian Telegram.</span></li>
+      <li><span>Tekan tombol <strong>Start</strong> agar bot bisa mengirim pesan ke chat kamu.</span></li>
+      <li><span>Dapatkan <code>CHAT_ID_KAMU</code> dengan memanggil endpoint <code>getUpdates</code> (lihat bagian Telegram API Testing).</span></li>
+    </ol>
+
+    <div class="callout callout--warning">
+      <strong>Jangan menampilkan token asli.</strong> Seluruh contoh di dokumentasi ini menggunakan placeholder
+      <code>TOKEN_BOT_KAMU</code> dan <code>CHAT_ID_KAMU</code>.
+    </div>
+  </section>
+
+  <!-- API TESTING -->
+  <section id="api-testing" class="section">
+    <h2>Telegram API Testing</h2>
+    <p class="section-intro">Dua endpoint utama digunakan untuk memvalidasi bot sebelum dihubungkan ke Wazuh.</p>
+
+    <div class="code-block-wrap">
+      <div class="code-block-head">
+        <span class="code-block-label">getUpdates — mengambil chat_id dari pesan terakhir ke bot</span>
+        <button class="copy-btn" data-copy-target="code-getupdates">Copy</button>
+      </div>
+      <pre id="code-getupdates"><code>curl -s "https://api.telegram.org/botTOKEN_BOT_KAMU/getUpdates"</code></pre>
+    </div>
+    <p class="fig-caption">Command ini mengembalikan JSON berisi riwayat pesan ke bot, termasuk <code>chat.id</code>
+    pengirim — inilah nilai yang dipakai sebagai <code>CHAT_ID_KAMU</code>.</p>
+
+    <div class="code-block-wrap">
+      <div class="code-block-head">
+        <span class="code-block-label">Contoh response getUpdates (setelah menekan Start di bot)</span>
+        <button class="copy-btn" data-copy-target="code-getupdates-result">Copy</button>
+      </div>
+      <pre id="code-getupdates-result"><code>{"ok":true,"result":[{"update_id":XXXXXXXXX,
+"message":{"message_id":1,"from":{"id":CHAT_ID_KAMU,"is_bot":false,
+"first_name":"...","username":"...","language_code":"id"},
+"chat":{"id":CHAT_ID_KAMU,"type":"private"},
+"date":XXXXXXXXXX,"text":"/start",
+"entities":[{"offset":0,"length":6,"type":"bot_command"}]}}]}</code></pre>
+    </div>
+    <p class="fig-caption">Field <code>chat.id</code> pada response inilah yang diambil sebagai <code>CHAT_ID_KAMU</code>.
+    Nilai token dan chat ID pada dokumentasi ini sengaja diganti placeholder — jangan pernah mem-publish token/chat ID asli.</p>
+
+    <div class="code-block-wrap">
+      <div class="code-block-head">
+        <span class="code-block-label">sendMessage — mengirim pesan uji ke chat Telegram</span>
+        <button class="copy-btn" data-copy-target="code-sendmessage">Copy</button>
+      </div>
+      <pre id="code-sendmessage"><code>curl -s -X POST "https://api.telegram.org/botTOKEN_BOT_KAMU/sendMessage" \
+  -d chat_id="CHAT_ID_KAMU" \
+  -d text="Test alert dari Wazuh Integration"</code></pre>
+    </div>
+    <p class="fig-caption">Digunakan untuk memastikan token dan chat ID valid sebelum diintegrasikan ke script Python.</p>
+
+    <div class="code-block-wrap">
+      <div class="code-block-head">
+        <span class="code-block-label">Contoh response sendMessage (status 200 / ok: true)</span>
+        <button class="copy-btn" data-copy-target="code-sendmessage-result">Copy</button>
+      </div>
+      <pre id="code-sendmessage-result"><code>{"ok":true,"result":{"message_id":2,
+"from":{"id":BOT_ID_KAMU,"is_bot":true,"first_name":"nama_bot_kamu"},
+"chat":{"id":CHAT_ID_KAMU,"type":"private"},
+"date":XXXXXXXXXX,"text":"TEST WAZUH TELEGRAM"}}</code></pre>
+    </div>
+    <p class="fig-caption"><code>"ok":true</code> menandakan pesan berhasil terkirim — token bot dan chat ID sudah valid
+    dan siap dipakai di script integrasi.</p>
+  </section>
+
+  <!-- WAZUH CUSTOM INTEGRATION -->
+  <section id="wazuh-integration" class="section">
+    <h2>Wazuh Custom Integration</h2>
+    <p class="section-intro">
+      File integrasi berada di <code>/var/ossec/integrations/custom-telegram</code> dan berjalan sebagai
+      script Python yang dipanggil otomatis oleh Wazuh Manager setiap kali ada alert yang cocok dengan
+      konfigurasi.
+    </p>
+
+    <h3>Membuat file integrasi</h3>
+    <div class="code-block-wrap">
+      <div class="code-block-head">
+        <span class="code-block-label">Buat / edit file integrasi dengan editor nano</span>
+        <button class="copy-btn" data-copy-target="code-nano-integration">Copy</button>
+      </div>
+      <pre id="code-nano-integration"><code>sudo nano /var/ossec/integrations/custom-telegram</code></pre>
+    </div>
+
+    <h3>Isi script <code>custom-telegram</code></h3>
+    <div class="code-block-wrap">
+      <div class="code-block-head">
+        <span class="code-block-label">custom-telegram (Python)</span>
+        <button class="copy-btn" data-copy-target="code-script">Copy</button>
+      </div>
+      <pre id="code-script"><code>#!/usr/bin/env python3
+import sys
+import json
+import requests
+
+TOKEN = "TOKEN_BOT_KAMU"
+CHAT_ID = "CHAT_ID_KAMU"
+
+alert_file = sys.argv[1]
+
+with open(alert_file, "r") as f:
+    alert = json.load(f)
+
+rule = alert.get("rule", {})
+agent = alert.get("agent", {})
+syscheck = alert.get("syscheck", {})
+
+message = f"""🚨 WAZUH ALERT
+🔴 Level    : {rule.get("level", "-")}
+📋 Rule ID  : {rule.get("id", "-")}
+💻 Agent    : {agent.get("name", "-")}
+🆔 Agent ID : {agent.get("id", "-")}
+⚠️ Event    : {rule.get("description", "-")}
+📁 Path     : {syscheck.get("path", "-")}
+🔧 Action   : {syscheck.get("event", "-")}
+"""
+
+url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+
+requests.post(
+    url,
+    data={
+        "chat_id": CHAT_ID,
+        "text": message
+    },
+    timeout=10
+)</code></pre>
+    </div>
+    <p class="fig-caption">Wazuh Manager memanggil script ini dengan path file alert JSON sebagai argumen
+    (<code>sys.argv[1]</code>) setiap kali sebuah alert cocok dengan konfigurasi <code>&lt;integration&gt;</code>
+    di <code>ossec.conf</code>.</p>
+
+    <h3>Fungsi script</h3>
+    <ul class="checklist">
+      <li>Membaca alert dalam format JSON yang dikirim Wazuh melalui argumen script</li>
+      <li>Mengambil data <code>rule</code> (id, level, description)</li>
+      <li>Mengambil data <code>agent</code> (name, id)</li>
+      <li>Mengambil data <code>syscheck</code> (path file, jenis perubahan)</li>
+      <li>Membentuk pesan terformat dari data-data tersebut</li>
+      <li>Mengirim pesan ke Telegram melalui endpoint <code>sendMessage</code></li>
+    </ul>
+
+    <h3>Permission &amp; ownership</h3>
+    <div class="code-block-wrap">
+      <div class="code-block-head">
+        <span class="code-block-label">Permission script integrasi</span>
+        <button class="copy-btn" data-copy-target="code-chmod">Copy</button>
+      </div>
+      <pre id="code-chmod"><code>sudo chmod 750 /var/ossec/integrations/custom-telegram</code></pre>
+    </div>
+
+    <div class="code-block-wrap">
+      <div class="code-block-head">
+        <span class="code-block-label">Ownership script integrasi</span>
+        <button class="copy-btn" data-copy-target="code-chown">Copy</button>
+      </div>
+      <pre id="code-chown"><code>sudo chown root:wazuh /var/ossec/integrations/custom-telegram</code></pre>
+    </div>
+
+    <h3>Dependency</h3>
+    <div class="code-block-wrap">
+      <div class="code-block-head">
+        <span class="code-block-label">Install library Python yang dibutuhkan</span>
+        <button class="copy-btn" data-copy-target="code-pip">Copy</button>
+      </div>
+      <pre id="code-pip"><code>sudo apt install python3-requests -y</code></pre>
+    </div>
+
+    <div class="callout callout--info">
+      Script tidak menyimpan token secara hardcoded pada dokumentasi ini — token dan chat ID sebenarnya
+      dikonfigurasi langsung pada environment Wazuh Manager, bukan ditampilkan di publik.
+    </div>
+  </section>
+
+  <!-- WAZUH CONFIGURATION -->
+  <section id="wazuh-config" class="section">
+    <h2>Wazuh Configuration</h2>
+    <p class="section-intro">Integrasi didaftarkan pada <code>/var/ossec/etc/ossec.conf</code> agar Wazuh Manager
+    memanggil script <code>custom-telegram</code> setiap kali alert baru terbentuk.</p>
+
+    <div class="code-block-wrap">
+      <div class="code-block-head">
+        <span class="code-block-label">Edit ossec.conf dengan nano</span>
+        <button class="copy-btn" data-copy-target="code-nano-conf">Copy</button>
+      </div>
+      <pre id="code-nano-conf"><code>sudo nano /var/ossec/etc/ossec.conf</code></pre>
+    </div>
+    <p class="fig-caption">Tambahkan blok <code>&lt;integration&gt;</code> berikut tepat sebelum tag penutup
+    <code>&lt;/ossec_config&gt;</code>.</p>
+
+    <div class="code-block-wrap">
+      <div class="code-block-head">
+        <span class="code-block-label">/var/ossec/etc/ossec.conf</span>
+        <button class="copy-btn" data-copy-target="code-ossecconf">Copy</button>
+      </div>
+      <pre id="code-ossecconf"><code>&lt;integration&gt;
+    &lt;name&gt;custom-telegram&lt;/name&gt;
+    &lt;level&gt;5&lt;/level&gt;
+    &lt;group&gt;syscheck&lt;/group&gt;
+    &lt;alert_format&gt;json&lt;/alert_format&gt;
+&lt;/integration&gt;</code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table class="doc-table">
+        <thead><tr><th>Parameter</th><th>Keterangan</th></tr></thead>
+        <tbody>
+          <tr><td><code>level 5</code></td><td>Integrasi hanya dipicu untuk alert dengan level 5 ke atas, menyaring event minor agar tidak membanjiri Telegram.</td></tr>
+          <tr><td><code>group syscheck</code></td><td>Membatasi integrasi pada alert dari grup syscheck, yaitu modul File Integrity Monitoring.</td></tr>
+          <tr><td><code>alert_format json</code></td><td>Alert dikirim ke script dalam format JSON agar mudah di-parse oleh Python.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block-wrap">
+      <div class="code-block-head">
+        <span class="code-block-label">Restart Wazuh Manager setelah perubahan konfigurasi</span>
+        <button class="copy-btn" data-copy-target="code-restart">Copy</button>
+      </div>
+      <pre id="code-restart"><code>sudo systemctl restart wazuh-manager</code></pre>
+    </div>
+  </section>
+
+  <!-- FIM TESTING -->
+  <section id="fim-testing" class="section">
+    <h2>FIM Testing</h2>
+    <p class="section-intro">Skenario pengujian yang digunakan untuk memvalidasi seluruh pipeline, dari perubahan
+    file di endpoint hingga notifikasi diterima di Telegram.</p>
+
+    <ol class="step-list">
+      <li><span>Windows membuat file uji di <code>C:\Users\Public\wazuh-test.txt</code></span></li>
+      <li><span>Wazuh Agent memonitor lokasi file tersebut melalui modul syscheck</span></li>
+      <li><span>File dimodifikasi (isi file diubah)</span></li>
+      <li><span>Agent mengirim event perubahan ke Wazuh Manager</span></li>
+      <li><span>Wazuh Manager menganalisis event terhadap rule yang tersedia</span></li>
+      <li><span>Rule ID 550 (integrity checksum changed) terpicu pada level 7</span></li>
+      <li><span>Custom integration mengambil alert JSON dan membentuk pesan</span></li>
+      <li><span>Telegram menerima notifikasi alert secara real-time</span></li>
+    </ol>
+
+    <div class="status-pill status-pill--ok">Diuji dan berhasil pada environment lab</div>
+  </section>
+
+  <!-- ALERT FLOW -->
+  <section id="alert-flow" class="section">
+    <h2>Alert Flow</h2>
+    <p class="section-intro">Detail tujuh langkah dari satu kejadian di endpoint Windows hingga alert
+    diterima di Telegram — ini adalah alur yang sudah diuji menggunakan skenario FIM.</p>
+
+    <div class="eyebrow-label">Flow Lab — Event Flow</div>
+    <div class="event-flow">
+      <div class="ef-step">
+        <div class="ef-badge">1</div>
+        <span class="ef-icon">📁</span>
+        <div class="ef-title">Trigger di Windows</div>
+        <p class="ef-desc">Terjadi perubahan file / folder atau EICAR test dijalankan di Windows.
+        Contoh: <code>C:\Data\test.txt</code> diubah.</p>
+      </div>
+      <div class="ef-step">
+        <div class="ef-badge">2</div>
+        <span class="ef-icon">🪟</span>
+        <div class="ef-title">Wazuh Agent Mendeteksi</div>
+        <p class="ef-desc">Wazuh Agent mendeteksi perubahan / event dan mengirimkannya ke Wazuh Manager.</p>
+      </div>
+      <div class="ef-step">
+        <div class="ef-badge">3</div>
+        <span class="ef-icon">🗄️</span>
+        <div class="ef-title">Wazuh Manager Menganalisis</div>
+        <p class="ef-desc">Wazuh Manager menerima data, menganalisis log &amp; event, mencocokkan dengan
+        rule (misal: Rule ID 550).</p>
+      </div>
+      <div class="ef-step">
+        <div class="ef-badge">4</div>
+        <span class="ef-icon">📄</span>
+        <div class="ef-title">Alert Terbentuk</div>
+        <p class="ef-desc">Rule cocok → alert dibuat dengan level (misal ≥ 5), format JSON.</p>
+      </div>
+      <div class="ef-step">
+        <div class="ef-badge">5</div>
+        <span class="ef-icon">🐍</span>
+        <div class="ef-title">Custom Integration (custom-telegram)</div>
+        <p class="ef-desc">Script Python membaca alert JSON dan mengirimkannya ke Telegram Bot API.</p>
+      </div>
+      <div class="ef-step">
+        <div class="ef-badge">6</div>
+        <span class="ef-icon">🤖</span>
+        <div class="ef-title">Telegram Bot API</div>
+        <p class="ef-desc">Telegram Bot API menerima request dari script dan mengirim pesan ke chat ID tujuan.</p>
+      </div>
+      <div class="ef-step ef-step--end">
+        <div class="ef-badge">7</div>
+        <span class="ef-icon">📱</span>
+        <div class="ef-title">Alert Diterima di Telegram</div>
+        <p class="ef-desc">User menerima alert secara real-time di Telegram.</p>
+        <div class="ef-mini-alert">
+          <div class="ef-mini-alert-head">🚨 WAZUH ALERT</div>
+          <div class="ef-mini-alert-body">
+            Level&nbsp;&nbsp;: 7<br>
+            Rule ID&nbsp;: 550<br>
+            Agent&nbsp;&nbsp;&nbsp;: LAPTOP-AQJ28AHJ<br>
+            Path&nbsp;&nbsp;&nbsp;&nbsp;: c:\data\test.txt<br>
+            Action&nbsp;: modified
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RINGKASAN -->
+  <section id="ringkasan" class="section">
+    <h2>Ringkasan</h2>
+    <p class="section-intro">Inti dari lab ini dalam lima poin. Item bertanda <em>konsep</em> menggambarkan
+    kemampuan yang sudah didesain dalam topologi tetapi belum sepenuhnya diuji — lihat Future Development.</p>
+
+    <div class="summary-grid">
+      <div class="summary-item">
+        <span class="summary-icon summary-icon--blue">🔍</span>
+        <div>
+          <div class="summary-title">Monitoring</div>
+          <p>FIM memantau integritas file &amp; direktori penting secara real-time.</p>
+        </div>
+      </div>
+      <div class="summary-item">
+        <span class="summary-icon summary-icon--red">🐞</span>
+        <div>
+          <div class="summary-title">Deteksi <em>(konsep)</em></div>
+          <p>Malware dapat dideteksi menggunakan EICAR test file — belum diuji pada lab ini.</p>
+        </div>
+      </div>
+      <div class="summary-item">
+        <span class="summary-icon summary-icon--warn">🔔</span>
+        <div>
+          <div class="summary-title">Alert Real-Time</div>
+          <p>Alert dikirim otomatis ke Telegram tanpa delay yang berarti.</p>
+        </div>
+      </div>
+      <div class="summary-item">
+        <span class="summary-icon summary-icon--green">📈</span>
+        <div>
+          <div class="summary-title">Visibilitas</div>
+          <p>Semua event dan alert dapat dipantau langsung di Wazuh Dashboard.</p>
+        </div>
+      </div>
+      <div class="summary-item">
+        <span class="summary-icon summary-icon--purple">🛡️</span>
+        <div>
+          <div class="summary-title">Keamanan</div>
+          <p>Meningkatkan visibilitas, deteksi, dan respons terhadap ancaman pada endpoint.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout--info">
+      <strong>Catatan:</strong> alert hanya akan dikirim ke Telegram jika level alert ≥ 5 dan sesuai dengan
+      group yang ditentukan (misal: <code>syscheck</code> untuk FIM).
+    </div>
+  </section>
+
+  <!-- EXAMPLE ALERT -->
+  <section id="example-alert" class="section">
+    <h2>Example Alert</h2>
+    <p class="section-intro">Contoh notifikasi asli yang diterima di Telegram setelah pengujian FIM pada
+    <code>wazuh-test.txt</code>.</p>
+
+    <div class="alert-card">
+      <div class="alert-card-head">🚨 WAZUH ALERT</div>
+      <div class="alert-card-body">
+        <div class="alert-row"><span class="alert-icon">🔴</span><span class="alert-label">Level</span><span class="alert-value alert-value--high">7</span></div>
+        <div class="alert-row"><span class="alert-icon">📋</span><span class="alert-label">Rule ID</span><span class="alert-value">550</span></div>
+        <div class="alert-row"><span class="alert-icon">💻</span><span class="alert-label">Agent</span><span class="alert-value">LAPTOP-AQJ28AHJ</span></div>
+        <div class="alert-row"><span class="alert-icon">🆔</span><span class="alert-label">Agent ID</span><span class="alert-value">001</span></div>
+        <div class="alert-row"><span class="alert-icon">⚠️</span><span class="alert-label">Event</span><span class="alert-value">Integrity checksum changed.</span></div>
+        <div class="alert-row"><span class="alert-icon">📁</span><span class="alert-label">Path</span><span class="alert-value alert-value--mono">c:\users\public\wazuh-test.txt</span></div>
+        <div class="alert-row"><span class="alert-icon">🔧</span><span class="alert-label">Action</span><span class="alert-value">modified</span></div>
+      </div>
+    </div>
+
+    <div class="alert-screenshot">
+      <img src="../images/tele.png" alt="Screenshot notifikasi Wazuh Alert asli yang diterima di chat Telegram bot Wazuh SOC Monitoring" loading="lazy">
+    </div>
+    <p class="fig-caption">Screenshot asli chat Telegram — beberapa alert FIM (file added / deleted) berhasil
+    diterima secara real-time dari bot <strong>Wazuh SOC Monitoring</strong> selama pengujian.</p>
+  </section>
+
+  <footer class="doc-footer">
+    <p>Wazuh SIEM → Telegram Real-Time Alert Integration — Dokumentasi Teknis</p>
+  </footer>
+
+</main>
+
+<button class="back-to-top" id="backToTop" aria-label="Kembali ke atas">↑</button>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------------------------------------------------------
+     SCROLL PROGRESS INDICATOR
+  --------------------------------------------------------- */
+  var progressBar = document.getElementById('progressBar');
+  function updateProgress() {
+    var scrollTop = window.scrollY;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progressBar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  /* ---------------------------------------------------------
+     ACTIVE SIDEBAR NAVIGATION
+  --------------------------------------------------------- */
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.section'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        var id = entry.target.getAttribute('id');
+        navLinks.forEach(function (link) {
+          link.classList.toggle('active', link.getAttribute('data-section') === id);
+        });
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+
+  sections.forEach(function (section) { observer.observe(section); });
+
+  /* ---------------------------------------------------------
+     SMOOTH SCROLL FOR NAV LINKS (also closes mobile sidebar)
+  --------------------------------------------------------- */
+  navLinks.forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var targetId = link.getAttribute('href');
+      var target = document.querySelector(targetId);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.pushState(null, '', targetId);
+      }
+      closeMobileSidebar();
+    });
+  });
+
+  /* ---------------------------------------------------------
+     COPY CODE BUTTON + TOAST
+  --------------------------------------------------------- */
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('is-visible');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toast.classList.remove('is-visible');
+    }, 2200);
+  }
+
+  var copyButtons = Array.prototype.slice.call(document.querySelectorAll('.copy-btn'));
+  copyButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var targetId = btn.getAttribute('data-copy-target');
+      var codeEl = document.getElementById(targetId);
+      if (!codeEl) return;
+      var text = codeEl.innerText;
+
+      function done() {
+        var original = btn.textContent;
+        btn.textContent = 'Copied';
+        btn.classList.add('is-copied');
+        showToast('Code disalin ke clipboard');
+        setTimeout(function () {
+          btn.textContent = original;
+          btn.classList.remove('is-copied');
+        }, 1600);
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function () {
+          fallbackCopy(text);
+          done();
+        });
+      } else {
+        fallbackCopy(text);
+        done();
+      }
+    });
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (err) { /* noop */ }
+    document.body.removeChild(ta);
+  }
+
+  /* ---------------------------------------------------------
+     MOBILE SIDEBAR
+  --------------------------------------------------------- */
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sidebarOverlay');
+  var mobileToggle = document.getElementById('mobileNavToggle');
+
+  function openMobileSidebar() {
+    sidebar.classList.add('is-open');
+    overlay.classList.add('is-visible');
+    mobileToggle.classList.add('is-open');
+    mobileToggle.setAttribute('aria-expanded', 'true');
+  }
+  function closeMobileSidebar() {
+    sidebar.classList.remove('is-open');
+    overlay.classList.remove('is-visible');
+    mobileToggle.classList.remove('is-open');
+    mobileToggle.setAttribute('aria-expanded', 'false');
+  }
+  mobileToggle.addEventListener('click', function () {
+    if (sidebar.classList.contains('is-open')) {
+      closeMobileSidebar();
+    } else {
+      openMobileSidebar();
+    }
+  });
+  overlay.addEventListener('click', closeMobileSidebar);
+
+  /* ---------------------------------------------------------
+     BACK TO TOP
+  --------------------------------------------------------- */
+  var backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', function () {
+    backToTop.classList.toggle('is-visible', window.scrollY > 480);
+  }, { passive: true });
+  backToTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ---------------------------------------------------------
+     DARK / LIGHT MODE TOGGLE
+  --------------------------------------------------------- */
+  var themeToggle = document.getElementById('themeToggle');
+  var iconDark = document.getElementById('themeIconDark');
+  var iconLight = document.getElementById('themeIconLight');
+  var themeLabel = document.getElementById('themeLabel');
+  var root = document.documentElement;
+  var currentTheme = 'dark';
+
+  function applyTheme(theme) {
+    currentTheme = theme;
+    if (theme === 'light') {
+      root.setAttribute('data-theme', 'light');
+      iconDark.style.display = 'none';
+      iconLight.style.display = 'inline';
+      themeLabel.textContent = 'Light mode';
+    } else {
+      root.removeAttribute('data-theme');
+      iconDark.style.display = 'inline';
+      iconLight.style.display = 'none';
+      themeLabel.textContent = 'Dark mode';
+    }
+  }
+  themeToggle.addEventListener('click', function () {
+    applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+  });
+
+  /* ---------------------------------------------------------
+     SEARCH DOCUMENTATION
+  --------------------------------------------------------- */
+  var searchInput = document.getElementById('docSearch');
+  var searchResults = document.getElementById('searchResults');
+
+  var searchIndex = sections.map(function (section) {
+    var heading = section.querySelector('h2');
+    return {
+      id: section.getAttribute('id'),
+      title: heading ? heading.textContent.trim() : section.getAttribute('id'),
+      text: section.textContent.toLowerCase()
+    };
+  });
+
+  function renderResults(query) {
+    var q = query.trim().toLowerCase();
+    if (!q) {
+      searchResults.classList.remove('is-open');
+      searchResults.innerHTML = '';
+      return;
+    }
+    var matches = searchIndex.filter(function (item) {
+      return item.text.indexOf(q) !== -1;
+    });
+
+    if (matches.length === 0) {
+      searchResults.innerHTML = '<div class="search-result-empty">Tidak ada hasil untuk "' + escapeHtml(query) + '"</div>';
+    } else {
+      searchResults.innerHTML = matches.map(function (item) {
+        return '<button type="button" class="search-result-item" data-target="#' + item.id + '">' + escapeHtml(item.title) + '</button>';
+      }).join('');
+    }
+    searchResults.classList.add('is-open');
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  searchInput.addEventListener('input', function () {
+    renderResults(searchInput.value);
+  });
+
+  searchResults.addEventListener('click', function (e) {
+    var item = e.target.closest('.search-result-item');
+    if (!item) return;
+    var targetId = item.getAttribute('data-target');
+    var target = document.querySelector(targetId);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      history.pushState(null, '', targetId);
+    }
+    searchInput.value = '';
+    searchResults.classList.remove('is-open');
+    closeMobileSidebar();
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.sidebar-search')) {
+      searchResults.classList.remove('is-open');
+    }
+  });
+
+  /* ---------------------------------------------------------
+     TROUBLESHOOTING ACCORDION
+  --------------------------------------------------------- */
+  var accordionItems = Array.prototype.slice.call(document.querySelectorAll('.accordion-item'));
+  accordionItems.forEach(function (item) {
+    var trigger = item.querySelector('.accordion-trigger');
+    var panel = item.querySelector('.accordion-panel');
+    trigger.addEventListener('click', function () {
+      var isOpen = item.classList.contains('is-open');
+      item.classList.toggle('is-open', !isOpen);
+      panel.style.maxHeight = !isOpen ? panel.scrollHeight + 'px' : '0px';
+    });
+  });
+
+})();
+
+</script>
+</body>
+</html>
