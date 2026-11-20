@@ -1,0 +1,1776 @@
+<!doctype html>
+<html lang="id">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Dokumentasi Home Server STB HG680P</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap"
+			rel="stylesheet" />
+		<style>
+			:root {
+				color-scheme: dark;
+				--bg: #080c16;
+				--panel: #0c1220;
+				--raised: #111a2b;
+				--line: #1b2840;
+				--text: #e6edf6;
+				--muted: #93a3b8;
+				--cyan: #22d3ee;
+				--green: #34d399;
+				--red: #fb4f6e;
+				--blue: #38a8f8;
+				--purple: #a78bfa;
+				--amber: #fbbf24;
+				--mono:
+					"JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Consolas,
+					monospace;
+				--sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+			}
+			* {
+				box-sizing: border-box;
+			}
+			html {
+				scroll-behavior: smooth;
+			}
+			body {
+				margin: 0;
+				background: var(--bg);
+				background-image:
+					linear-gradient(#0e1627 1px, transparent 1px),
+					linear-gradient(90deg, #0e1627 1px, transparent 1px);
+				background-size: 56px 56px;
+				color: var(--text);
+				font: 16px/1.75 var(--sans);
+			}
+			.wrap {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding-left: max(24px, env(safe-area-inset-left));
+				padding-right: max(24px, env(safe-area-inset-right));
+			}
+			a {
+				color: var(--cyan);
+				text-underline-offset: 3px;
+			}
+			a:focus-visible,
+			button:focus-visible {
+				outline: 2px solid var(--cyan);
+				outline-offset: 3px;
+			}
+			.t-red {
+				--c: var(--red);
+			}
+			.t-blue {
+				--c: var(--blue);
+			}
+			.t-purple {
+				--c: var(--purple);
+			}
+			.t-green {
+				--c: var(--green);
+			}
+			.t-cyan {
+				--c: var(--cyan);
+			}
+			.tag,
+			.pill,
+			.num {
+				color: var(--c);
+				border: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
+				background: color-mix(in srgb, var(--c) 10%, var(--bg));
+			}
+			.top {
+				position: sticky;
+				top: 0;
+				z-index: 20;
+				background: #080c16ee;
+				backdrop-filter: blur(8px);
+				border-bottom: 1px solid var(--line);
+			}
+			.top .wrap {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 24px;
+				min-height: 80px;
+			}
+			.brand {
+				font: 800 1.15rem var(--mono);
+				letter-spacing: 0.03em;
+				color: var(--text);
+				text-decoration: none;
+				line-height: 1.3;
+			}
+			.brand small {
+				display: block;
+				font: 700 0.68rem var(--mono);
+				letter-spacing: 0.2em;
+				color: var(--cyan);
+			}
+			.links {
+				display: flex;
+				align-items: center;
+				gap: 28px;
+			}
+			.links a {
+				font: 500 0.85rem var(--mono);
+				letter-spacing: 0.06em;
+				color: #c3cfde;
+				text-decoration: none;
+			}
+			.links a:hover,
+			.links a.on {
+				color: var(--cyan);
+			}
+			.links a.back {
+				padding: 7px 14px;
+				border: 1px solid color-mix(in srgb, var(--green) 45%, transparent);
+				border-radius: 8px;
+				color: var(--green);
+				background: #0a1a16;
+			}
+			.burger {
+				display: none;
+				background: none;
+				border: 1px solid var(--line);
+				color: var(--text);
+				border-radius: 8px;
+				font-size: 1.2rem;
+				padding: 4px 12px;
+				cursor: pointer;
+			}
+			.hero {
+				text-align: center;
+				padding: 84px 0 56px;
+			}
+			.eyebrow {
+				display: inline-flex;
+				align-items: center;
+				gap: 10px;
+				padding: 10px 22px;
+				border: 1px solid color-mix(in srgb, var(--cyan) 40%, transparent);
+				border-radius: 999px;
+				background: #0a1a24;
+				color: var(--cyan);
+				font: 600 0.78rem var(--mono);
+				letter-spacing: 0.25em;
+			}
+			.eyebrow::before {
+				content: "";
+				width: 7px;
+				height: 7px;
+				border-radius: 50%;
+				background: var(--cyan);
+			}
+			h1 {
+				margin: 34px 0 22px;
+				font: 800 clamp(1.35rem, 5.2vw, 4.2rem)/1.15 var(--mono);
+				letter-spacing: -0.01em;
+			}
+			.grad {
+				background: linear-gradient(90deg, var(--cyan), var(--green));
+				-webkit-background-clip: text;
+				background-clip: text;
+				color: transparent;
+			}
+			.lead {
+				max-width: 760px;
+				margin: 0 auto;
+				color: #b4c3d4;
+				font-size: 1.12rem;
+			}
+			.pills {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 14px;
+				margin-top: 40px;
+			}
+			.pill {
+				padding: 12px 24px;
+				border-radius: 999px;
+				font: 600 0.9rem var(--mono);
+			}
+			.idx {
+				padding: 48px 0 8px;
+			}
+			h2.big {
+				margin: 22px 0 28px;
+				font: 800 1.9rem/1.2 var(--mono);
+				letter-spacing: 0.01em;
+			}
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 16px;
+			}
+			.card {
+				display: flex;
+				align-items: center;
+				gap: 14px;
+				padding: 16px;
+				border: 1px solid var(--line);
+				border-radius: 12px;
+				background: var(--panel);
+				color: var(--text);
+				text-decoration: none;
+			}
+			.card:hover {
+				border-color: var(--cyan);
+			}
+			.num {
+				flex: none;
+				display: grid;
+				place-items: center;
+				width: 42px;
+				height: 42px;
+				border-radius: 10px;
+				font: 700 0.85rem var(--mono);
+			}
+			.ct b {
+				display: block;
+				font-weight: 600;
+				font-size: 0.95rem;
+				line-height: 1.35;
+			}
+			.tag {
+				display: inline-block;
+				padding: 1px 10px;
+				border-radius: 999px;
+				font: 600 0.68rem var(--mono);
+				letter-spacing: 0.12em;
+				font-style: normal;
+			}
+			.ct .tag {
+				margin-top: 6px;
+			}
+			.note,
+			.warn,
+			.ok {
+				--c: var(--cyan);
+				margin: 22px 0;
+				padding: 14px 18px;
+				border: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+				border-left: 3px solid var(--c);
+				border-radius: 8px;
+				background: color-mix(in srgb, var(--c) 7%, var(--bg));
+			}
+			.warn {
+				--c: var(--amber);
+			}
+			.ok {
+				--c: var(--green);
+			}
+			.note::before,
+			.warn::before,
+			.ok::before {
+				display: block;
+				margin-bottom: 4px;
+				font: 700 0.75rem var(--mono);
+				letter-spacing: 0.1em;
+				color: var(--c);
+			}
+			.note::before {
+				content: "[ INFO ]";
+			}
+			.warn::before {
+				content: "[ PERINGATAN ]";
+			}
+			.ok::before {
+				content: "[ OK ]";
+			}
+			.sec {
+				margin-top: 32px;
+				border: 1px solid var(--line);
+				border-radius: 16px;
+				background: var(--panel);
+				scroll-margin-top: 100px;
+			}
+			.sec-head {
+				display: flex;
+				align-items: center;
+				gap: 14px;
+				padding: 20px 28px;
+				border-bottom: 1px solid var(--line);
+			}
+			.sec-head h2 {
+				margin: 0;
+				font: 700 1.3rem/1.3 var(--mono);
+			}
+			.sec-head .tag {
+				margin-left: auto;
+			}
+			.sec-body {
+				padding: 6px 28px 28px;
+				min-width: 0;
+			}
+			.sec-body > p,
+			.sec-body li {
+				max-width: 80ch;
+			}
+			p {
+				margin: 10px 0 14px;
+			}
+			li {
+				margin: 6px 0;
+			}
+			li::marker {
+				color: var(--cyan);
+			}
+			h3 {
+				margin: 28px 0 8px;
+				font: 700 0.82rem/1.3 var(--mono);
+				letter-spacing: 0.12em;
+				text-transform: uppercase;
+				color: var(--cyan);
+			}
+			code {
+				font: 0.88em var(--mono);
+				color: #8ff0c2;
+				background: #0b2130;
+				border: 1px solid #17364a;
+				padding: 1px 6px;
+				border-radius: 5px;
+				overflow-wrap: anywhere;
+			}
+			.term {
+				margin: 16px 0 24px;
+				border: 1px solid var(--line);
+				border-radius: 10px;
+				background: #050810;
+				overflow: hidden;
+			}
+			.term figcaption {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 6px 8px 6px 14px;
+				background: var(--raised);
+				border-bottom: 1px solid var(--line);
+				font: 0.75rem var(--mono);
+				color: var(--muted);
+			}
+			.term button {
+				font: inherit;
+				color: var(--text);
+				background: transparent;
+				border: 1px solid var(--line);
+				border-radius: 6px;
+				padding: 3px 10px;
+				cursor: pointer;
+			}
+			.term button:hover {
+				border-color: var(--green);
+				color: var(--green);
+			}
+			.term pre {
+				margin: 0;
+				padding: 14px 16px;
+				overflow-x: auto;
+				white-space: pre-wrap;
+				overflow-wrap: anywhere;
+				font: 0.88rem/1.65 var(--mono);
+			}
+			.term pre code {
+				background: none;
+				border: 0;
+				padding: 0;
+				color: inherit;
+				font: inherit;
+			}
+			.c {
+				color: #6b8196;
+			}
+			.k {
+				color: var(--green);
+			}
+			.f {
+				color: var(--amber);
+			}
+			.tbl {
+				overflow-x: auto;
+				margin: 16px 0 26px;
+				border: 1px solid var(--line);
+				border-radius: 10px;
+				background: var(--bg);
+			}
+			table {
+				width: 100%;
+				min-width: 560px;
+				border-collapse: collapse;
+				font-size: 0.92rem;
+			}
+			th {
+				padding: 10px 14px;
+				background: var(--raised);
+				color: var(--muted);
+				font: 600 0.75rem var(--mono);
+				letter-spacing: 0.06em;
+				text-align: left;
+				white-space: nowrap;
+			}
+			td {
+				padding: 11px 14px;
+				border-top: 1px solid var(--line);
+				vertical-align: top;
+			}
+			tr:hover td {
+				background: #0d1626;
+			}
+			.dot {
+				display: inline-block;
+				width: 8px;
+				height: 8px;
+				margin-right: 8px;
+				border-radius: 50%;
+				background: var(--cyan);
+			}
+			.dot.plan {
+				background: var(--amber);
+			}
+			.dot.run {
+				display: inline-block;
+				width: 8px;
+				height: 8px;
+				margin-right: 8px;
+				border-radius: 50%;
+				background: var(--green);
+			}
+			.legend {
+				font: 0.78rem var(--mono);
+				color: var(--muted);
+				margin: 16px 0 -6px;
+			}
+			.legend .dot {
+				margin-left: 12px;
+			}
+			.legend .dot:first-child {
+				margin-left: 0;
+			}
+			.end {
+				margin: 40px 0 64px;
+				padding: 32px;
+				border: 1px solid var(--line);
+				border-radius: 16px;
+				background: var(--panel);
+				text-align: center;
+			}
+			.end p {
+				margin: 0 auto 20px;
+				max-width: 64ch;
+				color: var(--muted);
+				font-size: 0.9rem;
+			}
+			.btn {
+				display: inline-block;
+				padding: 12px 26px;
+				border-radius: 10px;
+				background: linear-gradient(90deg, var(--cyan), var(--green));
+				color: #04110d;
+				font: 700 0.9rem var(--mono);
+				text-decoration: none;
+			}
+			.btn:hover {
+				filter: brightness(1.1);
+			}
+			@media (max-width: 1000px) {
+				.grid {
+					grid-template-columns: repeat(2, 1fr);
+				}
+				.burger {
+					display: block;
+				}
+				.links {
+					display: none;
+					position: absolute;
+					left: 0;
+					right: 0;
+					top: 100%;
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 14px;
+					padding: 18px 24px;
+					background: #080c16;
+					border-bottom: 1px solid var(--line);
+				}
+				.links.open {
+					display: flex;
+				}
+			}
+			@media (max-width: 600px) {
+				.grid {
+					grid-template-columns: 1fr;
+				}
+				.hero {
+					padding: 56px 0 36px;
+				}
+				.sec-head,
+				.sec-body {
+					padding-left: 18px;
+					padding-right: 18px;
+				}
+				.sec-head {
+					flex-wrap: wrap;
+				}
+				.sec-head .tag {
+					margin-left: 0;
+				}
+				h2.big {
+					font-size: 1.4rem;
+				}
+			}
+			.gallery {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+				gap: 16px;
+				margin-top: 18px;
+			}
+			.shot-fig {
+				margin: 0;
+				min-width: 0;
+				border: 1px solid var(--line);
+				border-radius: 12px;
+				overflow: hidden;
+				background: var(--bg);
+			}
+			.shot {
+				display: block;
+				width: 100%;
+				aspect-ratio: 4/3;
+				padding: 0;
+				border: 0;
+				background: #050810;
+				cursor: zoom-in;
+			}
+			.shot img {
+				display: block;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+			.shot-fig figcaption {
+				display: flex;
+				flex-direction: column;
+				gap: 2px;
+				padding: 10px 14px;
+				font-size: 0.85rem;
+				color: var(--muted);
+			}
+			.shot-fig figcaption b {
+				font: 600 0.85rem var(--mono);
+				color: var(--text);
+			}
+			.missing .shot {
+				display: grid;
+				place-items: center;
+				padding: 14px;
+				cursor: default;
+				color: var(--muted);
+				font: 0.75rem/1.5 var(--mono);
+				text-align: center;
+				overflow-wrap: anywhere;
+			}
+			.lb {
+				position: fixed;
+				inset: 0;
+				z-index: 50;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 12px;
+				padding: 16px;
+				background: #02050bf2;
+			}
+			.lb[hidden] {
+				display: none;
+			}
+			.lb img {
+				max-width: 92vw;
+				max-height: 78vh;
+				object-fit: contain;
+				border-radius: 10px;
+			}
+			.lb p {
+				margin: 0;
+				color: var(--muted);
+				font: 0.8rem var(--mono);
+				text-align: center;
+			}
+			.lb button {
+				position: absolute;
+				width: 44px;
+				height: 44px;
+				border: 1px solid var(--line);
+				border-radius: 50%;
+				background: var(--panel);
+				color: var(--text);
+				font-size: 1.3rem;
+				cursor: pointer;
+			}
+			.lb button:hover {
+				border-color: var(--cyan);
+				color: var(--cyan);
+			}
+			.lb .x {
+				top: max(16px, env(safe-area-inset-top));
+				right: 16px;
+			}
+			.lb .p {
+				left: 12px;
+				top: 50%;
+			}
+			.lb .n {
+				right: 12px;
+				top: 50%;
+			}
+			@media (max-width: 640px) {
+				table {
+					min-width: 0;
+				}
+				tr:first-child {
+					display: none;
+				}
+				tr {
+					display: block;
+					padding: 12px 14px;
+					border-top: 1px solid var(--line);
+				}
+				tr:nth-child(2) {
+					border-top: 0;
+				}
+				td {
+					display: block;
+					border: 0;
+					padding: 4px 0;
+				}
+				td::before {
+					content: attr(data-label);
+					display: block;
+					font: 600 0.7rem var(--mono);
+					letter-spacing: 0.08em;
+					color: var(--muted);
+				}
+				.eyebrow {
+					letter-spacing: 0.15em;
+					padding: 8px 16px;
+				}
+				.pill {
+					padding: 10px 16px;
+					font-size: 0.8rem;
+				}
+				.sec-head h2 {
+					flex: 1;
+					min-width: 0;
+					font-size: 1.1rem;
+				}
+				.top .wrap {
+					min-height: 64px;
+				}
+				.end {
+					padding: 24px 18px;
+				}
+			}
+			@media (max-width: 380px) {
+				.wrap {
+					padding-left: 16px;
+					padding-right: 16px;
+				}
+				.sec-head,
+				.sec-body {
+					padding-left: 14px;
+					padding-right: 14px;
+				}
+			}
+			@media (prefers-reduced-motion: reduce) {
+				html {
+					scroll-behavior: auto;
+				}
+			}
+			@media print {
+				:root {
+					--bg: #fff;
+					--panel: #fff;
+					--raised: #eee;
+					--line: #ccc;
+					--text: #111;
+					--muted: #444;
+					--cyan: #0a5a85;
+					--green: #0a6b3a;
+					--amber: #8a5a00;
+				}
+				body {
+					background: #fff;
+				}
+				.top,
+				.term button,
+				.end {
+					display: none;
+				}
+				.term {
+					background: #f6f6f6;
+				}
+				code {
+					background: #eef2f5;
+					color: #111;
+				}
+				h1,
+				.grad {
+					color: #111;
+					background: none;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<header class="top">
+			<div class="wrap">
+				<a class="brand" href="#top"
+					>HOME_SERVER<small>STB HG680P DOCS LOG</small></a
+				>
+				<button
+					class="burger"
+					type="button"
+					aria-label="Menu"
+					aria-expanded="false">
+					☰
+				</button>
+				<nav class="links" aria-label="Navigasi">
+					<a href="#ringkasan">Overview</a><a href="#docker">Docker</a
+					><a href="#cms">CMS</a><a href="#tunnel">Tunnel</a
+					><a href="#backup">Backup</a><a href="#keamanan">Keamanan</a
+					><a href="#galeri">Galeri</a
+					><a
+						class="back"
+						href="../index.html#projects"
+						>← Projects</a
+					>
+				</nav>
+			</div>
+		</header>
+		<main id="top" class="wrap">
+			<section class="hero">
+				<span class="eyebrow">DOKUMENTASI TEKNIS</span>
+				<h1>
+					DOKUMENTASI HOME SERVER<br /><span class="grad">STB HG680P</span>
+				</h1>
+				<p class="lead">
+					Catatan konfigurasi server rumahan berbasis Armbian Linux, Docker,
+					Nginx, Laravel, MariaDB, dan Cloudflare Tunnel.
+				</p>
+				<div class="pills">
+					<span class="pill t-red">HARDWARE — STB HG680P</span
+					><span class="pill t-blue">DOCKER — 4 Container</span
+					><span class="pill t-purple">STORAGE — microSD 32 GB</span
+					><span class="pill t-green">ALERT — Telegram aktif</span>
+				</div>
+			</section>
+			<section class="idx">
+				<span class="eyebrow">NAVIGASI</span>
+				<h2 class="big">DAFTAR ISI DOKUMENTASI</h2>
+				<div class="grid">
+					<a class="card" href="#ringkasan"
+						><span class="num t-cyan">01</span
+						><span class="ct"
+							><b>Ringkasan Proyek</b><em class="tag t-cyan">OVERVIEW</em></span
+						></a
+					><a class="card" href="#hardware"
+						><span class="num t-blue">02</span
+						><span class="ct"
+							><b>Perangkat dan Jaringan</b
+							><em class="tag t-blue">JARINGAN</em></span
+						></a
+					><a class="card" href="#storage"
+						><span class="num t-purple">03</span
+						><span class="ct"
+							><b>Penyimpanan dan Folder</b
+							><em class="tag t-purple">STORAGE</em></span
+						></a
+					><a class="card" href="#akses"
+						><span class="num t-blue">04</span
+						><span class="ct"
+							><b>Masuk ke Server melalui SSH</b
+							><em class="tag t-blue">SSH</em></span
+						></a
+					><a class="card" href="#docker"
+						><span class="num t-green">05</span
+						><span class="ct"
+							><b>Docker dan Container</b
+							><em class="tag t-green">DOCKER</em></span
+						></a
+					><a class="card" href="#website-statis"
+						><span class="num t-green">06</span
+						><span class="ct"
+							><b>Website Statis dengan Nginx</b
+							><em class="tag t-green">WEB</em></span
+						></a
+					><a class="card" href="#cms"
+						><span class="num t-green">07</span
+						><span class="ct"
+							><b>Website Laravel / CMS</b
+							><em class="tag t-green">WEB</em></span
+						></a
+					><a class="card" href="#database"
+						><span class="num t-purple">08</span
+						><span class="ct"
+							><b>Database MariaDB</b
+							><em class="tag t-purple">DATABASE</em></span
+						></a
+					><a class="card" href="#tunnel"
+						><span class="num t-blue">09</span
+						><span class="ct"
+							><b>Akses Internet melalui Cloudflare Tunnel</b
+							><em class="tag t-blue">JARINGAN</em></span
+						></a
+					><a class="card" href="#cek"
+						><span class="num t-green">10</span
+						><span class="ct"
+							><b>Pengecekan Website yang Sedang Running</b
+							><em class="tag t-green">OPS</em></span
+						></a
+					><a class="card" href="#backup"
+						><span class="num t-purple">11</span
+						><span class="ct"
+							><b>Backup dan Ketahanan Data</b
+							><em class="tag t-purple">BACKUP</em></span
+						></a
+					><a class="card" href="#keamanan"
+						><span class="num t-red">12</span
+						><span class="ct"
+							><b>Keamanan Dasar</b><em class="tag t-red">SECURITY</em></span
+						></a
+					><a class="card" href="#kendala"
+						><span class="num t-green">13</span
+						><span class="ct"
+							><b>Kendala yang Pernah Ditemui</b
+							><em class="tag t-green">OPS</em></span
+						></a
+					><a class="card" href="#rencana"
+						><span class="num t-cyan">14</span
+						><span class="ct"
+							><b>Pekerjaan Berikutnya</b
+							><em class="tag t-cyan">ROADMAP</em></span
+						></a
+					><a class="card" href="#referensi"
+						><span class="num t-green">15</span
+						><span class="ct"
+							><b>Ringkasan Perintah Harian</b
+							><em class="tag t-green">OPS</em></span
+						></a
+					><a class="card" href="#status"
+						><span class="num t-cyan">16</span
+						><span class="ct"
+							><b>Status dan Batas Dokumentasi</b
+							><em class="tag t-cyan">INFO</em></span
+						></a
+					><a class="card" href="#galeri"
+						><span class="num t-purple">17</span
+						><span class="ct"
+							><b>Dokumentasi Foto</b><em class="tag t-purple">FOTO</em></span
+						></a
+					>
+				</div>
+			</section>
+			<div class="note">
+				<strong>Catatan status:</strong> Dokumentasi ini merangkum konfigurasi
+				yang pernah tercatat. Nama container dan port di bagian inventaris
+				berasal dari pemeriksaan sebelumnya, bukan pemeriksaan live saat dokumen
+				dibuat. Jalankan perintah verifikasi pada bagian “Pengecekan” sebelum
+				menganggap semuanya masih aktif. Bagian yang belum terkonfirmasi
+				ditandai dengan jelas.
+			</div>
+			<section class="sec" id="ringkasan">
+				<div class="sec-head">
+					<span class="num t-cyan">01</span>
+					<h2>Ringkasan Proyek</h2>
+					<span class="tag t-cyan">OVERVIEW</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						Proyek ini menggunakan STB HG680P yang menjalankan Armbian Linux
+						sebagai server rumahan. Tujuannya adalah menjalankan website dan
+						layanan pendukung dengan perangkat yang sudah dimiliki, sekaligus
+						belajar administrasi Linux, container, jaringan, pengelolaan data,
+						dan dasar-dasar DevOps.
+					</p>
+					<table>
+						<tr>
+							<th>Komponen</th>
+							<th>Peran</th>
+							<th>Status yang pernah tercatat</th>
+						</tr>
+						<tr>
+							<td>STB HG680P</td>
+							<td>Perangkat server</td>
+							<td>Digunakan</td>
+						</tr>
+						<tr>
+							<td>Armbian Linux</td>
+							<td>Sistem operasi server</td>
+							<td>Terpasang; arsitektur <code>aarch64</code></td>
+						</tr>
+						<tr>
+							<td>microSD Imou 32 GB</td>
+							<td>Penyimpanan data tambahan</td>
+							<td>Dipartisi dan dipasang di <code>/srv/data</code></td>
+						</tr>
+						<tr>
+							<td>Docker</td>
+							<td>Menjalankan layanan dalam container</td>
+							<td>Aktif saat pemeriksaan sebelumnya</td>
+						</tr>
+						<tr>
+							<td>Nginx</td>
+							<td>Web server untuk website statis</td>
+							<td>Container pernah dibuat</td>
+						</tr>
+						<tr>
+							<td>Laravel CMS + Apache</td>
+							<td>Aplikasi web</td>
+							<td>Container pernah berjalan pada port 8081</td>
+						</tr>
+						<tr>
+							<td>MariaDB</td>
+							<td>Database aplikasi</td>
+							<td>Container pernah berjalan; port host 3307</td>
+						</tr>
+						<tr>
+							<td>Cloudflare Tunnel</td>
+							<td>Akses dari internet tanpa membuka port masuk router</td>
+							<td>Container pernah dibuat; URL Quick Tunnel dapat berubah</td>
+						</tr>
+						<tr>
+							<td>Telegram monitoring</td>
+							<td>Notifikasi gangguan</td>
+							<td>Sudah berjalan</td>
+						</tr>
+						<tr>
+							<td>GitHub Actions CI/CD</td>
+							<td>Otomatisasi build/deploy</td>
+							<td>Sudah diterapkan</td>
+						</tr>
+					</table>
+				</div>
+			</section>
+			<section class="sec" id="hardware">
+				<div class="sec-head">
+					<span class="num t-blue">02</span>
+					<h2>Perangkat dan Jaringan</h2>
+					<span class="tag t-blue">JARINGAN</span>
+				</div>
+				<div class="sec-body">
+					<ul>
+						<li>Perangkat utama: STB HG680P.</li>
+						<li>Sistem operasi: Armbian Linux, kernel berbasis Linux.</li>
+						<li>Arsitektur: ARM64 / <code>aarch64</code>.</li>
+						<li>
+							Penyimpanan tambahan: microSD 32 GB, dipasang di
+							<code>/srv/data</code>.
+						</li>
+						<li>Koneksi jaringan: kabel LAN ke router.</li>
+						<li>Alamat IP lokal yang tercatat: <code>192.168.1.100</code>.</li>
+						<li>Router yang tercatat: <code>192.168.1.1</code>.</li>
+						<li>IP laptop yang pernah terlihat: <code>192.168.1.138</code>.</li>
+					</ul>
+					<div class="warn">
+						<strong>Alamat IP bisa berubah</strong> jika router menggunakan
+						DHCP. Jika SSH tidak tersambung, cek daftar perangkat pada router
+						atau periksa alamat IP STB dari terminalnya. Jangan langsung
+						mengubah konfigurasi jaringan tanpa mengetahui IP terbaru.
+					</div>
+				</div>
+			</section>
+			<section class="sec" id="storage">
+				<div class="sec-head">
+					<span class="num t-purple">03</span>
+					<h2>Penyimpanan dan Folder</h2>
+					<span class="tag t-purple">STORAGE</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						microSD dipasang pada <code>/srv/data</code>. Struktur folder yang
+						direncanakan/digunakan untuk memisahkan data server antara lain:
+					</p>
+					<pre><code>/srv/data/
+├── backups/
+├── docker/
+├── hermes/
+├── websites/
+│   └── pertama/
+│       └── index.html
+└── CMS-persistent/
+    └── storage/</code></pre>
+					<p>
+						Website statis pertama disimpan di
+						<code>/srv/data/websites/pertama/</code>. Backup storage CMS pernah
+						disalin ke <code>/srv/data/CMS-persistent/storage/</code>.
+					</p>
+					<p>
+						Mount microSD pernah terlihat sebagai
+						<code>/dev/mmcblk1p1</code> dengan filesystem VFAT. Sistem operasi
+						berada pada eMMC, dengan root filesystem di partisi ext4. Detail
+						partisi dapat berubah jika instalasi diulang.
+					</p>
+					<h3>Periksa mount dan ruang kosong</h3>
+					<pre><code>lsblk -f
+df -h
+findmnt /srv/data
+cat /etc/fstab</code></pre>
+					<div class="warn">
+						Sebelum mengedit <code>/etc/fstab</code>, pastikan UUID/partisi yang
+						benar dan buat salinan file. Salah konfigurasi dapat membuat
+						penyimpanan tidak ter-mount setelah reboot.
+					</div>
+				</div>
+			</section>
+			<section class="sec" id="akses">
+				<div class="sec-head">
+					<span class="num t-blue">04</span>
+					<h2>Masuk ke Server melalui SSH</h2>
+					<span class="tag t-blue">SSH</span>
+				</div>
+				<div class="sec-body">
+					<p>Dari PowerShell Windows, jalankan:</p>
+					<pre><code>ssh root@192.168.1.100</code></pre>
+					<p>
+						Jika IP berubah, ganti alamat tersebut dengan IP STB yang terbaru.
+						Saat pertama kali tersambung, SSH mungkin meminta konfirmasi
+						fingerprint host.
+					</p>
+					<p>
+						Setelah masuk, perintah-perintah di bawah dijalankan di terminal
+						STB, bukan di PowerShell laptop, kecuali jika disebutkan sebaliknya.
+					</p>
+				</div>
+			</section>
+			<section class="sec" id="docker">
+				<div class="sec-head">
+					<span class="num t-green">05</span>
+					<h2>Docker dan Container</h2>
+					<span class="tag t-green">DOCKER</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						Docker digunakan untuk memisahkan layanan sehingga website,
+						database, dan tunnel dapat dikelola secara terpisah.
+					</p>
+					<h3>Perintah dasar</h3>
+					<pre><code>docker --version
+docker compose version
+systemctl is-active docker
+docker ps
+docker ps -a
+docker images
+docker stats --no-stream</code></pre>
+					<p>
+						<code>docker ps</code> menampilkan container yang sedang berjalan.
+						<code>docker ps -a</code> juga menampilkan container yang sudah
+						berhenti.
+					</p>
+					<h3>Inventaris container yang pernah tercatat</h3>
+					<table>
+						<tr>
+							<th>Nama container</th>
+							<th>Fungsi</th>
+							<th>Port host</th>
+							<th>Catatan</th>
+						</tr>
+						<tr>
+							<td><code>website-pertama</code></td>
+							<td>Nginx untuk website statis</td>
+							<td><code>8080 → 80</code></td>
+							<td>
+								Konten di-mount read-only dari
+								<code>/srv/data/websites/pertama</code>.
+							</td>
+						</tr>
+						<tr>
+							<td><code>cms-laravel</code></td>
+							<td>Aplikasi Laravel dengan Apache</td>
+							<td><code>8081 → 80</code></td>
+							<td>Pernah terdeteksi tanpa Docker volume/bind mount.</td>
+						</tr>
+						<tr>
+							<td><code>mariadb-news</code></td>
+							<td>Database MariaDB</td>
+							<td><code>3307 → 3306</code></td>
+							<td>
+								Data pernah di-bind ke <code>/mnt/mariadb-data/data</code>.
+							</td>
+						</tr>
+						<tr>
+							<td><code>cloudflare-cms</code></td>
+							<td>Cloudflare Tunnel untuk CMS</td>
+							<td>Tidak ada port web host yang perlu dibuka</td>
+							<td>
+								Berbagi network Docker <code>cms-network</code> dengan CMS.
+							</td>
+						</tr>
+					</table>
+					<p>
+						Port dan status di tabel merupakan catatan historis. Verifikasi lagi
+						dengan <code>docker ps</code> sebelum digunakan.
+					</p>
+				</div>
+			</section>
+			<section class="sec" id="website-statis">
+				<div class="sec-head">
+					<span class="num t-green">06</span>
+					<h2>Website Statis dengan Nginx</h2>
+					<span class="tag t-green">WEB</span>
+				</div>
+				<div class="sec-body">
+					<p>Website percobaan pertama disimpan di:</p>
+					<pre><code>/srv/data/websites/pertama/index.html</code></pre>
+					<p>
+						Konten halaman menggunakan judul “Server Rumah Ariq” dan menjelaskan
+						bahwa website di-host menggunakan Armbian, Docker, dan Nginx.
+					</p>
+					<p>Container Nginx pernah dibuat dengan perintah berikut:</p>
+					<pre><code>docker run -d \
+  --name website-pertama \
+  --restart unless-stopped \
+  -p 8080:80 \
+  -v /srv/data/websites/pertama:/usr/share/nginx/html:ro \
+  nginx:alpine</code></pre>
+					<p>
+						Jika container sudah ada, jangan jalankan perintah pembuatan ulang
+						secara membabi buta karena nama container akan bentrok. Periksa
+						dahulu:
+					</p>
+					<pre><code>docker ps -a --filter name=website-pertama
+curl -I http://127.0.0.1:8080</code></pre>
+					<p>
+						Jika website berjalan, dari perangkat lain di jaringan lokal coba
+						buka
+						<code>http://192.168.1.100:8080/</code>. Ganti IP jika alamat STB
+						berubah.
+					</p>
+				</div>
+			</section>
+			<section class="sec" id="cms">
+				<div class="sec-head">
+					<span class="num t-green">07</span>
+					<h2>Website Laravel / CMS</h2>
+					<span class="tag t-green">WEB</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						CMS adalah aplikasi Laravel yang dijalankan melalui container
+						bernama
+						<code>cms-laravel</code>. Container pernah menggunakan image lokal
+						<code>cms-laravel:latest</code>, perintah proses
+						<code>apache2-foreground</code>, direktori kerja
+						<code>/var/www/html</code>, dan port host <code>8081</code> menuju
+						port container <code>80</code>.
+					</p>
+					<p>
+						Folder proyek yang pernah disebut adalah <code>/srv/data/CMS</code>.
+						Namun, container CMS pada pemeriksaan sebelumnya tidak memiliki
+						mount. Artinya, file aplikasi yang ada di dalam container belum
+						tentu sama atau tersinkron dengan folder proyek di host. Jangan
+						menghapus atau mengganti container sebelum memastikan source code
+						dan data penting sudah disalin serta dapat dibangun ulang.
+					</p>
+					<h3>Periksa CMS</h3>
+					<pre><code>docker ps --filter name=cms-laravel
+docker logs --tail 100 cms-laravel
+curl -I http://127.0.0.1:8081
+docker inspect cms-laravel --format '{{json .Mounts}}'</code></pre>
+					<p>
+						Jika CMS tidak merespons, periksa log container, status database,
+						konfigurasi environment, dan koneksi Docker network sebelum mengubah
+						konfigurasi.
+					</p>
+				</div>
+			</section>
+			<section class="sec" id="database">
+				<div class="sec-head">
+					<span class="num t-purple">08</span>
+					<h2>Database MariaDB</h2>
+					<span class="tag t-purple">DATABASE</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						Container database yang pernah tercatat bernama
+						<code>mariadb-news</code>, menggunakan MariaDB 11. Port host yang
+						tercatat adalah <code>3307</code>, diteruskan ke port container
+						<code>3306</code>. Data database pernah dipasang dari host di
+						<code>/mnt/mariadb-data/data</code>.
+					</p>
+					<h3>Periksa status dan log</h3>
+					<pre><code>docker ps --filter name=mariadb-news
+docker logs --tail 100 mariadb-news
+docker inspect mariadb-news --format '{{json .Mounts}}'</code></pre>
+					<p>
+						Jangan menaruh password database di dokumentasi, screenshot, GitHub,
+						atau pesan publik. Hindari mengekspos port database ke internet.
+						Untuk penggunaan lokal, aplikasi di network Docker sebaiknya
+						mengakses database melalui nama container/service dan port internal,
+						sesuai konfigurasi yang benar.
+					</p>
+					<div class="warn">
+						Jangan menghapus folder database atau menjalankan perintah
+						penghapusan volume sebelum membuat dan memeriksa backup. File
+						database tidak selalu bisa dipulihkan hanya dengan membuat container
+						baru.
+					</div>
+				</div>
+			</section>
+			<section class="sec" id="tunnel">
+				<div class="sec-head">
+					<span class="num t-blue">09</span>
+					<h2>Akses Internet melalui Cloudflare Tunnel</h2>
+					<span class="tag t-blue">JARINGAN</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						Container <code>cloudflare-cms</code> pernah dijalankan pada network
+						Docker <code>cms-network</code> dengan target
+						<code>http://cms-laravel:80</code>. Bentuk perintah yang pernah
+						digunakan:
+					</p>
+					<pre><code>docker run -d \
+  --name cloudflare-cms \
+  --restart unless-stopped \
+  --network cms-network \
+  cloudflare/cloudflared:latest \
+  tunnel --no-autoupdate --url http://cms-laravel:80</code></pre>
+					<p>
+						Perintah ini menggambarkan konfigurasi Quick Tunnel yang pernah
+						dipakai. Jalankan hanya jika container belum ada; periksa terlebih
+						dahulu dengan
+						<code>docker ps -a --filter name=cloudflare-cms</code>.
+					</p>
+					<h3>Periksa URL dan log tunnel</h3>
+					<pre><code>docker ps --filter name=cloudflare-cms
+docker logs --tail 100 cloudflare-cms</code></pre>
+					<p>
+						Jika memakai Quick Tunnel, URL biasanya berakhiran
+						<code>trycloudflare.com</code> dan dapat berubah setelah tunnel
+						dibuat ulang. URL lama tidak boleh dianggap masih aktif tanpa diuji.
+					</p>
+					<p>
+						Cloudflare Tunnel menghindari kebutuhan membuka port masuk router,
+						tetapi tidak otomatis membuat aplikasi aman. Tetap periksa
+						autentikasi aplikasi, konfigurasi database, rahasia environment, dan
+						pembaruan sistem.
+					</p>
+				</div>
+			</section>
+			<section class="sec" id="cek">
+				<div class="sec-head">
+					<span class="num t-green">10</span>
+					<h2>Pengecekan Website yang Sedang Running</h2>
+					<span class="tag t-green">OPS</span>
+				</div>
+				<div class="sec-body">
+					<p>Mulai dengan melihat container beserta port-nya:</p>
+					<pre><code>docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"</code></pre>
+					<p>Kemudian uji website lokal dari STB:</p>
+					<pre><code>curl -I http://127.0.0.1:8080
+curl -I http://127.0.0.1:8081</code></pre>
+					<p>Periksa juga port yang mendengarkan koneksi:</p>
+					<pre><code>ss -tulpn</code></pre>
+					<p>
+						Status HTTP seperti <code>200</code>, <code>301</code>, atau
+						<code>302</code> biasanya menunjukkan ada respons web. Status
+						<code>4xx</code> atau <code>5xx</code> perlu ditelusuri; status
+						tersebut tidak otomatis berarti container mati.
+					</p>
+					<p>
+						Dari laptop/HP yang berada di jaringan yang sama, coba alamat
+						berikut:
+					</p>
+					<ul>
+						<li>Website statis: <code>http://192.168.1.100:8080/</code></li>
+						<li>CMS Laravel: <code>http://192.168.1.100:8081/</code></li>
+					</ul>
+					<p>
+						Alamat di atas berlaku jika container dan port masih sama serta
+						firewall/jaringan mengizinkan koneksi.
+					</p>
+				</div>
+			</section>
+			<section class="sec" id="backup">
+				<div class="sec-head">
+					<span class="num t-purple">11</span>
+					<h2>Backup dan Ketahanan Data</h2>
+					<span class="tag t-purple">BACKUP</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						Data penting yang perlu diperhatikan mencakup source code Laravel,
+						file upload pengguna, konfigurasi yang tidak mengandung rahasia
+						untuk dokumentasi, serta dump database.
+					</p>
+					<ul>
+						<li>
+							Simpan backup di lokasi berbeda dari disk server jika
+							memungkinkan.
+						</li>
+						<li>
+							Backup database menggunakan mekanisme dump yang sesuai dengan
+							versi dan konfigurasi MariaDB.
+						</li>
+						<li>
+							Jangan menganggap image Docker sebagai backup data aplikasi.
+						</li>
+						<li>
+							Periksa apakah folder upload benar-benar di-mount ke host. Backup
+							folder host tidak akan mencakup data yang hanya tersimpan di
+							filesystem container.
+						</li>
+						<li>
+							Uji pemulihan backup secara berkala; file backup yang belum pernah
+							diuji belum tentu dapat dipulihkan.
+						</li>
+					</ul>
+					<p>
+						Backup storage CMS pernah disalin ke
+						<code>/srv/data/CMS-persistent/storage/</code>. Itu tidak dengan
+						sendirinya membuktikan semua data CMS atau database sudah memiliki
+						backup lengkap.
+					</p>
+				</div>
+			</section>
+			<section class="sec" id="keamanan">
+				<div class="sec-head">
+					<span class="num t-red">12</span>
+					<h2>Keamanan Dasar</h2>
+					<span class="tag t-red">SECURITY</span>
+				</div>
+				<div class="sec-body">
+					<ul>
+						<li>
+							Gunakan password yang kuat dan unik untuk akun server serta
+							database.
+						</li>
+						<li>
+							Jangan publikasikan file <code>.env</code>, file backup
+							environment, token Cloudflare, password, atau kunci aplikasi.
+						</li>
+						<li>
+							Pastikan file rahasia dikecualikan dari Git, termasuk file bernama
+							<code>.env.backup-*</code> dan dump konfigurasi yang mengandung
+							rahasia.
+						</li>
+						<li>
+							Perbarui Armbian, Docker image, dan dependency aplikasi secara
+							terencana.
+						</li>
+						<li>Jangan membuka port database ke internet.</li>
+						<li>
+							Batasi layanan yang dipublikasikan; gunakan autentikasi untuk
+							panel admin.
+						</li>
+						<li>
+							Periksa log dan siapkan backup sebelum melakukan perubahan besar.
+						</li>
+						<li>
+							Ingat bahwa perangkat yang mati listrik tidak dapat mengirim alert
+							dari dalam perangkat itu sendiri. Monitoring saat server mati
+							memerlukan pemantau eksternal atau perangkat lain.
+						</li>
+					</ul>
+					<div class="warn">
+						Jika password database pernah tercatat atau dibagikan di tempat yang
+						tidak aman, rencanakan rotasi password dengan memperbarui
+						konfigurasi database dan aplikasi secara terkoordinasi. Jangan
+						mengganti APP_KEY Laravel sembarangan karena data terenkripsi atau
+						sesi yang ada bisa terdampak.
+					</div>
+				</div>
+			</section>
+			<section class="sec" id="kendala">
+				<div class="sec-head">
+					<span class="num t-green">13</span>
+					<h2>Kendala yang Pernah Ditemui</h2>
+					<span class="tag t-green">OPS</span>
+				</div>
+				<div class="sec-body">
+					<ul>
+						<li>
+							Perintah Docker sempat salah penulisan saat menjalankan Nginx;
+							perintah yang benar menggunakan opsi <code>-p 8080:80</code>.
+						</li>
+						<li>
+							Nama perangkat dan alamat IP perlu dipastikan sebelum menjalankan
+							perintah remote.
+						</li>
+						<li>
+							Cloudflare Tunnel pernah mengalami kendala akibat salah ketik pada
+							opsi host gateway saat percobaan lain. Periksa log dan nama
+							layanan dengan teliti jika tunnel gagal.
+						</li>
+						<li>
+							Container CMS pernah terdeteksi tanpa mount. Ini penting untuk
+							dituntaskan sebelum container dibangun ulang.
+						</li>
+						<li>
+							Ruang penyimpanan eMMC sistem lebih kecil daripada microSD.
+							Periksa
+							<code>df -h</code> agar penggunaan Docker tidak memenuhi root
+							filesystem.
+						</li>
+					</ul>
+				</div>
+			</section>
+			<section class="sec" id="rencana">
+				<div class="sec-head">
+					<span class="num t-cyan">14</span>
+					<h2>Pekerjaan Berikutnya</h2>
+					<span class="tag t-cyan">ROADMAP</span>
+				</div>
+				<div class="sec-body">
+					<ol>
+						<li>
+							Verifikasi status terbaru seluruh container, port, dan URL
+							website.
+						</li>
+						<li>
+							Pastikan source code CMS dan file upload dipasang sebagai
+							volume/bind mount yang benar.
+						</li>
+						<li>
+							Pastikan backup database serta file aplikasi dapat dipulihkan.
+						</li>
+						<li>
+							Pastikan akses publik menggunakan URL yang benar dan HTTPS aktif.
+						</li>
+						<li>
+							Rancang CI/CD dengan GitHub Actions setelah alur build, secret,
+							backup, dan deployment aman.
+						</li>
+						<li>
+							Evaluasi kebutuhan domain sendiri jika ingin URL yang tetap.
+						</li>
+					</ol>
+				</div>
+			</section>
+			<section class="sec" id="referensi">
+				<div class="sec-head">
+					<span class="num t-green">15</span>
+					<h2>Ringkasan Perintah Harian</h2>
+					<span class="tag t-green">OPS</span>
+				</div>
+				<div class="sec-body">
+					<pre><code># Container yang berjalan
+docker ps
+
+# Semua container, termasuk yang berhenti
+docker ps -a
+
+# Status penggunaan resource
+docker stats --no-stream
+
+# Log container tertentu
+docker logs --tail 100 cms-laravel
+docker logs --tail 100 mariadb-news
+docker logs --tail 100 cloudflare-cms
+
+# Uji port website
+curl -I http://127.0.0.1:8080
+curl -I http://127.0.0.1:8081
+
+# Cek port dan penyimpanan
+ss -tulpn
+df -h
+lsblk -f</code></pre>
+				</div>
+			</section>
+			<section class="sec" id="status">
+				<div class="sec-head">
+					<span class="num t-cyan">16</span>
+					<h2>Status dan Batas Dokumentasi</h2>
+					<span class="tag t-cyan">INFO</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						Dokumentasi ini dibuat dari catatan konfigurasi dan pemeriksaan
+						sebelumnya. Ia bukan hasil audit langsung pada server saat ini.
+						Karena container, port, URL Quick Tunnel, dan kondisi jaringan bisa
+						berubah, gunakan perintah verifikasi di atas untuk memperbarui
+						status aktual sebelum melakukan perubahan atau membagikan
+						dokumentasi ini.
+					</p>
+				</div>
+			</section>
+			<section class="sec" id="galeri">
+				<div class="sec-head">
+					<span class="num t-purple">17</span>
+					<h2>Dokumentasi Foto</h2>
+					<span class="tag t-purple">FOTO</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						Foto dokumentasi yang diambil pada 27 Oktober 2026. Klik foto untuk
+						memperbesar.
+					</p>
+					<div class="gallery" id="gallery"></div>
+				</div>
+			</section>
+			<section class="end">
+				<p>
+					<strong>Dokumentasi Home Server STB HG680P</strong><br />
+					Catatan teknis pribadi. Perbarui bagian inventaris setelah ada
+					perubahan konfigurasi. Jangan memasukkan password, token, private key,
+					atau isi file environment ke dokumen yang dibagikan.
+				</p>
+				<a
+					class="btn"
+					href="../index.html#projects"
+					>← Kembali ke Projects</a
+				>
+			</section>
+		</main>
+		<script>
+			(() => {
+				const $ = (s, r = document) => [...r.querySelectorAll(s)];
+				const esc = (s) =>
+					s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+				$("pre").forEach((pre) => {
+					const raw = pre.textContent.replace(/\n$/, "");
+					const tree = /[├└]/.test(raw);
+					const html = raw
+						.split("\n")
+						.map((l) => {
+							let e = esc(l);
+							if (tree) return e;
+							if (/^\s*#/.test(l)) return '<span class="c">' + e + "</span>";
+							e = e.replace(
+								/(^|\s)(--?[a-zA-Z][\w-]*)/g,
+								'$1<span class="f">$2</span>',
+							);
+							return e.replace(/^([a-z][\w.-]*)/, '<span class="k">$1</span>');
+						})
+						.join("\n");
+					const fig = document.createElement("figure");
+					fig.className = "term";
+					fig.innerHTML =
+						"<figcaption><span>" +
+						(tree ? "struktur folder" : "terminal") +
+						'</span><button type="button">Salin</button></figcaption><pre><code>' +
+						html +
+						"</code></pre>";
+					pre.replaceWith(fig);
+					const btn = fig.querySelector("button");
+					btn.addEventListener("click", async () => {
+						try {
+							await navigator.clipboard.writeText(raw);
+							btn.textContent = "Tersalin";
+						} catch (e) {
+							btn.textContent = "Gagal";
+						}
+						setTimeout(() => {
+							btn.textContent = "Salin";
+						}, 1600);
+					});
+				});
+				$("table").forEach((t) => {
+					const d = document.createElement("div");
+					d.className = "tbl";
+					t.replaceWith(d);
+					d.appendChild(t);
+				});
+				const first = $(".tbl")[0];
+				if (first) {
+					$("td:nth-child(3)", first).forEach((td) => {
+						const t = td.textContent.trim();
+						const cls = /^Rencana/.test(t)
+							? " plan"
+							: /^running/.test(t)
+								? " run"
+								: "";
+						td.insertAdjacentHTML(
+							"afterbegin",
+							'<i class="dot' + cls + '"></i>',
+						);
+					});
+					first.insertAdjacentHTML(
+						"beforebegin",
+						'<p class="legend"><i class="dot"></i>Done</p>',
+					);
+				}
+				$("table").forEach((t) => {
+					const hs = [...t.rows[0].cells].map((c) => c.textContent.trim());
+					[...t.rows].slice(1).forEach((r) =>
+						[...r.cells].forEach((c, i) => {
+							c.dataset.label = hs[i] || "";
+						}),
+					);
+				});
+				// Galeri foto: ubah PHOTOS / IMG_DIRS / IMG_EXTS jika nama file atau folder berbeda
+				const PHOTOS = [
+					"Arsitektur-STB.png",
+					"htop.png",
+					"memory-stb.jpg",
+					"router.jpg",
+					"router-arm.jpg",
+					"terminal.png",
+					"6053047094618035862.jpg",
+				];
+				const IMG_DIRS = ["images/", "../images/", "/images/", "../assets/images/", "../img/", "../"];
+				const IMG_EXTS = [".jpg", ".jpeg", ".png", ".webp", ".JPG", ".PNG"];
+				const BLN = [
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"Mei",
+					"Jun",
+					"Jul",
+					"Agu",
+					"Sep",
+					"Okt",
+					"Nov",
+					"Des",
+				];
+				const enc = (p) => p.split("/").map(encodeURIComponent).join("/");
+				const cands = (n) => {
+					const names = [n];
+					const t = n.replace(/\s*fix+$/i, "");
+
+					if (t !== n) names.push(t);
+
+					const o = [];
+
+					IMG_DIRS.forEach((d) => {
+						names.forEach((x) => {
+							// Coba nama persis dulu, lalu semua ekstensi lain
+							// (jaga-jaga jika file aslinya .jpg tapi ditulis .png, atau sebaliknya).
+							const base = x.replace(/\.(jpe?g|png|webp)$/i, "");
+							if (base !== x) o.push(d + x);
+							IMG_EXTS.forEach((e) => o.push(d + base + e));
+						});
+					});
+
+					return o;
+				};
+
+				const stamp = (n) => {
+					const m = n.match(/(\d{4})(\d{2})(\d{2})_?(\d{2})(\d{2})/);
+					return m
+						? +m[3] +
+								" " +
+								BLN[+m[2] - 1] +
+								" " +
+								m[1] +
+								", " +
+								m[4] +
+								"." +
+								m[5]
+						: "";
+				};
+				const shots = [];
+				let cur = null;
+				const lb = document.createElement("div");
+				lb.className = "lb";
+				lb.hidden = true;
+				lb.innerHTML =
+					'<button class="x" type="button" aria-label="Tutup">✕</button><button class="p" type="button" aria-label="Sebelumnya">‹</button><img alt=""><button class="n" type="button" aria-label="Berikutnya">›</button><p></p>';
+				document.body.appendChild(lb);
+				const okList = () =>
+					shots.filter((s) => !s.fig.classList.contains("missing"));
+				const view = (s) => {
+					cur = s;
+					lb.querySelector("img").src = s.img.currentSrc || s.img.src;
+					lb.querySelector("p").textContent = s.cap;
+				};
+				const openLb = (s) => {
+					view(s);
+					lb.hidden = false;
+					document.body.style.overflow = "hidden";
+					lb.querySelector(".x").focus();
+				};
+				const closeLb = () => {
+					lb.hidden = true;
+					document.body.style.overflow = "";
+				};
+				const step = (d) => {
+					const L = okList();
+					view(L[(L.indexOf(cur) + d + L.length) % L.length]);
+				};
+				lb.querySelector(".x").onclick = closeLb;
+				lb.querySelector(".p").onclick = () => step(-1);
+				lb.querySelector(".n").onclick = () => step(1);
+				lb.addEventListener("click", (e) => {
+					if (e.target === lb) closeLb();
+				});
+				document.addEventListener("keydown", (e) => {
+					if (lb.hidden) return;
+					if (e.key === "Escape") closeLb();
+					if (e.key === "ArrowLeft") step(-1);
+					if (e.key === "ArrowRight") step(1);
+				});
+				const box = document.getElementById("gallery");
+				PHOTOS.forEach((n, i) => {
+					const cap = "Foto " + (i + 1),
+						fig = document.createElement("figure");
+					fig.className = "shot-fig";
+					fig.innerHTML =
+						'<button class="shot" type="button" aria-label="Perbesar ' +
+						cap +
+						'"><img loading="lazy" alt="' +
+						cap +
+						'"></button><figcaption><b>' +
+						cap +
+						"</b><span>" +
+						"</span></figcaption>";
+					const btn = fig.querySelector(".shot"),
+						img = fig.querySelector("img"),
+						c = cands(n);
+					let k = 0;
+					img.onerror = () => {
+						if (++k < c.length) {
+							img.src = enc(c[k]);
+						} else {
+							fig.classList.add("missing");
+							btn.disabled = true;
+							btn.textContent =
+								"Gambar tidak ditemukan: " + IMG_DIRS[0] + n;
+						}
+					};
+					img.src = enc(c[0]);
+					const sh = {
+						fig,
+						img,
+						cap: cap + (stamp(n) ? " — " + stamp(n) : ""),
+					};
+					shots.push(sh);
+					btn.addEventListener("click", () => openLb(sh));
+					box.appendChild(fig);
+				});
+				const menu = document.querySelector(".links"),
+					bg = document.querySelector(".burger");
+				bg.addEventListener("click", () => {
+					const o = menu.classList.toggle("open");
+					bg.setAttribute("aria-expanded", o);
+				});
+				menu.addEventListener("click", (e) => {
+					if (e.target.tagName === "A") menu.classList.remove("open");
+				});
+				const ls = $('.links a[href^="#"]');
+				const io = new IntersectionObserver(
+					(es) => {
+						es.forEach((e) => {
+							if (e.isIntersecting) {
+								ls.forEach((a) =>
+									a.classList.toggle(
+										"on",
+										a.getAttribute("href") === "#" + e.target.id,
+									),
+								);
+							}
+						});
+					},
+					{ rootMargin: "-20% 0px -70% 0px" },
+				);
+				$(".sec").forEach((s) => io.observe(s));
+			})();
+		</script>
+	</body>
+</html>

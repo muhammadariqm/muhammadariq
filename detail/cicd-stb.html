@@ -1,0 +1,1358 @@
+<!doctype html>
+<html lang="id">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>CI/CD GitHub Actions — Deploy Otomatis ke STB HG680P</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap"
+			rel="stylesheet" />
+		<style>
+			:root {
+				color-scheme: dark;
+				--bg: #080c16;
+				--panel: #0c1220;
+				--raised: #111a2b;
+				--line: #1b2840;
+				--text: #e6edf6;
+				--muted: #93a3b8;
+				--cyan: #22d3ee;
+				--green: #34d399;
+				--red: #fb4f6e;
+				--blue: #38a8f8;
+				--purple: #a78bfa;
+				--amber: #fbbf24;
+				--mono:
+					"JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Consolas,
+					monospace;
+				--sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+			}
+			* {
+				box-sizing: border-box;
+			}
+			html {
+				scroll-behavior: smooth;
+			}
+			body {
+				margin: 0;
+				background: var(--bg);
+				background-image:
+					linear-gradient(#0e1627 1px, transparent 1px),
+					linear-gradient(90deg, #0e1627 1px, transparent 1px);
+				background-size: 56px 56px;
+				color: var(--text);
+				font: 16px/1.75 var(--sans);
+			}
+			.wrap {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding-left: max(24px, env(safe-area-inset-left));
+				padding-right: max(24px, env(safe-area-inset-right));
+			}
+			a {
+				color: var(--cyan);
+				text-underline-offset: 3px;
+			}
+			a:focus-visible,
+			button:focus-visible {
+				outline: 2px solid var(--cyan);
+				outline-offset: 3px;
+			}
+			.t-red {
+				--c: var(--red);
+			}
+			.t-blue {
+				--c: var(--blue);
+			}
+			.t-purple {
+				--c: var(--purple);
+			}
+			.t-green {
+				--c: var(--green);
+			}
+			.t-cyan {
+				--c: var(--cyan);
+			}
+			.tag,
+			.pill,
+			.num {
+				color: var(--c);
+				border: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
+				background: color-mix(in srgb, var(--c) 10%, var(--bg));
+			}
+			.top {
+				position: sticky;
+				top: 0;
+				z-index: 20;
+				background: #080c16ee;
+				backdrop-filter: blur(8px);
+				border-bottom: 1px solid var(--line);
+			}
+			.top .wrap {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 24px;
+				min-height: 80px;
+			}
+			.brand {
+				font: 800 1.15rem var(--mono);
+				letter-spacing: 0.03em;
+				color: var(--text);
+				text-decoration: none;
+				line-height: 1.3;
+			}
+			.brand small {
+				display: block;
+				font: 700 0.68rem var(--mono);
+				letter-spacing: 0.2em;
+				color: var(--cyan);
+			}
+			.links {
+				display: flex;
+				align-items: center;
+				gap: 28px;
+			}
+			.links a {
+				font: 500 0.85rem var(--mono);
+				letter-spacing: 0.06em;
+				color: #c3cfde;
+				text-decoration: none;
+			}
+			.links a:hover,
+			.links a.on {
+				color: var(--cyan);
+			}
+			.links a.back {
+				padding: 7px 14px;
+				border: 1px solid color-mix(in srgb, var(--green) 45%, transparent);
+				border-radius: 8px;
+				color: var(--green);
+				background: #0a1a16;
+			}
+			.burger {
+				display: none;
+				background: none;
+				border: 1px solid var(--line);
+				color: var(--text);
+				border-radius: 8px;
+				font-size: 1.2rem;
+				padding: 4px 12px;
+				cursor: pointer;
+			}
+			.hero {
+				text-align: center;
+				padding: 84px 0 56px;
+			}
+			.eyebrow {
+				display: inline-flex;
+				align-items: center;
+				gap: 10px;
+				padding: 10px 22px;
+				border: 1px solid color-mix(in srgb, var(--cyan) 40%, transparent);
+				border-radius: 999px;
+				background: #0a1a24;
+				color: var(--cyan);
+				font: 600 0.78rem var(--mono);
+				letter-spacing: 0.25em;
+			}
+			.eyebrow::before {
+				content: "";
+				width: 7px;
+				height: 7px;
+				border-radius: 50%;
+				background: var(--cyan);
+			}
+			h1 {
+				margin: 34px 0 22px;
+				font: 800 clamp(1.35rem, 5.2vw, 4.2rem)/1.15 var(--mono);
+				letter-spacing: -0.01em;
+			}
+			.grad {
+				background: linear-gradient(90deg, var(--cyan), var(--green));
+				-webkit-background-clip: text;
+				background-clip: text;
+				color: transparent;
+			}
+			.lead {
+				max-width: 760px;
+				margin: 0 auto;
+				color: #b4c3d4;
+				font-size: 1.12rem;
+			}
+			.pills {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 14px;
+				margin-top: 40px;
+			}
+			.pill {
+				padding: 12px 24px;
+				border-radius: 999px;
+				font: 600 0.9rem var(--mono);
+			}
+			.idx {
+				padding: 48px 0 8px;
+			}
+			h2.big {
+				margin: 22px 0 28px;
+				font: 800 1.9rem/1.2 var(--mono);
+				letter-spacing: 0.01em;
+			}
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 16px;
+			}
+			.card {
+				display: flex;
+				align-items: center;
+				gap: 14px;
+				padding: 16px;
+				border: 1px solid var(--line);
+				border-radius: 12px;
+				background: var(--panel);
+				color: var(--text);
+				text-decoration: none;
+			}
+			.card:hover {
+				border-color: var(--cyan);
+			}
+			.num {
+				flex: none;
+				display: grid;
+				place-items: center;
+				width: 42px;
+				height: 42px;
+				border-radius: 10px;
+				font: 700 0.85rem var(--mono);
+			}
+			.ct b {
+				display: block;
+				font-weight: 600;
+				font-size: 0.95rem;
+				line-height: 1.35;
+			}
+			.tag {
+				display: inline-block;
+				padding: 1px 10px;
+				border-radius: 999px;
+				font: 600 0.68rem var(--mono);
+				letter-spacing: 0.12em;
+				font-style: normal;
+			}
+			.ct .tag {
+				margin-top: 6px;
+			}
+			.note,
+			.warn,
+			.ok {
+				--c: var(--cyan);
+				margin: 22px 0;
+				padding: 14px 18px;
+				border: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+				border-left: 3px solid var(--c);
+				border-radius: 8px;
+				background: color-mix(in srgb, var(--c) 7%, var(--bg));
+			}
+			.warn {
+				--c: var(--amber);
+			}
+			.ok {
+				--c: var(--green);
+			}
+			.note::before,
+			.warn::before,
+			.ok::before {
+				display: block;
+				margin-bottom: 4px;
+				font: 700 0.75rem var(--mono);
+				letter-spacing: 0.1em;
+				color: var(--c);
+			}
+			.note::before {
+				content: "[ INFO ]";
+			}
+			.warn::before {
+				content: "[ PERINGATAN ]";
+			}
+			.ok::before {
+				content: "[ OK ]";
+			}
+			.sec {
+				margin-top: 32px;
+				border: 1px solid var(--line);
+				border-radius: 16px;
+				background: var(--panel);
+				scroll-margin-top: 100px;
+			}
+			.sec-head {
+				display: flex;
+				align-items: center;
+				gap: 14px;
+				padding: 20px 28px;
+				border-bottom: 1px solid var(--line);
+			}
+			.sec-head h2 {
+				margin: 0;
+				font: 700 1.3rem/1.3 var(--mono);
+			}
+			.sec-head .tag {
+				margin-left: auto;
+			}
+			.sec-body {
+				padding: 6px 28px 28px;
+				min-width: 0;
+			}
+			.sec-body > p,
+			.sec-body li {
+				max-width: 80ch;
+			}
+			p {
+				margin: 10px 0 14px;
+			}
+			li {
+				margin: 6px 0;
+			}
+			li::marker {
+				color: var(--cyan);
+			}
+			h3 {
+				margin: 28px 0 8px;
+				font: 700 0.82rem/1.3 var(--mono);
+				letter-spacing: 0.12em;
+				text-transform: uppercase;
+				color: var(--cyan);
+			}
+			code {
+				font: 0.88em var(--mono);
+				color: #8ff0c2;
+				background: #0b2130;
+				border: 1px solid #17364a;
+				padding: 1px 6px;
+				border-radius: 5px;
+				overflow-wrap: anywhere;
+			}
+			.term {
+				margin: 16px 0 24px;
+				border: 1px solid var(--line);
+				border-radius: 10px;
+				background: #050810;
+				overflow: hidden;
+			}
+			.term figcaption {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 6px 8px 6px 14px;
+				background: var(--raised);
+				border-bottom: 1px solid var(--line);
+				font: 0.75rem var(--mono);
+				color: var(--muted);
+			}
+			.term button {
+				font: inherit;
+				color: var(--text);
+				background: transparent;
+				border: 1px solid var(--line);
+				border-radius: 6px;
+				padding: 3px 10px;
+				cursor: pointer;
+			}
+			.term button:hover {
+				border-color: var(--green);
+				color: var(--green);
+			}
+			.term pre {
+				margin: 0;
+				padding: 14px 16px;
+				overflow-x: auto;
+				white-space: pre-wrap;
+				overflow-wrap: anywhere;
+				font: 0.88rem/1.65 var(--mono);
+			}
+			.term pre code {
+				background: none;
+				border: 0;
+				padding: 0;
+				color: inherit;
+				font: inherit;
+			}
+			.c {
+				color: #6b8196;
+			}
+			.k {
+				color: var(--green);
+			}
+			.f {
+				color: var(--amber);
+			}
+			.tbl {
+				overflow-x: auto;
+				margin: 16px 0 26px;
+				border: 1px solid var(--line);
+				border-radius: 10px;
+				background: var(--bg);
+			}
+			table {
+				width: 100%;
+				min-width: 560px;
+				border-collapse: collapse;
+				font-size: 0.92rem;
+			}
+			th {
+				padding: 10px 14px;
+				background: var(--raised);
+				color: var(--muted);
+				font: 600 0.75rem var(--mono);
+				letter-spacing: 0.06em;
+				text-align: left;
+				white-space: nowrap;
+			}
+			td {
+				padding: 11px 14px;
+				border-top: 1px solid var(--line);
+				vertical-align: top;
+			}
+			tr:hover td {
+				background: #0d1626;
+			}
+			.dot {
+				display: inline-block;
+				width: 8px;
+				height: 8px;
+				margin-right: 8px;
+				border-radius: 50%;
+				background: var(--cyan);
+			}
+			.dot.plan {
+				background: var(--amber);
+			}
+			.dot.ok {
+				background: var(--green);
+			}
+			.legend {
+				font: 0.78rem var(--mono);
+				color: var(--muted);
+				margin: 16px 0 -6px;
+			}
+			.legend .dot {
+				margin-left: 12px;
+			}
+			.legend .dot:first-child {
+				margin-left: 0;
+			}
+			.end {
+				margin: 40px 0 64px;
+				padding: 32px;
+				border: 1px solid var(--line);
+				border-radius: 16px;
+				background: var(--panel);
+				text-align: center;
+			}
+			.end p {
+				margin: 0 auto 20px;
+				max-width: 64ch;
+				color: var(--muted);
+				font-size: 0.9rem;
+			}
+			.btn {
+				display: inline-block;
+				padding: 12px 26px;
+				border-radius: 10px;
+				background: linear-gradient(90deg, var(--cyan), var(--green));
+				color: #04110d;
+				font: 700 0.9rem var(--mono);
+				text-decoration: none;
+			}
+			.btn:hover {
+				filter: brightness(1.1);
+			}
+			@media (max-width: 1000px) {
+				.grid {
+					grid-template-columns: repeat(2, 1fr);
+				}
+				.burger {
+					display: block;
+				}
+				.links {
+					display: none;
+					position: absolute;
+					left: 0;
+					right: 0;
+					top: 100%;
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 14px;
+					padding: 18px 24px;
+					background: #080c16;
+					border-bottom: 1px solid var(--line);
+				}
+				.links.open {
+					display: flex;
+				}
+			}
+			@media (max-width: 600px) {
+				.grid {
+					grid-template-columns: 1fr;
+				}
+				.hero {
+					padding: 56px 0 36px;
+				}
+				.sec-head,
+				.sec-body {
+					padding-left: 18px;
+					padding-right: 18px;
+				}
+				.sec-head {
+					flex-wrap: wrap;
+				}
+				.sec-head .tag {
+					margin-left: 0;
+				}
+				h2.big {
+					font-size: 1.4rem;
+				}
+			}
+			.gallery {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+				gap: 16px;
+				margin-top: 18px;
+			}
+			.shot-fig {
+				margin: 0;
+				min-width: 0;
+				border: 1px solid var(--line);
+				border-radius: 12px;
+				overflow: hidden;
+				background: var(--bg);
+			}
+			.shot {
+				display: block;
+				width: 100%;
+				aspect-ratio: 4/3;
+				padding: 0;
+				border: 0;
+				background: #050810;
+				cursor: zoom-in;
+			}
+			.shot img {
+				display: block;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+			.shot-fig figcaption {
+				display: flex;
+				flex-direction: column;
+				gap: 2px;
+				padding: 10px 14px;
+				font-size: 0.85rem;
+				color: var(--muted);
+			}
+			.shot-fig figcaption b {
+				font: 600 0.85rem var(--mono);
+				color: var(--text);
+			}
+			.missing .shot {
+				display: grid;
+				place-items: center;
+				padding: 14px;
+				cursor: default;
+				color: var(--muted);
+				font: 0.75rem/1.5 var(--mono);
+				text-align: center;
+				overflow-wrap: anywhere;
+			}
+			.lb {
+				position: fixed;
+				inset: 0;
+				z-index: 50;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 12px;
+				padding: 16px;
+				background: #02050bf2;
+			}
+			.lb[hidden] {
+				display: none;
+			}
+			.lb img {
+				max-width: 92vw;
+				max-height: 78vh;
+				object-fit: contain;
+				border-radius: 10px;
+			}
+			.lb p {
+				margin: 0;
+				color: var(--muted);
+				font: 0.8rem var(--mono);
+				text-align: center;
+			}
+			.lb button {
+				position: absolute;
+				width: 44px;
+				height: 44px;
+				border: 1px solid var(--line);
+				border-radius: 50%;
+				background: var(--panel);
+				color: var(--text);
+				font-size: 1.3rem;
+				cursor: pointer;
+			}
+			.lb button:hover {
+				border-color: var(--cyan);
+				color: var(--cyan);
+			}
+			.lb .x {
+				top: max(16px, env(safe-area-inset-top));
+				right: 16px;
+			}
+			.lb .p {
+				left: 12px;
+				top: 50%;
+			}
+			.lb .n {
+				right: 12px;
+				top: 50%;
+			}
+			@media (max-width: 640px) {
+				table {
+					min-width: 0;
+				}
+				tr:first-child {
+					display: none;
+				}
+				tr {
+					display: block;
+					padding: 12px 14px;
+					border-top: 1px solid var(--line);
+				}
+				tr:nth-child(2) {
+					border-top: 0;
+				}
+				td {
+					display: block;
+					border: 0;
+					padding: 4px 0;
+				}
+				td::before {
+					content: attr(data-label);
+					display: block;
+					font: 600 0.7rem var(--mono);
+					letter-spacing: 0.08em;
+					color: var(--muted);
+				}
+				.eyebrow {
+					letter-spacing: 0.15em;
+					padding: 8px 16px;
+				}
+				.pill {
+					padding: 10px 16px;
+					font-size: 0.8rem;
+				}
+				.sec-head h2 {
+					flex: 1;
+					min-width: 0;
+					font-size: 1.1rem;
+				}
+				.top .wrap {
+					min-height: 64px;
+				}
+				.end {
+					padding: 24px 18px;
+				}
+			}
+			@media (max-width: 380px) {
+				.wrap {
+					padding-left: 16px;
+					padding-right: 16px;
+				}
+				.sec-head,
+				.sec-body {
+					padding-left: 14px;
+					padding-right: 14px;
+				}
+			}
+			@media (prefers-reduced-motion: reduce) {
+				html {
+					scroll-behavior: auto;
+				}
+			}
+			@media print {
+				:root {
+					--bg: #fff;
+					--panel: #fff;
+					--raised: #eee;
+					--line: #ccc;
+					--text: #111;
+					--muted: #444;
+					--cyan: #0a5a85;
+					--green: #0a6b3a;
+					--amber: #8a5a00;
+				}
+				body {
+					background: #fff;
+				}
+				.top,
+				.term button,
+				.end {
+					display: none;
+				}
+				.term {
+					background: #f6f6f6;
+				}
+				code {
+					background: #eef2f5;
+					color: #111;
+				}
+				h1,
+				.grad {
+					color: #111;
+					background: none;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<header class="top">
+			<div class="wrap">
+				<a class="brand" href="#top"
+					>HOME_SERVER<small>STB HG680P CI/CD LOG</small></a
+				>
+				<button
+					class="burger"
+					type="button"
+					aria-label="Menu"
+					aria-expanded="false">
+					☰
+				</button>
+				<nav class="links" aria-label="Navigasi">
+					<a href="#ringkasan">Overview</a><a href="#runner">Runner</a
+					><a href="#deploy">Deploy</a><a href="#workflow">Workflow</a
+					><a href="#keamanan">Keamanan</a
+					><a class="back" href="home-server-stb-hg680p.html">← Home Server</a>
+				</nav>
+			</div>
+		</header>
+		<main id="top" class="wrap">
+			<section class="hero">
+				<span class="eyebrow">DOKUMENTASI TEKNIS</span>
+				<h1>
+					CI/CD GITHUB ACTIONS<br /><span class="grad"
+						>DEPLOY OTOMATIS KE STB</span
+					>
+				</h1>
+				<p class="lead">
+					Catatan pemasangan self-hosted runner di STB HG680P (Armbian, ARM64)
+					agar setiap push ke branch main otomatis memperbarui website Laravel
+					CMS tanpa membuka port SSH.
+				</p>
+				<div class="pills">
+					<span class="pill t-cyan">RUNNER — self-hosted ARM64</span
+					><span class="pill t-green">TRIGGER — push ke main</span
+					><span class="pill t-blue">HEALTH — HTTP 200</span
+					><span class="pill t-purple">TANPA PORT SSH TERBUKA</span>
+				</div>
+			</section>
+			<section class="idx">
+				<span class="eyebrow">NAVIGASI</span>
+				<h2 class="big">DAFTAR ISI</h2>
+				<div class="grid">
+					<a class="card" href="#ringkasan"
+						><span class="num t-cyan">01</span
+						><span class="ct"
+							><b>Ringkasan Alur</b><em class="tag t-cyan">OVERVIEW</em></span
+						></a
+					><a class="card" href="#metode"
+						><span class="num t-blue">02</span
+						><span class="ct"
+							><b>Memilih Metode Deploy</b
+							><em class="tag t-blue">DESAIN</em></span
+						></a
+					><a class="card" href="#persiapan"
+						><span class="num t-purple">03</span
+						><span class="ct"
+							><b>Persiapan Repository di STB</b
+							><em class="tag t-purple">GIT</em></span
+						></a
+					><a class="card" href="#runner"
+						><span class="num t-green">04</span
+						><span class="ct"
+							><b>Memasang Runner</b><em class="tag t-green">RUNNER</em></span
+						></a
+					><a class="card" href="#deploy"
+						><span class="num t-amber">05</span
+						><span class="ct"
+							><b>Script Deploy dan Izin sudo</b
+							><em class="tag t-amber">DEPLOY</em></span
+						></a
+					><a class="card" href="#workflow"
+						><span class="num t-cyan">06</span
+						><span class="ct"
+							><b>Workflow GitHub Actions</b
+							><em class="tag t-cyan">YAML</em></span
+						></a
+					><a class="card" href="#verifikasi"
+						><span class="num t-green">07</span
+						><span class="ct"
+							><b>Verifikasi</b><em class="tag t-green">CEK</em></span
+						></a
+					><a class="card" href="#keamanan"
+						><span class="num t-red">08</span
+						><span class="ct"
+							><b>Keamanan</b><em class="tag t-red">SECURITY</em></span
+						></a
+					><a class="card" href="#rencana"
+						><span class="num t-purple">09</span
+						><span class="ct"
+							><b>Rencana Lanjutan</b><em class="tag t-purple">NEXT</em></span
+						></a
+					>
+				</div>
+			</section>
+			<section class="sec" id="ringkasan">
+				<div class="sec-head">
+					<span class="num t-cyan">01</span>
+					<h2>Ringkasan Alur</h2>
+					<span class="tag t-cyan">OVERVIEW</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						Setiap <code>git push</code> ke branch <code>main</code> repository
+						<code>muhammadariqm/CMS</code> memicu GitHub Actions. Job dijalankan
+						oleh <strong>self-hosted runner</strong> yang terpasang langsung di
+						STB, lalu memanggil script deploy lokal. Tidak ada port SSH yang
+						dibuka ke internet.
+					</p>
+					<ol>
+						<li>
+							Push ke <code>main</code> (atau jalankan manual lewat
+							<code>workflow_dispatch</code>).
+						</li>
+						<li>
+							GitHub mengirim job ke runner <code>stb-hg680p</code> melalui
+							koneksi keluar dari STB.
+						</li>
+						<li>
+							Runner melakukan checkout kode, lalu menjalankan
+							<code>sudo -n /usr/local/sbin/deploy-cms</code>.
+						</li>
+						<li>
+							Script menyalin kode ke folder website live tanpa
+							<code>--delete</code>.
+						</li>
+						<li>
+							Workflow memeriksa <code>http://127.0.0.1:8081</code>; harus
+							mengembalikan HTTP 200.
+						</li>
+					</ol>
+					<table>
+						<tr>
+							<th>Komponen</th>
+							<th>Lokasi / nilai</th>
+							<th>Status</th>
+						</tr>
+						<tr>
+							<td>Runner</td>
+							<td><code>/opt/actions-runner</code> (ext4 eMMC)</td>
+							<td>Sudah berjalan sebagai service</td>
+						</tr>
+						<tr>
+							<td>User runner</td>
+							<td><code>fnet1</code> (bukan root)</td>
+							<td>Sudah berjalan</td>
+						</tr>
+						<tr>
+							<td>Label runner</td>
+							<td><code>self-hosted, Linux, ARM64, stb-hg680p</code></td>
+							<td>Sudah berjalan</td>
+						</tr>
+						<tr>
+							<td>Script deploy</td>
+							<td><code>/usr/local/sbin/deploy-cms</code></td>
+							<td>Sudah berjalan</td>
+						</tr>
+						<tr>
+							<td>Izin sudo</td>
+							<td><code>/etc/sudoers.d/deploy-cms</code></td>
+							<td>Sudah berjalan; validasi <code>visudo</code> OK</td>
+						</tr>
+						<tr>
+							<td>Workflow</td>
+							<td><code>.github/workflows/deploy.yml</code></td>
+							<td>Sudah berjalan; run pertama sukses (34 detik)</td>
+						</tr>
+						<tr>
+							<td>Migration / seeder / restart container</td>
+							<td>Tidak dijalankan otomatis</td>
+							<td>Rencana; sengaja ditunda</td>
+						</tr>
+					</table>
+				</div>
+			</section>
+			<section class="sec" id="metode">
+				<div class="sec-head">
+					<span class="num t-blue">02</span>
+					<h2>Memilih Metode Deploy</h2>
+					<span class="tag t-blue">DESAIN</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						GitHub Actions berjalan di cloud, sedangkan
+						<code>192.168.1.100</code> adalah IP lokal rumah. Runner cloud tidak
+						bisa menjangkaunya secara langsung.
+					</p>
+					<table>
+						<tr>
+							<th>Opsi</th>
+							<th>Kelebihan</th>
+							<th>Kekurangan / hasil</th>
+						</tr>
+						<tr>
+							<td>SSH dari GitHub ke STB</td>
+							<td>Sederhana secara konsep</td>
+							<td>
+								Perlu membuka SSH ke internet atau mengatur jalur tambahan
+							</td>
+						</tr>
+						<tr>
+							<td>SSH lewat Cloudflare Tunnel</td>
+							<td>Tanpa port terbuka</td>
+							<td>
+								Tunnel yang ada adalah Quick Tunnel ke
+								<code>http://cms-laravel:80</code>; hanya HTTP, bukan SSH
+							</td>
+						</tr>
+						<tr>
+							<td><strong>Self-hosted runner di STB</strong></td>
+							<td>
+								Hanya koneksi keluar; perintah Docker/file berjalan lokal;
+								tunnel website tidak diubah
+							</td>
+							<td>
+								<strong>Dipilih.</strong> Runner harus dibatasi ke repository
+								sendiri
+							</td>
+						</tr>
+					</table>
+					<div class="note">
+						<strong>Catatan:</strong> Sempat disiapkan SSH key
+						<code>stb_deploy</code> (ed25519) di laptop dan dipasang ke STB. Key
+						itu tidak dipakai oleh metode runner; hapus barisnya dari
+						<code>~/.ssh/authorized_keys</code> di STB bila tidak diperlukan
+						lagi.
+					</div>
+				</div>
+			</section>
+			<section class="sec" id="persiapan">
+				<div class="sec-head">
+					<span class="num t-purple">03</span>
+					<h2>Persiapan Repository di STB</h2>
+					<span class="tag t-purple">GIT</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						Folder website live harus dicek sebelum deploy. Jangan menjalankan
+						<code>git clone</code> atau menghapus folder, karena folder ini
+						dipakai container Laravel.
+					</p>
+					<pre><code>cd /srv/data/websites/CMS
+git status
+git remote -v
+git branch --show-current</code></pre>
+					<p>
+						Hasil yang tercatat: branch <code>main</code>, tetapi working tree
+						punya perubahan dan banyak file <em>untracked</em> (folder konten
+						seperti <code>articles/</code>, <code>banners/</code>,
+						<code>gallery/</code>, <code>projects/</code>,
+						<code>settings/</code>, file <code>.env.backup-*</code>, backup
+						container, dan konfigurasi Docker).
+					</p>
+					<div class="warn">
+						Jangan jalankan <code>git pull</code>,
+						<code>git reset --hard</code>, atau <code>git clean</code> di folder
+						live. Perintah itu bisa menimpa atau menghapus perubahan lokal dan
+						konten yang dikelola lewat CMS. Karena itu deploy memakai checkout
+						terpisah di runner, lalu menyalin file kode saja.
+					</div>
+				</div>
+			</section>
+			<section class="sec" id="runner">
+				<div class="sec-head">
+					<span class="num t-green">04</span>
+					<h2>Memasang Runner</h2>
+					<span class="tag t-green">RUNNER</span>
+				</div>
+				<div class="sec-body">
+					<h3>Kendala: microSD berformat VFAT</h3>
+					<p>
+						Ekstrak runner di <code>/srv/data</code> menghasilkan error
+						<code>Cannot change ownership to uid 1001</code>. Penyebabnya,
+						microSD terpasang sebagai <code>vfat</code> yang tidak mendukung
+						ownership dan permission Linux.
+					</p>
+					<pre><code>findmnt -T /srv/data -o TARGET,SOURCE,FSTYPE,OPTIONS
+df -h /srv/data /</code></pre>
+					<table>
+						<tr>
+							<th>Lokasi</th>
+							<th>Filesystem</th>
+							<th>Ruang kosong</th>
+							<th>Keputusan</th>
+						</tr>
+						<tr>
+							<td><code>/srv/data</code> (microSD)</td>
+							<td>vfat</td>
+							<td>± 20 GB</td>
+							<td>Tidak cocok untuk runner</td>
+						</tr>
+						<tr>
+							<td><code>/</code> (eMMC)</td>
+							<td>ext4</td>
+							<td>1,9 GB → 1,3 GB setelah salin</td>
+							<td>Dipakai; runner 592 MB</td>
+						</tr>
+					</table>
+					<h3>Salin ke ext4 dan beri akses ke fnet1</h3>
+					<pre><code>pgrep -af &#x27;Runner.Listener|Runner.Worker&#x27;
+mkdir -p /opt/actions-runner
+cp -a /srv/data/github-runner/actions-runner/. /opt/actions-runner/
+chown -R fnet1:fnet1 /opt/actions-runner</code></pre>
+					<p>
+						<code>config.sh</code> menolak berjalan sebagai root (<em
+							>Must not run with sudo</em
+						>), jadi runner dijalankan oleh user biasa <code>fnet1</code>.
+					</p>
+					<h3>Registrasi runner</h3>
+					<pre><code>runuser -u fnet1 -- bash -c &#x27;cd /opt/actions-runner &amp;&amp; ./config.sh --unattended --url https://github.com/muhammadariqm/CMS --token TOKEN_DARI_GITHUB --name stb-hg680p --labels self-hosted,Linux,ARM64,stb-hg680p&#x27;</code></pre>
+					<div class="warn">
+						<code>TOKEN_DARI_GITHUB</code> adalah placeholder. Ambil token baru
+						dari <em>Settings → Actions → Runners → New self-hosted runner</em>.
+						Token bersifat sementara; jangan di-commit atau dikirim ke chat.
+					</div>
+					<h3>Jalankan sebagai service</h3>
+					<pre><code>cd /opt/actions-runner
+./svc.sh install fnet1
+./svc.sh start
+./svc.sh status</code></pre>
+					<div class="ok">
+						Status <code>active (running)</code>, log menampilkan
+						<em>Connected to GitHub</em> dan <em>Listening for Jobs</em>.
+						Service <code>enabled</code>, sehingga aktif otomatis setelah STB
+						restart.
+					</div>
+					<div class="note">
+						<strong>Catatan:</strong> Folder runner lama di microSD
+						(<code>/srv/data/github-runner</code>) dibiarkan sebagai cadangan.
+					</div>
+				</div>
+			</section>
+			<section class="sec" id="deploy">
+				<div class="sec-head">
+					<span class="num t-amber">05</span>
+					<h2>Script Deploy dan Izin sudo</h2>
+					<span class="tag t-amber">DEPLOY</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						Runner berjalan sebagai <code>fnet1</code>, sedangkan folder live
+						butuh hak lebih tinggi. Solusinya satu script khusus yang boleh
+						dipanggil lewat <code>sudo</code> tanpa password, bukan memberi
+						<code>fnet1</code> akses root penuh.
+					</p>
+					<ul>
+						<li>
+							Script: <code>/usr/local/sbin/deploy-cms</code> (menyalin kode ke
+							folder live tanpa <code>--delete</code>).
+						</li>
+						<li>
+							Aturan sudoers: <code>/etc/sudoers.d/deploy-cms</code>, hanya
+							untuk script tersebut.
+						</li>
+						<li>
+							Script menolak berjalan bila checkout
+							<code>/opt/actions-runner/_work/CMS/CMS/</code> belum ada.
+						</li>
+					</ul>
+					<pre><code>sudo visudo -cf /etc/sudoers.d/deploy-cms
+sudo -u fnet1 sudo -n /usr/local/sbin/deploy-cms</code></pre>
+					<p>
+						Hasil uji: <code>parsed OK</code>, lalu pesan
+						<code>ERROR: checkout CMS belum ditemukan</code>. Itu hasil yang
+						diharapkan karena izin sudo bekerja dan script menolak berjalan
+						tanpa checkout.
+					</p>
+					<div class="note">
+						<strong>Catatan:</strong> Isi lengkap script dan aturan sudoers
+						tidak ikut tercatat di catatan ini. Salin dari server bila ingin
+						mendokumentasikannya, dan pastikan tidak ada rahasia di dalamnya.
+					</div>
+				</div>
+			</section>
+			<section class="sec" id="workflow">
+				<div class="sec-head">
+					<span class="num t-cyan">06</span>
+					<h2>Workflow GitHub Actions</h2>
+					<span class="tag t-cyan">YAML</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						Dua workflow lama (<code>docker-ci.yml</code> dan
+						<code>deploy.yml</code> versi lama) dihapus dan diganti satu file:
+					</p>
+					<pre><code># .github/workflows/deploy.yml
+name: Deploy CMS to STB
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cms-stb-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy on STB HG680P
+    runs-on: [self-hosted, Linux, ARM64, stb-hg680p]
+
+    steps:
+      - name: Checkout latest code
+        uses: actions/checkout@v4
+
+      - name: Deploy CMS files
+        run: sudo -n /usr/local/sbin/deploy-cms
+
+      - name: Check website
+        run: |
+          set -e
+          HTTP_CODE=$(curl -sS -o /dev/null -w &#x27;%{http_code}&#x27; http://127.0.0.1:8081)
+          echo &quot;CMS HTTP status: ${HTTP_CODE}&quot;
+          if [ &quot;$HTTP_CODE&quot; != &quot;200&quot; ]; then
+            echo &quot;CMS health check failed.&quot;
+            exit 1
+          fi</code></pre>
+					<ul>
+						<li>
+							<code>concurrency</code> memastikan dua deploy tidak berjalan
+							bersamaan.
+						</li>
+						<li>
+							<code>permissions: contents: read</code> membatasi hak token
+							workflow.
+						</li>
+						<li>
+							Tidak ada migration, seeder, atau restart container di workflow
+							ini.
+						</li>
+						<li>
+							Tanpa <code>--delete</code>, file yang sudah dihapus dari GitHub
+							bisa tertinggal di folder live. Ini disengaja untuk deploy awal.
+						</li>
+					</ul>
+				</div>
+			</section>
+			<section class="sec" id="verifikasi">
+				<div class="sec-head">
+					<span class="num t-green">07</span>
+					<h2>Verifikasi</h2>
+					<span class="tag t-green">CEK</span>
+				</div>
+				<div class="sec-body">
+					<p>
+						Run pertama workflow <em>Deploy CMS to STB</em> berstatus
+						<strong>Success</strong>: job di STB 27 detik, total 34 detik,
+						dipicu push ke <code>main</code>. Cek manual dari STB:
+					</p>
+					<pre><code>curl -sS -o /dev/null -w &#x27;HTTP %{http_code}\n&#x27; http://127.0.0.1:8081
+systemctl status &#x27;actions.runner.*&#x27; --no-pager
+docker ps</code></pre>
+					<div class="ok">
+						Hasil tercatat: <code>HTTP 200</code>. Runner <em>active</em>,
+						website tetap merespons setelah deploy.
+					</div>
+					<div class="note">
+						<strong>Catatan:</strong> Run sukses belum membuktikan perubahan
+						kode tampil di website. Uji dengan perubahan teks kecil pada halaman
+						publik, push, lalu cek apakah workflow jalan otomatis, teks berubah,
+						dan folder media serta konfigurasi tetap utuh. Warning
+						<em>Node.js 20 deprecated</em> pada
+						<code>actions/checkout@v4</code> bukan kegagalan; naikkan versinya
+						nanti.
+					</div>
+				</div>
+			</section>
+			<section class="sec" id="keamanan">
+				<div class="sec-head">
+					<span class="num t-red">08</span>
+					<h2>Keamanan</h2>
+					<span class="tag t-red">SECURITY</span>
+				</div>
+				<div class="sec-body">
+					<ul>
+						<li>
+							Self-hosted runner menjalankan perintah langsung di STB. Pakai
+							hanya untuk repository pribadi; jangan aktifkan untuk fork atau
+							pull request dari orang lain.
+						</li>
+						<li>
+							Jangan simpan token registrasi runner, private key, atau isi
+							<code>.env</code> di repository dan dokumentasi.
+						</li>
+						<li>
+							Runner berjalan sebagai <code>fnet1</code>, bukan root; hak root
+							hanya lewat satu script di sudoers.
+						</li>
+						<li>
+							Pastikan <code>.env</code>, <code>.env.backup-*</code>,
+							<code>container-backup.json</code>, dan file backup lain masuk
+							<code>.gitignore</code> dan tidak ikut ter-commit.
+						</li>
+						<li>Port SSH 22 tidak perlu dibuka ke internet untuk alur ini.</li>
+					</ul>
+					<div class="warn">
+						Private key <code>stb_deploy</code> yang pernah dibuat jangan
+						dibagikan. Bila sudah tidak dipakai, hapus file key dan public
+						key-nya dari STB maupun laptop.
+					</div>
+				</div>
+			</section>
+			<section class="sec" id="rencana">
+				<div class="sec-head">
+					<span class="num t-purple">09</span>
+					<h2>Rencana Lanjutan</h2>
+					<span class="tag t-purple">NEXT</span>
+				</div>
+				<div class="sec-body">
+					<ol>
+						<li>
+							Uji alur penuh dengan perubahan teks kecil dan konfirmasi hasilnya
+							di website.
+						</li>
+						<li>
+							Perbarui <code>actions/checkout</code> ke versi yang mendukung
+							runtime Node lebih baru.
+						</li>
+						<li>
+							Tentukan cara aman membersihkan file lama (pengganti
+							<code>--delete</code>) dari daftar yang sudah diverifikasi.
+						</li>
+						<li>
+							Putuskan kapan migration dijalankan, misalnya langkah manual atau
+							workflow terpisah dengan backup database lebih dulu.
+						</li>
+						<li>
+							Pantau ruang eMMC (sisa ± 1,3 GB); folder <code>_work</code> dan
+							log runner bisa membesar.
+						</li>
+						<li>
+							Hapus salinan runner lama di microSD setelah yakin runner di
+							<code>/opt</code> stabil.
+						</li>
+					</ol>
+				</div>
+			</section>
+			<section class="end">
+				<p>
+					<strong>CI/CD Home Server STB HG680P</strong><br />Disusun dari
+					catatan proses pemasangan, bukan audit langsung pada server. Jangan
+					memasukkan password, token, private key, atau isi file environment ke
+					dokumen yang dibagikan.
+				</p>
+				<a class="btn" href="../index.html#projects"
+					>← Kembali</a
+				>
+			</section>
+		</main>
+		<script>
+			(() => {
+				const $ = (s, r = document) => [...r.querySelectorAll(s)];
+				const esc = (s) =>
+					s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+				$("pre").forEach((pre) => {
+					const raw = pre.textContent.replace(/\n$/, "");
+					const html = raw
+						.split("\n")
+						.map((l) => {
+							let e = esc(l);
+							if (/^\s*#/.test(l)) return '<span class="c">' + e + "</span>";
+							e = e.replace(
+								/(^|\s)(--?[a-zA-Z][\w-]*)/g,
+								'$1<span class="f">$2</span>',
+							);
+							return e.replace(/^([a-z][\w.-]*)/, '<span class="k">$1</span>');
+						})
+						.join("\n");
+					const fig = document.createElement("figure");
+					fig.className = "term";
+					fig.innerHTML =
+						'<figcaption><span>terminal</span><button type="button">Salin</button></figcaption><pre><code>' +
+						html +
+						"</code></pre>";
+					pre.replaceWith(fig);
+					const btn = fig.querySelector("button");
+					btn.addEventListener("click", async () => {
+						try {
+							await navigator.clipboard.writeText(raw);
+							btn.textContent = "Tersalin";
+						} catch (e) {
+							btn.textContent = "Gagal";
+						}
+						setTimeout(() => {
+							btn.textContent = "Salin";
+						}, 1600);
+					});
+				});
+				$("table").forEach((t) => {
+					const hs = [...t.rows[0].cells].map((c) => c.textContent.trim());
+					[...t.rows].slice(1).forEach((r) =>
+						[...r.cells].forEach((c, i) => {
+							c.dataset.label = hs[i] || "";
+						}),
+					);
+					const d = document.createElement("div");
+					d.className = "tbl";
+					t.replaceWith(d);
+					d.appendChild(t);
+				});
+				const menu = document.querySelector(".links"),
+					bg = document.querySelector(".burger");
+				bg.addEventListener("click", () => {
+					const o = menu.classList.toggle("open");
+					bg.setAttribute("aria-expanded", o);
+				});
+				menu.addEventListener("click", (e) => {
+					if (e.target.tagName === "A") menu.classList.remove("open");
+				});
+				const ls = $('.links a[href^="#"]');
+				const io = new IntersectionObserver(
+					(es) => {
+						es.forEach((e) => {
+							if (e.isIntersecting)
+								ls.forEach((a) =>
+									a.classList.toggle(
+										"on",
+										a.getAttribute("href") === "#" + e.target.id,
+									),
+								);
+						});
+					},
+					{ rootMargin: "-20% 0px -70% 0px" },
+				);
+				$(".sec").forEach((s) => io.observe(s));
+			})();
+		</script>
+	</body>
+</html>
